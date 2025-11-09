@@ -2,6 +2,10 @@ export interface Env {
   DB: D1Database;
   ENVIRONMENT?: string;
   MARKET: DurableObjectNamespace;
+  REALM: DurableObjectNamespace;
+  KINGDOM: DurableObjectNamespace;
+  CITY: DurableObjectNamespace;
+  RULESETS?: KVNamespace; // For ruleset storage
 }
 
 export interface User {

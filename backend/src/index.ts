@@ -7,6 +7,9 @@ import { PurchaseRewards } from './game/purchases';
 import { validateUserId, validateUsername, validateEmail, validateProductId, validateAmount, validateTransactionId, ValidationError } from './utils/validation';
 
 export { MarketDO } from './durable-objects/market';
+export { RealmDO } from './durable-objects/realm-do';
+export { KingdomDO } from './durable-objects/kingdom-do';
+export { CityDO } from './durable-objects/city-do';
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -26,7 +29,13 @@ export default {
     }
 
     try {
+      // Kingdoms Persist API (new architecture)
+      if (path.startsWith('/realm/') || path.startsWith('/kingdom/') || path.startsWith('/city/') || path === '/ws') {
+        const { handleKingdomsPersistAPI } = await import('./api/kingdoms-persist/routes');
+        return handleKingdomsPersistAPI(request, env);
+      }
       
+      // Legacy Kingdom Ledger API
       if (path.startsWith('/api/v1/city') || path.startsWith('/api/v1/tick')) {
         const { handleCity } = await import('./api/v1/city');
         return handleCity(request, env);

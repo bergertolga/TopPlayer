@@ -1,0 +1,167 @@
+{
+  "id": "v1",
+  "version": "1.0.0",
+  "units": {
+    "levy": {
+      "name": "Levy",
+      "family": "levy",
+      "cost": {
+        "rations": 1,
+        "tools": 0.1
+      },
+      "upkeep": {
+        "rations": 0.5
+      },
+      "train_time_ticks": 3
+    },
+    "pikes": {
+      "name": "Pikes",
+      "family": "professional",
+      "cost": {
+        "iron": 2,
+        "tools": 1,
+        "rations": 1
+      },
+      "upkeep": {
+        "rations": 0.5
+      },
+      "train_time_ticks": 10
+    },
+    "archers": {
+      "name": "Archers",
+      "family": "professional",
+      "cost": {
+        "timber": 1,
+        "fiber": 2,
+        "tools": 1,
+        "rations": 1
+      },
+      "upkeep": {
+        "rations": 0.5
+      },
+      "train_time_ticks": 10
+    }
+  },
+  "buildings": {
+    "b_fields": {
+      "name": "Fields",
+      "type": "production",
+      "cost": {
+        "grain": 10,
+        "timber": 5
+      },
+      "upkeep": {
+        "coins": 1
+      },
+      "build_time_ticks": 60,
+      "production": {
+        "grain": 10
+      }
+    },
+    "b_lumber": {
+      "name": "Lumberyard",
+      "type": "production",
+      "cost": {
+        "timber": 5,
+        "stone": 3
+      },
+      "upkeep": {
+        "coins": 1
+      },
+      "build_time_ticks": 72,
+      "production": {
+        "timber": 8
+      }
+    },
+    "b_kiln": {
+      "name": "Kiln",
+      "type": "processing",
+      "cost": {
+        "stone": 5,
+        "clay": 3
+      },
+      "upkeep": {
+        "coins": 1
+      },
+      "build_time_ticks": 90,
+      "processing": {
+        "input": {
+          "clay": 2
+        },
+        "output": {
+          "bricks": 1
+        },
+        "efficiency": 0.9
+      }
+    },
+    "b_barracks": {
+      "name": "Barracks",
+      "type": "military",
+      "cost": {
+        "timber": 10,
+        "stone": 5,
+        "iron": 2
+      },
+      "upkeep": {
+        "coins": 2
+      },
+      "build_time_ticks": 120
+    },
+    "b_warehouse": {
+      "name": "Warehouse",
+      "type": "storage",
+      "cost": {
+        "timber": 8,
+        "stone": 4
+      },
+      "upkeep": {
+        "coins": 1
+      },
+      "build_time_ticks": 100,
+      "storage": 100
+    }
+  },
+  "recipes": {
+    "bricks": {
+      "name": "Bricks",
+      "input": {
+        "clay": 2
+      },
+      "output": {
+        "bricks": 1
+      },
+      "time_ticks": 10,
+      "building": "b_kiln"
+    },
+    "rations": {
+      "name": "Rations",
+      "input": {
+        "grain": 2
+      },
+      "output": {
+        "rations": 1
+      },
+      "time_ticks": 5,
+      "building": "b_fields"
+    }
+  },
+  "events": {
+    "harvest": {
+      "name": "Bountiful Harvest",
+      "type": "climate",
+      "modifiers": {
+        "grain_production": 1.5
+      },
+      "duration_ticks": 864
+    },
+    "plague": {
+      "name": "Plague",
+      "type": "disaster",
+      "modifiers": {
+        "labor_efficiency": 0.7
+      },
+      "duration_ticks": 432
+    }
+  }
+}
+

@@ -11,9 +11,28 @@ name = "MARKET"
 class_name = "MarketDO"
 script_name = "idle-adventure-backend"
 
+[[durable_objects.bindings]]
+name = "REALM"
+class_name = "RealmDO"
+script_name = "idle-adventure-backend"
+
+[[durable_objects.bindings]]
+name = "KINGDOM"
+class_name = "KingdomDO"
+script_name = "idle-adventure-backend"
+
+[[durable_objects.bindings]]
+name = "CITY"
+class_name = "CityDO"
+script_name = "idle-adventure-backend"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["MarketDO"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["RealmDO", "KingdomDO", "CityDO"]
 
 [env.production]
 vars = { ENVIRONMENT = "production" }
