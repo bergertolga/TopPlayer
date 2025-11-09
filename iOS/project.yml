@@ -1,0 +1,50 @@
+# XcodeGen project configuration
+name: TopPlayer
+options:
+  bundleIdPrefix: com.idleadventure
+  deploymentTarget:
+    iOS: "15.0"
+  developmentLanguage: en
+  xcodeVersion: "1500"
+  usesTabs: false
+  indentWidth: 2
+  tabWidth: 2
+  projectVersion: 54
+
+packages: {}
+
+targets:
+  TopPlayer:
+    type: application
+    platform: iOS
+    deploymentTarget: "15.0"
+    sources:
+      - path: TopPlayer
+    info:
+      path: TopPlayer/Info.plist
+      properties:
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: false
+    entitlements:
+      path: Entitlements.entitlements
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.idleadventure.topplayer
+        PRODUCT_NAME: TopPlayer
+        MARKETING_VERSION: 1.0
+        CURRENT_PROJECT_VERSION: 1
+        SWIFT_VERSION: "5.0"
+        SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2" # iPhone and iPad
+        IPHONEOS_DEPLOYMENT_TARGET: "15.0"
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "DEBUG $(inherited)"
+        OTHER_SWIFT_FLAGS: "$(inherited) -Xfrontend -warn-long-function-bodies=100"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+    dependencies: []
+    prebuildScripts: []
+    postbuildScripts: []
+

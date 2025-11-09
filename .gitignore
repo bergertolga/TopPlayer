@@ -1,0 +1,114 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Xcode
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/
+*.xcuserdata/
+*.xcscmblueprint
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+DerivedData/
+build/
+*.swiftpm
+.swiftpm/checkouts/
+.swiftpm/xcode/
+*.playground
+*.timeline
+*.xccheckout
+
+# iOS
+*.mobileprovision
+*.certSigningRequest
+*.p12
+*.cer
+*.entitlements
+*.app.dSYM.zip
+*.app.dSYM
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json
+yarn.lock
+.pnpm-store/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Cloudflare
+.wrangler/
+.dev.vars
+dist/
+worker-configuration.d.ts
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+*~
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.framework
+*.app
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Secrets and keys
+*.pem
+*.key
+*.cert
+secrets/
+keys/
+
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Misc
+*.orig
+.cache/
+

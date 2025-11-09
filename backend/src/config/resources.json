@@ -1,0 +1,125 @@
+{
+  "resources": [
+    {
+      "code": "WOOD",
+      "name": "Wood",
+      "type": "raw",
+      "baseValue": 1.0,
+      "description": "Basic building material"
+    },
+    {
+      "code": "STONE",
+      "name": "Stone",
+      "type": "raw",
+      "baseValue": 1.5,
+      "description": "Sturdy construction material"
+    },
+    {
+      "code": "ORE",
+      "name": "Iron Ore",
+      "type": "raw",
+      "baseValue": 2.0,
+      "description": "Raw metal for smelting"
+    },
+    {
+      "code": "FOOD",
+      "name": "Food",
+      "type": "raw",
+      "baseValue": 0.8,
+      "description": "Sustains your population"
+    },
+    {
+      "code": "FIBER",
+      "name": "Fiber",
+      "type": "raw",
+      "baseValue": 1.2,
+      "description": "Textile material"
+    },
+    {
+      "code": "CLAY",
+      "name": "Clay",
+      "type": "raw",
+      "baseValue": 1.0,
+      "description": "Pottery and brick material"
+    },
+    {
+      "code": "PLANKS",
+      "name": "Planks",
+      "type": "refined",
+      "baseValue": 3.0,
+      "description": "Processed wood"
+    },
+    {
+      "code": "BRICKS",
+      "name": "Bricks",
+      "type": "refined",
+      "baseValue": 4.0,
+      "description": "Fired clay bricks"
+    },
+    {
+      "code": "INGOTS",
+      "name": "Iron Ingots",
+      "type": "refined",
+      "baseValue": 5.0,
+      "description": "Smelted metal"
+    },
+    {
+      "code": "FABRIC",
+      "name": "Fabric",
+      "type": "refined",
+      "baseValue": 3.5,
+      "description": "Woven textiles"
+    },
+    {
+      "code": "TOOLS",
+      "name": "Tools",
+      "type": "refined",
+      "baseValue": 8.0,
+      "description": "Crafted tools for efficiency"
+    },
+    {
+      "code": "COAL",
+      "name": "Coal",
+      "type": "fuel",
+      "baseValue": 2.5,
+      "description": "Fuel for processing"
+    },
+    {
+      "code": "CHARCOAL",
+      "name": "Charcoal",
+      "type": "fuel",
+      "baseValue": 3.0,
+      "description": "Refined fuel"
+    },
+    {
+      "code": "SPICES",
+      "name": "Spices",
+      "type": "special",
+      "baseValue": 15.0,
+      "description": "Rare trade goods"
+    },
+    {
+      "code": "GEMS",
+      "name": "Gems",
+      "type": "special",
+      "baseValue": 50.0,
+      "description": "Precious stones"
+    },
+    {
+      "code": "MANA",
+      "name": "Mana",
+      "type": "special",
+      "baseValue": 20.0,
+      "description": "Magical energy"
+    },
+    {
+      "code": "COINS",
+      "name": "Coins",
+      "type": "special",
+      "baseValue": 1.0,
+      "description": "Currency"
+    }
+  ]
+}
+
+

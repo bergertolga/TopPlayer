@@ -1,0 +1,71 @@
+{
+  "tickIntervalSeconds": 60,
+  "production": {
+    "baseMultiplierPerLevel": 0.15,
+    "formula": "base_per_min * (1 + 0.15 * level) * modifiers"
+  },
+  "refining": {
+    "baseEfficiency": 0.9,
+    "efficiencyPerLevel": 0.02,
+    "formula": "yield = input * (0.9 + 0.02 * level + toolBonus)"
+  },
+  "happiness": {
+    "base": 0.9,
+    "foodDeficitPenalty": -0.1,
+    "fabricDeficitPenalty": -0.05,
+    "festivalBonus": 0.02,
+    "min": 0.0,
+    "max": 1.0,
+    "productionMultiplier": "0.8 + happiness * 0.4"
+  },
+  "warehouse": {
+    "baseCapacity": 15000,
+    "capacityMultiplier": 1.5,
+    "formula": "base * (1.5 ^ level)"
+  },
+  "market": {
+    "transactionFeeMin": 0.008,
+    "transactionFeeMax": 0.02,
+    "defaultTransactionFee": 0.01,
+    "maxTaxRate": 0.05,
+    "priceBandPercent": 40,
+    "priceBandWindowHours": 24,
+    "maxOpenOrdersPerCity": 50,
+    "orderCancelCooldownSeconds": 30
+  },
+  "pvp": {
+    "raidStealPercent": 0.15,
+    "raidStealMaxPercent": 0.05,
+    "shieldDurationHours": 8
+  },
+  "routes": {
+    "baseTravelTimeMinutes": 30,
+    "riskEventChance": 0.1,
+    "escortReductionPercent": 0.5
+  },
+  "prestige": {
+    "multiplierFormula": "1 + sqrt(prestigePoints) * 0.1",
+    "keepGovernors": true,
+    "keepCosmetics": true
+  },
+  "startingCity": {
+    "level": 1,
+    "population": 100,
+    "happiness": 0.9,
+    "resources": {
+      "WOOD": 200,
+      "STONE": 200,
+      "FOOD": 300,
+      "COINS": 1000
+    },
+    "buildings": [
+      {"code": "TOWN_HALL", "level": 1},
+      {"code": "FARM", "level": 1},
+      {"code": "LUMBER_MILL", "level": 1},
+      {"code": "QUARRY", "level": 1},
+      {"code": "WAREHOUSE", "level": 1}
+    ]
+  }
+}
+
+

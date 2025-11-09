@@ -1,0 +1,45 @@
+{
+  "regions": [
+    {
+      "id": "region-heartlands",
+      "name": "Heartlands",
+      "tier": 1,
+      "woodBias": 1.3,
+      "oreBias": 0.9,
+      "foodBias": 1.2,
+      "stoneBias": 1.0,
+      "fiberBias": 1.1,
+      "clayBias": 1.0,
+      "maxCities": 100,
+      "description": "Fertile plains rich in wood and food"
+    },
+    {
+      "id": "region-highlands",
+      "name": "Highlands",
+      "tier": 1,
+      "woodBias": 0.8,
+      "oreBias": 1.3,
+      "foodBias": 0.9,
+      "stoneBias": 1.2,
+      "fiberBias": 0.9,
+      "clayBias": 0.8,
+      "maxCities": 100,
+      "description": "Mountainous region rich in ore and stone"
+    },
+    {
+      "id": "region-coast",
+      "name": "Coast",
+      "tier": 1,
+      "woodBias": 1.0,
+      "oreBias": 0.7,
+      "foodBias": 1.3,
+      "stoneBias": 0.9,
+      "fiberBias": 1.2,
+      "clayBias": 1.1,
+      "maxCities": 100,
+      "description": "Coastal region with abundant fish and fiber"
+    }
+  ]
+}
+
+

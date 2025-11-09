@@ -1,0 +1,41 @@
+name = "idle-adventure-backend"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# [triggers]
+# crons = ["* * * * *"]  # Every minute - adjust to every 60 seconds via Cloudflare dashboard
+# Commented out: Free plan limit is 5 cron triggers. Enable after upgrading or removing other triggers.
+
+[[durable_objects.bindings]]
+name = "MARKET"
+class_name = "MarketDO"
+script_name = "idle-adventure-backend"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MarketDO"]
+
+[env.production]
+vars = { ENVIRONMENT = "production" }
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "idle-adventure-db"
+database_id = "cc3ae444-ceb1-4e8f-950c-a9548fa93097"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "idle-adventure-db"
+database_id = "cc3ae444-ceb1-4e8f-950c-a9548fa93097"
+
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "idle-adventure-db-dev"
+database_id = "" # Will be set after first deploy
+
+[build]
+command = "npm run build"
+

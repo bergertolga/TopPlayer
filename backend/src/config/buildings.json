@@ -1,0 +1,221 @@
+{
+  "buildings": [
+    {
+      "code": "TOWN_HALL",
+      "name": "Town Hall",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 5,
+      "upkeepCoins": 10,
+      "maxLevel": 20,
+      "description": "Central administration building"
+    },
+    {
+      "code": "FARM",
+      "name": "Farm",
+      "category": "production",
+      "baseProduction": {"FOOD": 30},
+      "workersRequired": 3,
+      "upkeepCoins": 5,
+      "maxLevel": 15,
+      "description": "Produces food"
+    },
+    {
+      "code": "LUMBER_MILL",
+      "name": "Lumber Mill",
+      "category": "production",
+      "baseProduction": {"WOOD": 22},
+      "workersRequired": 2,
+      "upkeepCoins": 4,
+      "maxLevel": 15,
+      "description": "Harvests wood"
+    },
+    {
+      "code": "QUARRY",
+      "name": "Quarry",
+      "category": "production",
+      "baseProduction": {"STONE": 18},
+      "workersRequired": 3,
+      "upkeepCoins": 5,
+      "maxLevel": 15,
+      "description": "Mines stone"
+    },
+    {
+      "code": "MINE",
+      "name": "Mine",
+      "category": "production",
+      "baseProduction": {"ORE": 15},
+      "workersRequired": 4,
+      "upkeepCoins": 6,
+      "maxLevel": 15,
+      "description": "Mines iron ore"
+    },
+    {
+      "code": "PASTURE",
+      "name": "Pasture",
+      "category": "production",
+      "baseProduction": {"FIBER": 12},
+      "workersRequired": 2,
+      "upkeepCoins": 3,
+      "maxLevel": 15,
+      "description": "Raises livestock for fiber"
+    },
+    {
+      "code": "CLAY_PIT",
+      "name": "Clay Pit",
+      "category": "production",
+      "baseProduction": {"CLAY": 15},
+      "workersRequired": 2,
+      "upkeepCoins": 3,
+      "maxLevel": 15,
+      "description": "Extracts clay"
+    },
+    {
+      "code": "SAWMILL",
+      "name": "Sawmill",
+      "category": "processing",
+      "inputResources": {"WOOD": 2},
+      "outputResources": {"PLANKS": 1},
+      "workersRequired": 2,
+      "upkeepCoins": 4,
+      "maxLevel": 15,
+      "description": "Converts wood to planks"
+    },
+    {
+      "code": "SMELTER",
+      "name": "Smelter",
+      "category": "processing",
+      "inputResources": {"ORE": 2, "COAL": 1},
+      "outputResources": {"INGOTS": 1},
+      "workersRequired": 3,
+      "upkeepCoins": 6,
+      "maxLevel": 15,
+      "description": "Smelts ore into ingots"
+    },
+    {
+      "code": "KILN",
+      "name": "Kiln",
+      "category": "processing",
+      "inputResources": {"CLAY": 2},
+      "outputResources": {"BRICKS": 1},
+      "workersRequired": 2,
+      "upkeepCoins": 4,
+      "maxLevel": 15,
+      "description": "Fires clay into bricks"
+    },
+    {
+      "code": "LOOM",
+      "name": "Loom",
+      "category": "processing",
+      "inputResources": {"FIBER": 2},
+      "outputResources": {"FABRIC": 1},
+      "workersRequired": 2,
+      "upkeepCoins": 4,
+      "maxLevel": 15,
+      "description": "Weaves fiber into fabric"
+    },
+    {
+      "code": "WORKSHOP",
+      "name": "Workshop",
+      "category": "processing",
+      "inputResources": {"INGOTS": 1, "PLANKS": 1},
+      "outputResources": {"TOOLS": 1},
+      "workersRequired": 3,
+      "upkeepCoins": 5,
+      "maxLevel": 15,
+      "description": "Crafts tools"
+    },
+    {
+      "code": "WAREHOUSE",
+      "name": "Warehouse",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 1,
+      "upkeepCoins": 2,
+      "maxLevel": 20,
+      "description": "Increases storage capacity"
+    },
+    {
+      "code": "HOUSE",
+      "name": "House",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 0,
+      "upkeepCoins": 1,
+      "maxLevel": 10,
+      "description": "Increases population capacity"
+    },
+    {
+      "code": "MARKET_STALL",
+      "name": "Market Stall",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 1,
+      "upkeepCoins": 3,
+      "maxLevel": 10,
+      "description": "Increases market order slots"
+    },
+    {
+      "code": "UNIVERSITY",
+      "name": "University",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 5,
+      "upkeepCoins": 15,
+      "maxLevel": 10,
+      "description": "Enables research"
+    },
+    {
+      "code": "EMBASSY",
+      "name": "Embassy",
+      "category": "city",
+      "baseProduction": {},
+      "workersRequired": 2,
+      "upkeepCoins": 8,
+      "maxLevel": 5,
+      "description": "Enables treaties and diplomacy"
+    },
+    {
+      "code": "BARRACKS",
+      "name": "Barracks",
+      "category": "military",
+      "baseProduction": {},
+      "workersRequired": 3,
+      "upkeepCoins": 10,
+      "maxLevel": 10,
+      "description": "Trains troops"
+    },
+    {
+      "code": "GARRISON",
+      "name": "Garrison",
+      "category": "military",
+      "baseProduction": {},
+      "workersRequired": 2,
+      "upkeepCoins": 8,
+      "maxLevel": 10,
+      "description": "City defense"
+    },
+    {
+      "code": "CARAVANSERAI",
+      "name": "Caravanserai",
+      "category": "logistics",
+      "baseProduction": {},
+      "workersRequired": 2,
+      "upkeepCoins": 5,
+      "maxLevel": 10,
+      "description": "Increases route capacity"
+    },
+    {
+      "code": "PORT",
+      "name": "Port",
+      "category": "logistics",
+      "baseProduction": {},
+      "workersRequired": 4,
+      "upkeepCoins": 12,
+      "maxLevel": 10,
+      "description": "Enables sea trade routes"
+    }
+  ]
+}
+
+

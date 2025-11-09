@@ -1,0 +1,85 @@
+{
+  "governors": [
+    {
+      "code": "GOV_FARMER",
+      "name": "Farmer John",
+      "rarity": "common",
+      "bonuses": [
+        {"stat": "production:FOOD", "value": 0.10}
+      ],
+      "description": "Expert in agricultural production"
+    },
+    {
+      "code": "GOV_LUMBERJACK",
+      "name": "Lumberjack Will",
+      "rarity": "common",
+      "bonuses": [
+        {"stat": "production:WOOD", "value": 0.10}
+      ],
+      "description": "Master of forestry"
+    },
+    {
+      "code": "GOV_MINER",
+      "name": "Miner Stone",
+      "rarity": "common",
+      "bonuses": [
+        {"stat": "production:ORE", "value": 0.10},
+        {"stat": "production:STONE", "value": 0.05}
+      ],
+      "description": "Skilled in mining operations"
+    },
+    {
+      "code": "GOV_MERCHANT",
+      "name": "Merchant Gold",
+      "rarity": "rare",
+      "bonuses": [
+        {"stat": "market:fee", "value": -0.05},
+        {"stat": "city:happiness", "value": 0.05}
+      ],
+      "description": "Reduces market fees and boosts happiness"
+    },
+    {
+      "code": "GOV_ARCHITECT",
+      "name": "Architect Build",
+      "rarity": "rare",
+      "bonuses": [
+        {"stat": "building:upkeep", "value": -0.10},
+        {"stat": "building:capacity", "value": 0.15}
+      ],
+      "description": "Reduces upkeep and increases capacity"
+    },
+    {
+      "code": "GOV_ENGINEER",
+      "name": "Engineer Craft",
+      "rarity": "epic",
+      "bonuses": [
+        {"stat": "processing:efficiency", "value": 0.15},
+        {"stat": "production:all", "value": 0.05}
+      ],
+      "description": "Boosts processing efficiency and all production"
+    },
+    {
+      "code": "GOV_STEWARD",
+      "name": "Steward Wise",
+      "rarity": "epic",
+      "bonuses": [
+        {"stat": "city:happiness", "value": 0.10},
+        {"stat": "city:population", "value": 0.20}
+      ],
+      "description": "Increases happiness and population growth"
+    },
+    {
+      "code": "GOV_LEGEND",
+      "name": "Legendary Ruler",
+      "rarity": "legendary",
+      "bonuses": [
+        {"stat": "production:all", "value": 0.15},
+        {"stat": "city:happiness", "value": 0.10},
+        {"stat": "market:fee", "value": -0.10}
+      ],
+      "description": "Legendary leader with comprehensive bonuses"
+    }
+  ]
+}
+
+
