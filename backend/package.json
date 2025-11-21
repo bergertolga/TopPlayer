@@ -8,13 +8,18 @@
     "deploy": "wrangler deploy",
     "migrate": "wrangler d1 migrations apply idle-adventure-db",
     "generate": "wrangler d1 migrations create",
-    "build": "tsc"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20240124.0"
   },
   "devDependencies": {
+    "@types/node": "^20.11.30",
+    "miniflare": "^3.20240524.0",
     "typescript": "^5.3.3",
+    "vitest": "^2.1.1",
     "wrangler": "^3.19.0"
   }
 }

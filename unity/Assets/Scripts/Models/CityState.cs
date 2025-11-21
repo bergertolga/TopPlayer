@@ -27,7 +27,7 @@ namespace KingdomsPersist.Models
         public Dictionary<string, int> units = new Dictionary<string, int>();
         
         [JsonProperty("heroes")]
-        public List<Hero> heroes = new List<Hero>();
+        public List<CityHero> heroes = new List<CityHero>();
         
         [JsonProperty("queues")]
         public Queues queues = new Queues();
@@ -80,7 +80,7 @@ namespace KingdomsPersist.Models
 
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
-    public class Hero
+    public class CityHero
     {
         [JsonProperty("id")]
         public string id;

@@ -6,6 +6,13 @@ export interface Env {
   KINGDOM: DurableObjectNamespace;
   CITY: DurableObjectNamespace;
   RULESETS?: KVNamespace; // For ruleset storage
+  TEST_CLOCK?: {
+    now(): number;
+  };
+  TEST_RNG?: {
+    next(): number;
+    nextInt?(max: number): number;
+  };
 }
 
 export interface User {

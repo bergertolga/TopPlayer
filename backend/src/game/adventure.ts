@@ -7,6 +7,7 @@ export interface BattleResult {
     gems: number;
     resources?: Record<string, number>;
     heroShards?: { heroId: string; amount: number }[];
+    heroXP?: number; // XP awarded per hero
   };
 }
 

@@ -5,6 +5,10 @@ const MARKET_CONFIG = {
   maxTaxRate: 0.05,
 };
 
+function roundCurrency(value: number): number {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+}
+
 export interface TradeMatch {
   buyOrderId: string;
   sellOrderId: string;
@@ -21,10 +25,19 @@ export class MarketEngine {
     resourceId: string,
     councilTaxRate: number = 0
   ): Promise<void> {
-    const transactionFee = match.price * match.qty * MARKET_CONFIG.transactionFee;
-    const tax = match.price * match.qty * Math.min(councilTaxRate, MARKET_CONFIG.maxTaxRate);
-    const totalCost = match.price * match.qty + transactionFee + tax;
-    const sellerReceives = match.price * match.qty - transactionFee - tax;
+    const grossValue = match.price * match.qty;
+    const transactionFee = roundCurrency(grossValue * MARKET_CONFIG.transactionFee);
+    const normalizedTaxRate = Math.min(Math.max(councilTaxRate, 0), MARKET_CONFIG.maxTaxRate);
+
+    /**
+     * Tax rule:
+     * - Tax is skimmed from the seller's proceeds at `normalizedTaxRate` of the gross value
+     * - Buyer pays gross + fee + tax; seller receives gross - fee - tax; council treasury gets the tax
+     * - All currency math is rounded to 2 decimals
+     */
+    const tax = roundCurrency(Math.min(grossValue, grossValue * normalizedTaxRate));
+    const totalCost = roundCurrency(grossValue + transactionFee + tax);
+    const sellerReceives = Math.max(0, roundCurrency(grossValue - transactionFee - tax));
 
     const resource = await db.prepare(
       'SELECT code FROM resources WHERE id = ?'
@@ -203,8 +216,7 @@ export class MarketEngine {
       .run();
 
     // Deposit tax into council treasury if tax was collected
-    if (tax > 0 && councilTaxRate > 0) {
-      // Get the region of the seller (tax is collected from seller's region)
+    if (tax > 0 && normalizedTaxRate > 0) {
       const sellerCityData = await db.prepare(
         'SELECT region_id FROM cities WHERE id = ?'
       )
@@ -212,27 +224,18 @@ export class MarketEngine {
         .first<{ region_id: string }>();
 
       if (sellerCityData) {
-        // Find council for this region
         const council = await db.prepare(
-          'SELECT id, treasury_balance FROM councils WHERE region_id = ?'
+          'SELECT id FROM councils WHERE region_id = ? ORDER BY created_at ASC LIMIT 1'
         )
           .bind(sellerCityData.region_id)
-          .first<{ id: string; treasury_balance: number }>();
+          .first<{ id: string }>();
 
         if (council) {
-          // Update council treasury balance
-          // Note: If treasury_balance column doesn't exist yet, this will fail gracefully
-          // Run migration 0004_council_treasury.sql first
-          const newTreasuryBalance = (council.treasury_balance || 0) + tax;
           await db.prepare(
-            'UPDATE councils SET treasury_balance = ? WHERE id = ?'
+            'UPDATE councils SET treasury_balance = treasury_balance + ? WHERE id = ?'
           )
-            .bind(newTreasuryBalance, council.id)
-            .run()
-            .catch((error) => {
-              // If column doesn't exist, log warning but don't fail
-              console.warn('Council treasury_balance column not found. Run migration 0004_council_treasury.sql:', error);
-            });
+            .bind(tax, council.id)
+            .run();
         }
       }
     }

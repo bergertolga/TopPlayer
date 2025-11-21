@@ -33,8 +33,8 @@ export interface CityState {
     traits: string[];
   }>;
   queues: {
-    build: Array<BuildCommand>;
-    train: Array<TrainCommand>;
+    build: Array<BuildQueueEntry>;
+    train: Array<TrainQueueEntry>;
   };
   version: number;
   seed: number; // For deterministic RNG
@@ -62,6 +62,16 @@ export interface TrainCommand extends BaseCommand {
   type: 'TRAIN';
   unit: string;
   qty: number;
+}
+
+export interface BuildQueueEntry extends BuildCommand {
+  started_at_tick: number;
+  ready_at_tick: number;
+}
+
+export interface TrainQueueEntry extends TrainCommand {
+  started_at_tick: number;
+  ready_at_tick: number;
 }
 
 export interface LawSetCommand extends BaseCommand {

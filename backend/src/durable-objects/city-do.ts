@@ -3,7 +3,26 @@
  * Manages city state, command queue, and tick processing
  */
 
-import { CityState, Command, BuildCommand, TrainCommand, LawSetCommand } from '../types/kingdoms-persist';
+import {
+  CityState,
+  Command,
+  BuildCommand,
+  TrainCommand,
+  LawSetCommand,
+  BuildQueueEntry,
+  TrainQueueEntry,
+} from '../types/kingdoms-persist';
+
+export interface CityTickOptions {
+  stateOverride?: Partial<CityState>;
+  queueOverride?: Command[];
+  ticks?: number;
+  dtMs?: number;
+}
+
+export const CITY_TICK_DURATION_MS = 5 * 60 * 1000; // 5 minutes per simulation tick
+export const DEFAULT_BUILD_TIME_TICKS = 3;
+const DEFAULT_TRAIN_TIME_TICKS = 2;
 
 export class CityDO {
   private state: DurableObjectState;
@@ -18,12 +37,7 @@ export class CityDO {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // Initialize state if needed
-    let cityState = await this.state.storage.get<CityState>('state');
-    if (!cityState) {
-      cityState = await this.initializeState();
-      await this.state.storage.put('state', cityState);
-    }
+    await this.ensureState();
 
     if (path === '/state') {
       return this.getState();
@@ -44,6 +58,7 @@ export class CityDO {
         timber: 100,
         stone: 60,
         coins: 1000,
+        rations: 0,
       },
       labor: {
         free: 50,
@@ -58,19 +73,16 @@ export class CityDO {
       units: {},
       heroes: [],
       queues: {
-        build: [],
-        train: [],
+        build: [] as BuildQueueEntry[],
+        train: [] as TrainQueueEntry[],
       },
       version: 1,
-      seed: Math.floor(Math.random() * 1000000),
+      seed: this.randomInt(1000000),
     };
   }
 
   private async getState(): Promise<Response> {
-    const state = await this.state.storage.get<CityState>('state');
-    if (!state) {
-      return Response.json({ error: 'State not initialized' }, { status: 500 });
-    }
+    const state = await this.ensureState();
     return Response.json({
       state,
       version: state.version,
@@ -85,7 +97,7 @@ export class CityDO {
     const command: Command = await request.json();
     
     // Validate command timestamp (reject stale commands)
-    const now = Date.now();
+    const now = this.currentTime();
     const maxAge = 60000; // 1 minute
     if (command.client_time < now - maxAge) {
       return Response.json({
@@ -156,35 +168,13 @@ export class CityDO {
   }
 
   private async processTick(): Promise<Response> {
-    const state = await this.state.storage.get<CityState>('state');
-    if (!state) {
-      return Response.json({ error: 'State not initialized' }, { status: 500 });
-    }
+    const state = await this.ensureState();
     const queue = (await this.state.storage.get<Command[]>('commandQueue')) || [];
 
     // Load ruleset
     const ruleset = await this.loadRuleset('v1');
 
-    // Process commands
-    for (const command of queue) {
-      await this.applyCommand(state, command, ruleset);
-    }
-
-    // Process queues
-    await this.processQueues(state, ruleset);
-
-    // Apply upkeep
-    await this.applyUpkeep(state, ruleset);
-
-    // Run production
-    await this.runProduction(state, ruleset);
-
-    // Resolve expeditions
-    await this.resolveExpeditions(state, ruleset);
-
-    // Increment version
-    state.version += 1;
-    state.ticks += 1;
+    await this.runTick(state, queue, ruleset);
 
     // Save state
     await this.state.storage.put('state', state);
@@ -194,6 +184,28 @@ export class CityDO {
       tick: state.ticks,
       version: state.version,
     });
+  }
+
+  async processTickForTest(options: CityTickOptions = {}): Promise<CityState> {
+    const state = await this.ensureState();
+    const baseQueue =
+      options.queueOverride ?? (await this.state.storage.get<Command[]>('commandQueue')) ?? [];
+
+    if (options.stateOverride) {
+      this.applyStateOverrides(state, options.stateOverride);
+    }
+
+    const ruleset = await this.loadRuleset('v1');
+    const totalTicks = this.resolveTickCount(options);
+
+    for (let step = 0; step < totalTicks; step++) {
+      const queue = step === 0 ? baseQueue : [];
+      await this.runTick(state, queue, ruleset);
+    }
+
+    await this.state.storage.put('state', state);
+    await this.state.storage.put('commandQueue', []);
+    return this.cloneState(state);
   }
 
   private async applyCommand(state: CityState, command: Command, ruleset: any): Promise<void> {
@@ -222,13 +234,8 @@ export class CityDO {
     // Deduct costs
     this.deductResources(state, buildingDef.cost);
 
-    // Add to build queue
-    state.queues.build.push({
-      type: 'BUILD',
-      building: cmd.building,
-      slot: cmd.slot,
-      client_time: cmd.client_time,
-    });
+    // Add to build queue with timing metadata
+    state.queues.build.push(this.createBuildQueueEntry(state, cmd, buildingDef));
   }
 
   private async applyTrainCommand(state: CityState, cmd: TrainCommand, ruleset: any): Promise<void> {
@@ -248,13 +255,8 @@ export class CityDO {
     // Deduct costs
     this.deductResources(state, totalCost);
 
-    // Add to train queue
-    state.queues.train.push({
-      type: 'TRAIN',
-      unit: cmd.unit,
-      qty: cmd.qty,
-      client_time: cmd.client_time,
-    });
+    // Add to train queue with timing metadata
+    state.queues.train.push(this.createTrainQueueEntry(state, cmd, unitDef));
   }
 
   private async applyLawSetCommand(state: CityState, cmd: LawSetCommand): Promise<void> {
@@ -271,14 +273,15 @@ export class CityDO {
 
   private async processQueues(state: CityState, ruleset: any): Promise<void> {
     // Process build queue
-    const completedBuilds: BuildCommand[] = [];
+    const completedBuilds: BuildQueueEntry[] = [];
     for (const build of state.queues.build) {
       const buildingDef = ruleset.buildings[build.building];
       if (!buildingDef) continue;
 
-      // Simple time-based completion (in real implementation, track start time)
-      // For MVP, assume builds complete after N ticks
-      completedBuilds.push(build);
+      this.ensureBuildQueueTiming(build, buildingDef, state.ticks);
+      if (state.ticks >= build.ready_at_tick) {
+        completedBuilds.push(build);
+      }
     }
 
     for (const build of completedBuilds) {
@@ -290,10 +293,13 @@ export class CityDO {
       state.queues.build = state.queues.build.filter(b => b !== build);
     }
 
-    // Process train queue (similar logic)
-    const completedTrains: TrainCommand[] = [];
+    // Process train queue
+    const completedTrains: TrainQueueEntry[] = [];
     for (const train of state.queues.train) {
-      completedTrains.push(train);
+      this.ensureTrainQueueTiming(train, state.ticks, ruleset.units[train.unit]);
+      if (state.ticks >= train.ready_at_tick) {
+        completedTrains.push(train);
+      }
     }
 
     for (const train of completedTrains) {
@@ -321,13 +327,41 @@ export class CityDO {
   }
 
   private async runProduction(state: CityState, ruleset: any): Promise<void> {
-    // Run production for each building
-    for (const building of state.buildings) {
-      const buildingDef = ruleset.buildings[building.id.split('_')[1]];
-      if (!buildingDef?.production) continue;
+    // Base production per tick (every 5 minutes = 300 seconds)
+    // For MVP: Simple base production that scales with buildings
+    
+    // Base resource production per tick (scaled for 5-minute ticks)
+    const baseProductionPerTick: Record<string, number> = {
+      coins: 5,      // 5 coins per tick = 60 coins/hour = 1440 coins/day
+      grain: 10,     // 10 grain per tick
+      timber: 8,     // 8 timber per tick
+      stone: 5,      // 5 stone per tick
+    };
 
-      for (const [resource, amount] of Object.entries(buildingDef.production)) {
-        state.resources[resource] = (state.resources[resource] || 0) + (amount as number);
+    // Apply base production
+    for (const [resource, amount] of Object.entries(baseProductionPerTick)) {
+      state.resources[resource] = (state.resources[resource] || 0) + amount;
+    }
+
+    // Building-based production multipliers
+    for (const building of state.buildings) {
+      const buildingType = this.getBuildingType(building.id);
+      const level = building.lvl || 1;
+      
+      // Simple building production bonuses
+      switch (buildingType) {
+        case 'farm':
+          state.resources.grain = (state.resources.grain || 0) + (5 * level);
+          break;
+        case 'lumber_mill':
+          state.resources.timber = (state.resources.timber || 0) + (4 * level);
+          break;
+        case 'quarry':
+          state.resources.stone = (state.resources.stone || 0) + (3 * level);
+          break;
+        case 'market':
+          state.resources.coins = (state.resources.coins || 0) + (2 * level);
+          break;
       }
     }
   }
@@ -337,10 +371,36 @@ export class CityDO {
   }
 
   private async loadRuleset(rulesetId: string): Promise<any> {
-    // In real implementation, load from KV
+    // Simple ruleset for MVP - in production, load from KV
     return {
-      buildings: {},
-      units: {},
+      buildings: {
+        farm: {
+          cost: { timber: 50, stone: 30 },
+          production: { grain: 5 },
+          build_time_ticks: 3,
+        },
+        lumber_mill: {
+          cost: { timber: 40, stone: 20 },
+          production: { timber: 4 },
+          build_time_ticks: 4,
+        },
+        quarry: {
+          cost: { timber: 30, stone: 10 },
+          production: { stone: 3 },
+          build_time_ticks: 4,
+        },
+        market: {
+          cost: { timber: 60, stone: 40, coins: 200 },
+          production: { coins: 2 },
+          build_time_ticks: 5,
+        },
+      },
+      units: {
+        worker: {
+          cost: { coins: 10, grain: 5 },
+          upkeep: { rations: 0.5 },
+        },
+      },
       recipes: {},
     };
   }
@@ -358,6 +418,191 @@ export class CityDO {
     for (const [resource, amount] of Object.entries(costs)) {
       state.resources[resource] = Math.max(0, (state.resources[resource] || 0) - amount);
     }
+  }
+
+  private async ensureState(): Promise<CityState> {
+    let state = await this.state.storage.get<CityState>('state');
+    if (!state) {
+      state = await this.initializeState();
+      await this.state.storage.put('state', state);
+    }
+    return state;
+  }
+
+  private currentTime(): number {
+    if (this.env?.TEST_CLOCK?.now) {
+      return this.env.TEST_CLOCK.now();
+    }
+    return Date.now();
+  }
+
+  private random(): number {
+    if (this.env?.TEST_RNG?.next) {
+      return this.env.TEST_RNG.next();
+    }
+    return Math.random();
+  }
+
+  private randomInt(max: number): number {
+    return Math.floor(this.random() * max);
+  }
+
+  private getBuildingType(buildingId: string): string {
+    const parts = buildingId.split('_');
+    if (parts.length <= 2) {
+      return parts[1] || buildingId;
+    }
+    return parts.slice(1, -1).join('_');
+  }
+
+  private applyStateOverrides(state: CityState, overrides: Partial<CityState>): void {
+    if (overrides.resources) {
+      state.resources = {
+        ...state.resources,
+        ...overrides.resources,
+      };
+    }
+
+    if (overrides.labor) {
+      state.labor = {
+        ...state.labor,
+        ...overrides.labor,
+        assigned: {
+          ...state.labor.assigned,
+          ...(overrides.labor.assigned ?? {}),
+        },
+      };
+    }
+
+    if (overrides.buildings) {
+      state.buildings = overrides.buildings;
+    }
+
+    if (overrides.laws) {
+      state.laws = {
+        ...state.laws,
+        ...overrides.laws,
+      };
+    }
+
+    if (overrides.units) {
+      state.units = {
+        ...state.units,
+        ...overrides.units,
+      };
+    }
+
+    if (overrides.heroes) {
+      state.heroes = overrides.heroes;
+    }
+
+    if (overrides.queues) {
+      state.queues = {
+        ...state.queues,
+        ...overrides.queues,
+      };
+    }
+
+    if (typeof overrides.ticks === 'number') {
+      state.ticks = overrides.ticks;
+    }
+
+    if (typeof overrides.version === 'number') {
+      state.version = overrides.version;
+    }
+
+    if (typeof overrides.seed === 'number') {
+      state.seed = overrides.seed;
+    }
+  }
+
+  private async runTick(state: CityState, queue: Command[], ruleset: any): Promise<void> {
+    for (const command of queue) {
+      await this.applyCommand(state, command, ruleset);
+    }
+
+    await this.applyUpkeep(state, ruleset);
+    await this.runProduction(state, ruleset);
+    await this.resolveExpeditions(state, ruleset);
+
+    state.version += 1;
+    state.ticks += 1;
+
+    await this.processQueues(state, ruleset);
+  }
+
+  private resolveTickCount(options: CityTickOptions): number {
+    if (options.ticks && options.ticks > 0) {
+      return Math.floor(options.ticks);
+    }
+    if (options.dtMs && options.dtMs > 0) {
+      return Math.max(1, Math.floor(options.dtMs / CITY_TICK_DURATION_MS));
+    }
+    return 1;
+  }
+
+  private cloneState<T>(value: T): T {
+    const globalClone = (globalThis as any).structuredClone;
+    if (typeof globalClone === 'function') {
+      return globalClone(value);
+    }
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  private createBuildQueueEntry(state: CityState, cmd: BuildCommand, buildingDef: any): BuildQueueEntry {
+    const buildTime = this.getBuildTimeTicks(cmd.building, buildingDef);
+    return {
+      ...cmd,
+      started_at_tick: state.ticks,
+      ready_at_tick: state.ticks + buildTime,
+    };
+  }
+
+  private createTrainQueueEntry(state: CityState, cmd: TrainCommand, unitDef: any): TrainQueueEntry {
+    const trainTime = this.getTrainTimeTicks(cmd.unit, unitDef);
+    return {
+      ...cmd,
+      started_at_tick: state.ticks,
+      ready_at_tick: state.ticks + trainTime,
+    };
+  }
+
+  private ensureBuildQueueTiming(entry: BuildQueueEntry, buildingDef: any, currentTick: number): void {
+    if (typeof entry.ready_at_tick === 'number' && typeof entry.started_at_tick === 'number') {
+      return;
+    }
+
+    const buildTime = this.getBuildTimeTicks(entry.building, buildingDef);
+    entry.started_at_tick = currentTick;
+    entry.ready_at_tick = currentTick + buildTime;
+  }
+
+  private ensureTrainQueueTiming(
+    entry: TrainQueueEntry,
+    currentTick: number,
+    unitDef: any
+  ): void {
+    if (typeof entry.ready_at_tick === 'number' && typeof entry.started_at_tick === 'number') {
+      return;
+    }
+
+    const trainTime = this.getTrainTimeTicks(entry.unit, unitDef);
+    entry.started_at_tick = currentTick;
+    entry.ready_at_tick = currentTick + trainTime;
+  }
+
+  private getBuildTimeTicks(_building: string, buildingDef: any): number {
+    if (buildingDef?.build_time_ticks) {
+      return Math.max(1, buildingDef.build_time_ticks);
+    }
+    return DEFAULT_BUILD_TIME_TICKS;
+  }
+
+  private getTrainTimeTicks(_unit: string, unitDef: any): number {
+    if (unitDef?.train_time_ticks) {
+      return Math.max(1, unitDef.train_time_ticks);
+    }
+    return DEFAULT_TRAIN_TIME_TICKS;
   }
 }
 

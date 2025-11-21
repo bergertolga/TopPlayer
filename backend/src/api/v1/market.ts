@@ -348,6 +348,7 @@ export async function handleMarket(
           side: body.side,
           price: body.price,
           qty: body.qty,
+          createdAt: now,
         }),
       }));
 

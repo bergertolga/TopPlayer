@@ -1,4 +1,4 @@
-interface Order {
+export interface Order {
   id: string;
   cityId: string;
   price: number;
@@ -7,7 +7,7 @@ interface Order {
   createdAt: number;
 }
 
-interface OrdersState {
+export interface OrdersState {
   buys: Order[];
   sells: Order[];
 }
@@ -120,6 +120,7 @@ export class MarketDO {
       side: 'buy' | 'sell';
       price: number;
       qty: number;
+      createdAt?: number;
     };
 
     const orders = await this.getOrders();
@@ -129,7 +130,7 @@ export class MarketDO {
       price: body.price,
       qty: body.qty,
       qtyFilled: 0,
-      createdAt: Date.now(),
+      createdAt: typeof body.createdAt === 'number' ? body.createdAt : Date.now(),
     };
 
     if (body.side === 'buy') {
@@ -187,6 +188,12 @@ export class MarketDO {
     });
   }
 
+  /**
+   * Matching applies strict price-time priority:
+   * - Buys sorted by highest price, then earliest createdAt
+   * - Sells sorted by lowest price, then earliest createdAt
+   * Orders execute deterministically with no randomness.
+   */
   async tryMatch(): Promise<any[]> {
     const orders = await this.getOrders();
     const matches: any[] = [];

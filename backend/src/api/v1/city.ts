@@ -171,6 +171,14 @@ export async function handleCity(
       }
     }
 
+    // If just requesting cityId, return it
+    if (url.searchParams.get('cityIdOnly') === 'true') {
+      if (!city) {
+        return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
+      }
+      return jsonResponse({ cityId: city.id }, 200, corsHeaders);
+    }
+
     if (!city) {
       return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
     }

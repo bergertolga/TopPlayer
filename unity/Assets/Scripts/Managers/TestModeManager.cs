@@ -10,12 +10,42 @@ namespace KingdomsPersist.Managers
     /// </summary>
     public class TestModeManager : MonoBehaviour
     {
+        public static TestModeManager Instance { get; private set; }
+
         [Header("Test Mode")]
         public bool enableTestMode = true;
         public bool simulateTickProgression = true;
+
+        [Header("Network Override")]
+        [Tooltip("Skip all backend calls while Test Mode is enabled and respond with mock data instead.")]
+        public bool interceptNetworkCalls = true;
+        [Tooltip("Log whenever a mock command is applied while running in Test Mode.")]
+        public bool logHandledCommands = true;
         
         private float tickTimer = 0f;
         private int mockTick = 1000;
+
+        public bool ShouldInterceptNetwork => enableTestMode && interceptNetworkCalls;
+
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+        }
 
         private void Start()
         {
@@ -29,25 +59,71 @@ namespace KingdomsPersist.Managers
 
         private void Update()
         {
-            if (enableTestMode && simulateTickProgression)
+            if (!enableTestMode || !simulateTickProgression)
             {
-                tickTimer += Time.deltaTime;
-                if (tickTimer >= 1f) // Update every second
-                {
-                    tickTimer = 0f;
-                    mockTick++;
+                return;
+            }
+
+            tickTimer += Time.deltaTime;
+            if (tickTimer < 1f)
+            {
+                return;
+            }
+
+            tickTimer = 0f;
+            mockTick++;
                     
-                    // Simulate resource production
-                    if (GameStateManager.Instance?.currentCityState != null)
-                    {
-                        SimulateProduction();
-                        GenerateMockRealmTime();
+            // Simulate resource production
+            if (GameStateManager.Instance?.currentCityState != null)
+            {
+                SimulateProduction();
+                GenerateMockRealmTime();
                         
-                        // Trigger UI update using public method
-                        GameStateManager.Instance.TriggerCityStateUpdate(GameStateManager.Instance.currentCityState);
-                    }
+                // Trigger UI update using public method
+                GameStateManager.Instance.TriggerCityStateUpdate(GameStateManager.Instance.currentCityState);
+            }
+        }
+
+        public bool TryHandleCommand(Command command)
+        {
+            if (!ShouldInterceptNetwork || command == null)
+            {
+                return false;
+            }
+
+            CityState state = EnsureCityState();
+            if (state == null)
+            {
+                return false;
+            }
+
+            bool handled = false;
+            switch (command)
+            {
+                case BuildCommand buildCommand:
+                    handled = HandleBuildCommand(state, buildCommand);
+                    break;
+                case TrainCommand trainCommand:
+                    handled = HandleTrainCommand(state, trainCommand);
+                    break;
+                case LawSetCommand lawCommand:
+                    handled = HandleLawCommand(state, lawCommand);
+                    break;
+                default:
+                    handled = false;
+                    break;
+            }
+
+            if (handled)
+            {
+                MarkStateChanged(state);
+                if (logHandledCommands)
+                {
+                    Debug.Log($"[TestMode] Handled offline command: {command.type}");
                 }
             }
+
+            return handled;
         }
 
         private void GenerateMockCityState()
@@ -91,9 +167,9 @@ namespace KingdomsPersist.Managers
                     { "levy", 50 },
                     { "pikes", 10 }
                 },
-                heroes = new System.Collections.Generic.List<Hero>
+                heroes = new System.Collections.Generic.List<CityHero>
                 {
-                    new Hero { id = "H#1", cmd = 3, crf = 2, cng = 1, traits = new System.Collections.Generic.List<string> { "Stoic", "Forager" } }
+                    new CityHero { id = "H#1", cmd = 3, crf = 2, cng = 1, traits = new System.Collections.Generic.List<string> { "Stoic", "Forager" } }
                 },
                 queues = new Queues
                 {
@@ -104,6 +180,19 @@ namespace KingdomsPersist.Managers
 
             GameStateManager.Instance.currentCityState = state;
             GameStateManager.Instance.currentVersion = state.version;
+
+            if (string.IsNullOrEmpty(GameStateManager.Instance.userId))
+            {
+                GameStateManager.Instance.userId = "test-user";
+            }
+            if (string.IsNullOrEmpty(GameStateManager.Instance.cityId))
+            {
+                GameStateManager.Instance.cityId = "test-city";
+            }
+            if (string.IsNullOrEmpty(GameStateManager.Instance.kingdomId))
+            {
+                GameStateManager.Instance.kingdomId = "test-kingdom";
+            }
 
             // Trigger UI update using public method
             GameStateManager.Instance.TriggerCityStateUpdate(state);
@@ -150,6 +239,125 @@ namespace KingdomsPersist.Managers
             state.ticks = mockTick;
             state.version++;
             GameStateManager.Instance.currentVersion = state.version;
+        }
+
+        private CityState EnsureCityState()
+        {
+            if (GameStateManager.Instance == null)
+            {
+                return null;
+            }
+
+            if (GameStateManager.Instance.currentCityState == null)
+            {
+                GenerateMockCityState();
+            }
+
+            return GameStateManager.Instance.currentCityState;
+        }
+
+        private bool HandleBuildCommand(CityState state, BuildCommand command)
+        {
+            if (state.buildings == null)
+            {
+                state.buildings = new System.Collections.Generic.List<Building>();
+            }
+
+            if (command.slot >= 0)
+            {
+                state.buildings.RemoveAll(b => b.slot.HasValue && b.slot.Value == command.slot);
+            }
+
+            string buildingId = $"b_{command.building.ToLower()}_{state.buildings.Count + 1}";
+            state.buildings.Add(new Building
+            {
+                id = buildingId,
+                lvl = 1,
+                slot = command.slot
+            });
+
+            if (state.resources == null)
+            {
+                state.resources = new System.Collections.Generic.Dictionary<string, float>();
+            }
+
+            if (!state.resources.ContainsKey("coins"))
+            {
+                state.resources["coins"] = 1000f;
+            }
+
+            state.resources["coins"] = Mathf.Max(0f, state.resources["coins"] - 50f);
+
+            if (state.queues == null)
+            {
+                state.queues = new Queues();
+            }
+
+            state.queues.build ??= new System.Collections.Generic.List<BuildCommand>();
+            state.queues.build.Add(command);
+
+            return true;
+        }
+
+        private bool HandleTrainCommand(CityState state, TrainCommand command)
+        {
+            if (state.units == null)
+            {
+                state.units = new System.Collections.Generic.Dictionary<string, int>();
+            }
+
+            if (!state.units.ContainsKey(command.unit))
+            {
+                state.units[command.unit] = 0;
+            }
+            state.units[command.unit] += Mathf.Max(1, command.qty);
+
+            if (state.queues == null)
+            {
+                state.queues = new Queues();
+            }
+
+            state.queues.train ??= new System.Collections.Generic.List<TrainCommand>();
+            state.queues.train.Add(command);
+
+            return true;
+        }
+
+        private bool HandleLawCommand(CityState state, LawSetCommand command)
+        {
+            if (state.laws == null)
+            {
+                state.laws = new Laws();
+            }
+
+            if (command.tax.HasValue)
+            {
+                state.laws.tax = command.tax.Value;
+            }
+
+            if (command.market_fee.HasValue)
+            {
+                state.laws.market_fee = command.market_fee.Value;
+            }
+
+            if (!string.IsNullOrEmpty(command.rationing))
+            {
+                state.laws.rationing = command.rationing;
+            }
+
+            return true;
+        }
+
+        private void MarkStateChanged(CityState state)
+        {
+            if (state == null || GameStateManager.Instance == null)
+            {
+                return;
+            }
+
+            state.version++;
+            GameStateManager.Instance.currentVersion = state.version;
+            GameStateManager.Instance.TriggerCityStateUpdate(state);
         }
     }
 }

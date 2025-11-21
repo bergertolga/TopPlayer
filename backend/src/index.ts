@@ -681,6 +681,47 @@ async function handleAdventure(request: Request, env: Env, corsHeaders: Record<s
       }
     }
 
+    // Award hero XP to participating heroes
+    // Base XP = stage_number * 10, multiplied by stars
+    const baseXP = adventure.stage_number * 10;
+    const xpPerHero = Math.floor(baseXP * (1 + result.stars * 0.5));
+    
+    // Add XP to result for client display
+    result.rewards.heroXP = xpPerHero;
+    
+    const leveledUpHeroes: string[] = [];
+    
+    for (const heroId of body.heroIds) {
+      const hero = await env.DB.prepare(
+        'SELECT experience, level FROM user_heroes WHERE id = ? AND user_id = ?'
+      )
+        .bind(heroId, userId)
+        .first<{ experience: number; level: number }>();
+
+      if (hero) {
+        const oldLevel = hero.level || 1;
+        let newXP = (hero.experience || 0) + xpPerHero;
+        let newLevel = oldLevel;
+        
+        // Simple level-up calculation: 100 XP per level
+        const xpForNextLevel = newLevel * 100;
+        while (newXP >= xpForNextLevel && newLevel < 100) {
+          newXP -= xpForNextLevel;
+          newLevel += 1;
+        }
+        
+        if (newLevel > oldLevel) {
+          leveledUpHeroes.push(heroId);
+        }
+        
+        await env.DB.prepare(
+          'UPDATE user_heroes SET experience = ?, level = ? WHERE id = ?'
+        )
+          .bind(newXP, newLevel, heroId)
+          .run();
+      }
+    }
+
     
     const existingProgress = await env.DB.prepare(
       'SELECT * FROM user_adventure_progress WHERE user_id = ? AND adventure_id = ?'
@@ -713,7 +754,11 @@ async function handleAdventure(request: Request, env: Env, corsHeaders: Record<s
         .run();
     }
 
-    return jsonResponse({ success: true, result }, 200, corsHeaders);
+    return jsonResponse({ 
+      success: true, 
+      result,
+      leveledUpHeroes: leveledUpHeroes.length > 0 ? leveledUpHeroes : undefined
+    }, 200, corsHeaders);
   }
 
   return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
