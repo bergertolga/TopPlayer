@@ -22,7 +22,7 @@ const seedBuildings = buildingsData.buildings.map(b => {
   const outputResources = JSON.stringify(b.outputResources || {});
   const upkeepResources = JSON.stringify(b.upkeepResources || {});
   
-  return `INSERT OR IGNORE INTO buildings (id, code, name, category, base_production_json, input_resources_json, output_resources_json, upkeep_coins, upkeep_resources_json, workers_required, max_level, description, created_at) VALUES ('${id}', '${b.code}', '${b.name.replace(/'/g, "''")}', '${b.category}', '${baseProduction}', '${inputResources}', '${outputResources}', ${b.upkeepCoins}, '${upkeepResources}', ${b.workersRequired}, ${b.maxLevel}, '${(b.description || '').replace(/'/g, "''")}', ${now});`;
+  return `INSERT OR IGNORE INTO buildings (id, code, name, category, base_production_json, input_resources_json, output_resources_json, upkeep_coins, upkeep_resources_json, workers_required, max_level, description, unlock_level, created_at) VALUES ('${id}', '${b.code}', '${b.name.replace(/'/g, "''")}', '${b.category}', '${baseProduction}', '${inputResources}', '${outputResources}', ${b.upkeepCoins}, '${upkeepResources}', ${b.workersRequired}, ${b.maxLevel}, '${(b.description || '').replace(/'/g, "''")}', ${b.unlockLevel || 1}, ${now});`;
 }).join('\n');
 
 // Generate SQL for seeding regions

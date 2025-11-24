@@ -1,6 +1,7 @@
 import { Env } from '../../types';
 import { validateUserId } from '../../utils/validation';
 import { MilestoneSystem } from '../../game/milestones';
+import { CityManager } from '../../game/city';
 
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -53,14 +54,18 @@ export async function handleRoutes(
       return jsonResponse({ error: 'Routes unlock at city level 5' }, 403, corsHeaders);
     }
 
+    await processRoutesForCity(env.DB, city.id);
+
     const routes = await env.DB.prepare(
       `SELECT r.*, res.code as resource_code, res.name as resource_name,
-              fr.name as from_region_name, tr.name as to_region_name
+              fr.name as from_region_name, tr.name as to_region_name,
+              dc.name as destination_city_name
        FROM routes r
        JOIN resources res ON r.resource_id = res.id
        JOIN regions fr ON r.from_region_id = fr.id
        JOIN regions tr ON r.to_region_id = tr.id
-       WHERE r.city_id = ? AND r.status = 'active'
+       LEFT JOIN cities dc ON r.destination_city_id = dc.id
+       WHERE r.city_id = ? AND r.status != 'completed'
        ORDER BY r.next_departure ASC`
     )
       .bind(city.id)
@@ -188,13 +193,14 @@ export async function handleRoutes(
     const nextDeparture = now + (cycleMinutes * 60 * 1000);
 
     await env.DB.prepare(
-      'INSERT INTO routes (id, city_id, from_region_id, to_region_id, capacity, resource_id, qty_per_trip, cycle_minutes, escort_level, repeats, next_departure, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+      'INSERT INTO routes (id, city_id, from_region_id, to_region_id, destination_city_id, capacity, resource_id, qty_per_trip, cycle_minutes, escort_level, repeats, next_departure, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
     )
       .bind(
         routeId,
         city.id,
         fromRegion.id,
         toRegion.id,
+        destinationCityExists.id,
         body.qtyPerTrip,
         resource.id,
         body.qtyPerTrip,
@@ -205,20 +211,6 @@ export async function handleRoutes(
         'active',
         now
       )
-      .run();
-
-    const currentStock = await env.DB.prepare(
-      'SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?'
-    ).bind(city.id, resource.id).first<{ amount: number }>();
-    
-    const currentAmount = Math.max(0, currentStock?.amount || 0);
-    const newAmount = Math.max(0, currentAmount - body.qtyPerTrip);
-    
-    await env.DB.prepare(
-      `UPDATE city_resources SET amount = ? 
-       WHERE city_id = ? AND resource_id = ?`
-    )
-      .bind(newAmount, city.id, resource.id)
       .run();
 
     await MilestoneSystem.checkAndGrantMilestone(env.DB, userId, 'first_route', 1);
@@ -261,4 +253,117 @@ export async function handleRoutes(
   }
 
   return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+}
+
+export async function processRoutesForCity(db: D1Database, cityId: string): Promise<void> {
+  const now = Date.now();
+  const routes = await db.prepare(
+    `SELECT r.*, res.id as resource_id, res.code as resource_code
+     FROM routes r
+     JOIN resources res ON r.resource_id = res.id
+     WHERE r.city_id = ? AND r.status != 'completed'`
+  )
+    .bind(cityId)
+    .all();
+
+  for (const route of routes.results as any[]) {
+    // process arrivals
+    if (route.in_transit_qty > 0 && route.arrival_at && route.arrival_at <= now) {
+      if (route.destination_city_id) {
+        const warehouseRow = await db.prepare(
+          `SELECT cb.level FROM city_buildings cb
+           JOIN buildings b ON cb.building_id = b.id
+           WHERE cb.city_id = ? AND b.code = 'WAREHOUSE' AND cb.is_active = 1`
+        )
+          .bind(route.destination_city_id)
+          .first<{ level: number }>();
+
+        const warehouseLevel = warehouseRow?.level || 1;
+        const capacity = CityManager.calculateWarehouseCapacity(warehouseLevel);
+        const destinationTotals = await db.prepare(
+          'SELECT amount FROM city_resources WHERE city_id = ?'
+        )
+          .bind(route.destination_city_id)
+          .all<{ amount: number }>();
+
+        let currentUsage = 0;
+        for (const res of destinationTotals.results as any[]) {
+          currentUsage += Math.max(0, res.amount);
+        }
+
+        const availableCapacity = Math.max(0, capacity - currentUsage);
+        const deliverAmount = Math.min(route.in_transit_qty, availableCapacity);
+
+        if (deliverAmount > 0) {
+          await db.prepare(
+            `INSERT INTO city_resources (city_id, resource_id, amount, protected)
+             VALUES (?, ?, ?, 0)
+             ON CONFLICT(city_id, resource_id) DO UPDATE SET amount = amount + ?`
+          )
+            .bind(route.destination_city_id, route.resource_id, deliverAmount, deliverAmount)
+            .run();
+        }
+      }
+
+      let repeats = route.repeats;
+      if (typeof repeats === 'number' && repeats > 0) {
+        repeats -= 1;
+      }
+      let status = route.status;
+      if (typeof repeats === 'number' && repeats === 0) {
+        status = 'completed';
+      }
+
+      const nextDeparture =
+        status === 'completed'
+          ? route.next_departure
+          : now + (route.cycle_minutes * 60 * 1000);
+
+      await db.prepare(
+        'UPDATE routes SET in_transit_qty = 0, arrival_at = 0, next_departure = ?, repeats = ?, status = ? WHERE id = ?'
+      )
+        .bind(nextDeparture, repeats, status, route.id)
+        .run();
+
+      route.in_transit_qty = 0;
+      route.arrival_at = 0;
+      route.next_departure = nextDeparture;
+      route.repeats = repeats;
+      route.status = status;
+    }
+
+    if (route.status !== 'active') {
+      continue;
+    }
+
+    if (route.in_transit_qty <= 0 && route.next_departure <= now) {
+      const stock = await db.prepare(
+        'SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?'
+      )
+        .bind(route.city_id, route.resource_id)
+        .first<{ amount: number }>();
+
+      if (!stock || stock.amount < route.qty_per_trip) {
+        const delay = now + (10 * 60 * 1000);
+        await db.prepare('UPDATE routes SET next_departure = ? WHERE id = ?')
+          .bind(delay, route.id)
+          .run();
+        continue;
+      }
+
+      await db.prepare(
+        'UPDATE city_resources SET amount = MAX(0, amount - ?) WHERE city_id = ? AND resource_id = ?'
+      )
+        .bind(route.qty_per_trip, route.city_id, route.resource_id)
+        .run();
+
+      const arrivalAt = now + (route.cycle_minutes * 60 * 1000);
+
+      await db.prepare(
+        'UPDATE routes SET in_transit_qty = ?, arrival_at = ?, next_departure = ? WHERE id = ?'
+      )
+        .bind(route.qty_per_trip, arrivalAt, arrivalAt, route.id)
+        .run();
+    }
+  }
 }

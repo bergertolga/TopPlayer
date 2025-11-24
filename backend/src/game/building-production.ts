@@ -15,6 +15,31 @@ export interface CollectResult {
   error?: string;
 }
 
+async function getCityResource(
+  db: D1Database,
+  cityId: string,
+  resourceCode: string
+): Promise<{ resourceId: string; amount: number } | null> {
+  const row = await db.prepare(
+    `SELECT cr.resource_id, cr.amount
+     FROM city_resources cr
+     JOIN resources r ON cr.resource_id = r.id
+     WHERE cr.city_id = ? AND r.code = ?`
+  )
+    .bind(cityId, resourceCode)
+    .first<{ resource_id: string; amount: number }>();
+
+  if (!row) {
+    const resource = await db.prepare('SELECT id FROM resources WHERE code = ?').bind(resourceCode).first<{ id: string }>();
+    if (!resource) {
+      return null;
+    }
+    return { resourceId: resource.id, amount: 0 };
+  }
+
+  return { resourceId: row.resource_id, amount: Math.max(0, row.amount) };
+}
+
 export class BuildingProductionManager {
   static calculateBuildingStorageCapacity(level: number): number {
     return BUILDING_STORAGE_BASE + (BUILDING_STORAGE_PER_LEVEL * (level - 1));
@@ -148,10 +173,93 @@ export class BuildingProductionManager {
         );
         storage[resource] = newAmount;
       }
-    } else if (Object.keys(inputResources).length > 0) {
-      // Processing buildings need resources from warehouse
-      // For now, skip - they'll need a different system
-      // TODO: Implement processing building production
+    } else if (Object.keys(inputResources).length > 0 && Object.keys(outputResources).length > 0) {
+      const levelMultiplier = 1 + (0.15 * (building.level - 1));
+      let effectiveMinutes = minutesElapsed;
+      const inputStatus: Record<string, { resourceId: string; amount: number }> = {};
+
+      for (const resourceCode of Object.keys(inputResources)) {
+        const cityResource = await getCityResource(db, cityId, resourceCode);
+        inputStatus[resourceCode] = cityResource || { resourceId: '', amount: 0 };
+        const perMinute = ((inputResources[resourceCode] as number) || 0) * levelMultiplier;
+        if (perMinute <= 0) {
+          continue;
+        }
+        const available = cityResource?.amount || 0;
+        if (available <= 0) {
+          effectiveMinutes = 0;
+          break;
+        }
+        const maxMinutesForResource = available / perMinute;
+        if (maxMinutesForResource < effectiveMinutes) {
+          effectiveMinutes = maxMinutesForResource;
+        }
+      }
+
+      if (effectiveMinutes <= 0) {
+        await db.prepare(
+          'UPDATE city_buildings SET last_production = ? WHERE city_id = ? AND building_id = ?'
+        )
+          .bind(currentTime, cityId, buildingId)
+          .run();
+        return;
+      }
+
+      const efficiency = 0.9 + (0.02 * (building.level - 1));
+      const producedOutputs: Record<string, number> = {};
+      let totalOutput = 0;
+
+      for (const [resource, baseOutput] of Object.entries(outputResources)) {
+        const perMinuteOutput = ((baseOutput as number) || 0) * levelMultiplier * efficiency;
+        const produced = Math.floor(perMinuteOutput * effectiveMinutes);
+        producedOutputs[resource] = produced;
+        totalOutput += produced;
+      }
+
+      if (totalOutput <= 0) {
+        await db.prepare(
+          'UPDATE city_buildings SET last_production = ? WHERE city_id = ? AND building_id = ?'
+        )
+          .bind(currentTime, cityId, buildingId)
+          .run();
+        return;
+      }
+
+      if (totalOutput > availableSpace) {
+        const scale = availableSpace / totalOutput;
+        totalOutput = 0;
+        for (const resource of Object.keys(producedOutputs)) {
+          producedOutputs[resource] = Math.floor(producedOutputs[resource] * scale);
+          totalOutput += producedOutputs[resource];
+        }
+      }
+
+      if (totalOutput <= 0) {
+        await db.prepare(
+          'UPDATE city_buildings SET last_production = ? WHERE city_id = ? AND building_id = ?'
+        )
+          .bind(currentTime, cityId, buildingId)
+          .run();
+        return;
+      }
+
+      for (const [resource, baseRequired] of Object.entries(inputResources)) {
+        const perMinute = ((baseRequired as number) || 0) * levelMultiplier;
+        const consumed = Math.floor(perMinute * effectiveMinutes);
+        if (consumed <= 0) continue;
+        const resourceInfo = inputStatus[resource];
+        if (!resourceInfo?.resourceId) continue;
+        await db.prepare(
+          'UPDATE city_resources SET amount = MAX(0, amount - ?) WHERE city_id = ? AND resource_id = ?'
+        )
+          .bind(consumed, cityId, resourceInfo.resourceId)
+          .run();
+      }
+
+      for (const [resource, produced] of Object.entries(producedOutputs)) {
+        if (produced <= 0) continue;
+        storage[resource] = (storage[resource] || 0) + produced;
+      }
     }
 
     // Update building storage and last_production

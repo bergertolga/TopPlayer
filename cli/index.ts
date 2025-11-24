@@ -24,7 +24,14 @@ interface Building {
   outputRate?: Record<string, number>;
   storage_capacity?: number;
   storage_json?: Record<string, number>;
+}
 
+interface BuildingCatalogEntry {
+  code: string;
+  name: string;
+  category: string;
+  unlockLevel: number;
+  ownedLevel?: number;
 }
 
 interface City {
@@ -39,6 +46,7 @@ interface GameState {
   city: City | null;
   resources: Resource[];
   buildings: Building[];
+  buildingCatalog?: BuildingCatalogEntry[];
 }
 
 interface PremiumSnapshot {
@@ -90,7 +98,8 @@ let username: string = '';
 let gameState: GameState = {
   city: null,
   resources: [],
-  buildings: []
+  buildings: [],
+  buildingCatalog: []
 };
 let premiumSnapshot: PremiumSnapshot | null = null;
 let capitalSnapshot: CapitalSnapshot | null = null;
@@ -311,7 +320,8 @@ async function refreshState() {
   }
     gameState.city = data.city;
     gameState.resources = data.resources;
-    gameState.buildings = data.buildings;
+  gameState.buildings = data.buildings;
+  gameState.buildingCatalog = data.buildingCatalog || [];
 
   await Promise.all([refreshPremiumSnapshot(), refreshCapitalSnapshot()]);
     return true;
@@ -348,24 +358,52 @@ async function collectResources() {
 
 async function upgradeBuilding() {
   console.log('\n--- Upgrade Building ---');
+  const options: Array<{ label: string; code: string }> = [];
+
   gameState.buildings.forEach((b, i) => {
     const status = b.is_active ? 'Active' : 'Inactive';
     const upgradeInfo = b.canUpgrade ? `(Cost: ${formatNumber(b.upgradeCost)} coins)` : '(Max Level)';
     console.log(`${i + 1}. ${b.name} (Lvl ${b.level}) - ${status} ${upgradeInfo}`);
+    options.push({ label: b.name, code: b.code });
   });
+
+  const catalog = gameState.buildingCatalog || [];
+  const ownedCodes = new Set(gameState.buildings.map((b) => b.code));
+  const unlockable = catalog.filter(
+    (entry) => entry.unlockLevel <= (gameState.city?.level || 1) && !ownedCodes.has(entry.code)
+  );
+
+  if (unlockable.length) {
+    console.log('\n--- Constructable Buildings ---');
+    unlockable.forEach((entry, idx) => {
+      const optionIndex = options.length + idx + 1;
+      console.log(
+        `${optionIndex}. ${entry.name} [${entry.code}] (Unlock Level ${entry.unlockLevel}) - Construct (Cost scales with upkeep)`
+      );
+      options.push({ label: entry.name, code: entry.code });
+    });
+  }
+
+  if (!options.length) {
+    console.log('No buildings available to upgrade or construct right now.');
+    await question('\nPress Enter to continue...');
+    return;
+  }
+
   console.log('0. Cancel');
 
-  const answer = await question('Select building to upgrade: ');
-  const index = parseInt(answer) - 1;
+  const answer = await question('Select building to upgrade/construct: ');
+  const selection = parseInt(answer, 10);
 
-  if (index >= 0 && index < gameState.buildings.length) {
-    const building = gameState.buildings[index];
-    console.log(`Upgrading ${building.name}...`);
-    const result = await apiCall('/api/v1/city/upgrade', 'POST', { buildingCode: building.code });
+  if (selection >= 1 && selection <= options.length) {
+    const pick = options[selection - 1];
+    console.log(`Upgrading ${pick.label}...`);
+    const result = await apiCall('/api/v1/city/upgrade', 'POST', { buildingCode: pick.code });
     if (result && result.success) {
-      console.log(`Successfully upgraded ${building.name} to level ${result.newLevel}!`);
+      console.log(`Successfully upgraded ${pick.label} to level ${result.newLevel}!`);
     }
   }
+
   await refreshState();
 }
 
@@ -422,8 +460,15 @@ async function viewRoutes() {
             console.log('No active trade routes.');
         } else {
             data.routes.forEach((r: any) => {
-                const nextDept = new Date(r.next_departure).toLocaleTimeString();
-                console.log(`Route to ${r.to_region_name}: ${r.resource_name} (Next: ${nextDept})`);
+                if (r.in_transit_qty > 0) {
+                    const arrival = new Date(r.arrival_at).toLocaleTimeString();
+                    console.log(`Route to ${r.to_region_name} (${r.destination_city_name || 'Unknown City'}) - ${r.resource_name}`);
+                    console.log(`   In transit: ${formatNumber(r.in_transit_qty)} arriving at ${arrival}`);
+                } else {
+                    const nextDept = new Date(r.next_departure).toLocaleTimeString();
+                    console.log(`Route to ${r.to_region_name} (${r.destination_city_name || 'Unknown City'}) - ${r.resource_name}`);
+                    console.log(`   Next departure: ${nextDept}`);
+                }
             });
         }
     }
@@ -1292,6 +1337,28 @@ async function buildingInsightsMenu() {
       console.log(`   Output: ${out}`);
     }
   });
+
+  const catalog = gameState.buildingCatalog || [];
+  const ownedCodes = new Set(gameState.buildings.map((b) => b.code));
+  const unlockable = catalog.filter(
+    (entry) => entry.unlockLevel <= (gameState.city?.level || 1) && !ownedCodes.has(entry.code)
+  );
+  const locked = catalog.filter((entry) => entry.unlockLevel > (gameState.city?.level || 1));
+
+  if (unlockable.length) {
+    console.log('\nBuildings you can construct:');
+    unlockable.forEach((entry) => {
+      console.log(`- ${entry.name} [${entry.code}] (Unlock Level ${entry.unlockLevel})`);
+    });
+  }
+
+  if (locked.length) {
+    console.log('\nLocked buildings (increase city level to unlock):');
+    locked.forEach((entry) => {
+      console.log(`- ${entry.name} [${entry.code}] unlocks at City Level ${entry.unlockLevel}`);
+    });
+  }
+
   await question('\nPress Enter to return...');
 }
 

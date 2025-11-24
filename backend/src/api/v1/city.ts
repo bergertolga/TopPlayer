@@ -184,6 +184,10 @@ export async function handleCity(
     }
 
     
+    const { processRoutesForCity } = await import('./routes');
+    await processRoutesForCity(env.DB, String(city.id));
+
+    
     const resources = await env.DB.prepare(
       `SELECT r.code, r.name, r.type, cr.amount, cr.protected
        FROM city_resources cr
@@ -443,10 +447,26 @@ export async function handleCity(
       })
     );
 
+    const buildingCatalogRows = await env.DB.prepare(
+      'SELECT code, name, category, unlock_level FROM buildings'
+    ).all();
+
+    const buildingCatalog = (buildingCatalogRows?.results || []).map((def: any) => {
+      const owned = buildingsWithCosts.find((b: any) => b.code === def.code);
+      return {
+        code: def.code,
+        name: def.name,
+        category: def.category,
+        unlockLevel: def.unlock_level || 1,
+        ownedLevel: owned?.level || 0,
+      };
+    });
+
     return jsonResponse({
       city,
       resources: resources.results,
       buildings: buildingsWithCosts,
+      buildingCatalog,
       governors: governors.results,
       production: {
         rates: totalProduction,
@@ -663,7 +683,7 @@ export async function handleCity(
       'SELECT * FROM buildings WHERE code = ?'
     )
       .bind(body.buildingCode)
-      .first<{ id: string; max_level: number; upkeep_coins: number }>();
+      .first<{ id: string; max_level: number; upkeep_coins: number; unlock_level?: number }>();
 
     if (!building) {
       return jsonResponse({ error: 'Building not found' }, 404, corsHeaders);
@@ -671,13 +691,17 @@ export async function handleCity(
 
     
     const city = await env.DB.prepare(
-      'SELECT * FROM cities WHERE user_id = ?'
+      'SELECT id, level FROM cities WHERE user_id = ?'
     )
       .bind(userId)
-      .first<{ id: string }>();
+      .first<{ id: string; level: number }>();
 
     if (!city) {
       return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
+    }
+
+    if (building.unlock_level && city.level < building.unlock_level) {
+      return jsonResponse({ error: `Building unlocks at city level ${building.unlock_level}` }, 403, corsHeaders);
     }
 
     
@@ -758,10 +782,10 @@ export async function handleCity(
     const body = await request.json() as { buildingId?: string };
     
     const city = await env.DB.prepare(
-      'SELECT id FROM cities WHERE user_id = ?'
+      'SELECT id, level FROM cities WHERE user_id = ?'
     )
       .bind(userId)
-      .first<{ id: string }>();
+      .first<{ id: string; level: number }>();
 
     if (!city) {
       return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
