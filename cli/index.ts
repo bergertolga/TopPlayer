@@ -24,6 +24,7 @@ interface Building {
   outputRate?: Record<string, number>;
   storage_capacity?: number;
   storage_json?: Record<string, number>;
+
 }
 
 interface City {
@@ -38,6 +39,23 @@ interface GameState {
   city: City | null;
   resources: Resource[];
   buildings: Building[];
+}
+
+interface PremiumSnapshot {
+  crowns: number;
+  lastStipendAt?: number;
+  boosts?: Array<{ boost_code?: string; expires_at?: number; metadata_json?: string }>;
+}
+
+interface CapitalSnapshot {
+  favorPoints: number;
+  king: {
+    name: string;
+    decree: string;
+    message: string;
+    issuedAt: number;
+  };
+  actions: Array<{ code: string; reward: number; [key: string]: any }>;
 }
 
 const RESOURCE_METADATA: Record<string, { name: string; type: string; description: string }> = {
@@ -68,6 +86,8 @@ let gameState: GameState = {
   resources: [],
   buildings: []
 };
+let premiumSnapshot: PremiumSnapshot | null = null;
+let capitalSnapshot: CapitalSnapshot | null = null;
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -133,6 +153,31 @@ async function selectContractId(contracts: any[]): Promise<string | null> {
   }
 
   console.log('Could not find a contract with that identifier.');
+  return null;
+}
+
+async function selectBundleCode(bundles: any[]): Promise<string | null> {
+  if (!bundles.length) {
+    console.log('No bundles available.');
+    return null;
+  }
+  const raw = (await question('Enter bundle number or code: ')).trim();
+  if (!raw) {
+    console.log('No selection provided.');
+    return null;
+  }
+  const numeric = Number(raw);
+  if (!Number.isNaN(numeric)) {
+    const idx = Math.floor(numeric) - 1;
+    if (idx >= 0 && idx < bundles.length) {
+      return bundles[idx].code;
+    }
+  }
+  const found = bundles.find((b: any) => b.code === raw || b.id === raw);
+  if (found) {
+    return found.code;
+  }
+  console.log('Could not find a bundle with that identifier.');
   return null;
 }
 
@@ -255,13 +300,29 @@ async function ensureUserSession(): Promise<boolean> {
 // Actions
 async function refreshState() {
   const data = await apiCall('/api/v1/city');
-  if (data) {
-    gameState.city = data.city;
-    gameState.resources = data.resources;
-    gameState.buildings = data.buildings;
-    return true;
+  if (!data) {
+    return false;
   }
-  return false;
+  gameState.city = data.city;
+  gameState.resources = data.resources;
+  gameState.buildings = data.buildings;
+
+  await Promise.all([refreshPremiumSnapshot(), refreshCapitalSnapshot()]);
+  return true;
+}
+
+async function refreshPremiumSnapshot() {
+  const premium = await apiCall('/api/v1/premium/balance');
+  if (premium) {
+    premiumSnapshot = premium;
+  }
+}
+
+async function refreshCapitalSnapshot() {
+  const capital = await apiCall('/api/v1/world/capital');
+  if (capital) {
+    capitalSnapshot = capital;
+  }
 }
 
 async function collectResources() {
@@ -550,6 +611,165 @@ async function capitalBoardMenu() {
   }
 }
 
+async function premiumMenu() {
+  while (true) {
+    await refreshPremiumSnapshot();
+    const premium = premiumSnapshot;
+    console.log('\n--- Shop & Premium ---');
+    console.log(`Crowns: ${premium ? formatNumber(premium.crowns) : '0'}`);
+    if (premium?.boosts?.length) {
+      console.log('Active Boosts:');
+      premium.boosts.forEach((boost: any) => {
+        const expires = boost.expires_at ? new Date(boost.expires_at).toLocaleTimeString() : 'unknown';
+        console.log(`- ${boost.boost_code || boost.code || 'boost'} until ${expires}`);
+      });
+    } else {
+      console.log('No active boosts.');
+    }
+
+    const bundlesData = await apiCall('/api/v1/shop/bundles');
+    const bundles = bundlesData?.bundles || [];
+    if (bundles.length) {
+      console.log('\nAvailable Bundles:');
+      bundles.forEach((bundle: any, idx: number) => {
+        console.log(`${idx + 1}. ${bundle.name} [${bundle.code}] - ${formatNumber(bundle.price)} Crowns`);
+        if (bundle.description) {
+          console.log(`   ${bundle.description}`);
+        }
+      });
+    } else {
+      console.log('\nNo bundles available.');
+    }
+
+    console.log('\nOptions:');
+    console.log('1. Claim daily stipend');
+    console.log('2. Purchase bundle');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice === '1') {
+      await apiCall('/api/v1/premium/stipend', 'POST', {});
+    } else if (choice === '2') {
+      const bundleCode = await selectBundleCode(bundles);
+      if (bundleCode) {
+        await apiCall('/api/v1/shop/purchase', 'POST', { bundleCode });
+        await refreshState();
+      }
+    }
+  }
+}
+
+async function worldChatMenu() {
+  while (true) {
+    const data = await apiCall('/api/v1/chat/world?limit=25');
+    console.log('\n--- World Chat ---');
+    if (data?.messages?.length) {
+      data.messages
+        .slice()
+        .reverse()
+        .forEach((msg: any) => {
+          const time = new Date(msg.created_at).toLocaleTimeString();
+          console.log(`[${time}] ${msg.username || msg.user_id}: ${msg.message}`);
+        });
+    } else {
+      console.log('No messages yet. Be the first to speak!');
+    }
+    console.log('\nOptions:');
+    console.log('1. Send message');
+    console.log('R. Refresh');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice.toLowerCase() === 'r') continue;
+    if (choice === '1') {
+      const text = await question('Message: ');
+      if (text.trim()) {
+        await apiCall('/api/v1/chat/world', 'POST', { message: text.trim() });
+      }
+    }
+  }
+}
+
+async function directMessageMenu() {
+  let partner = (await question('Enter partner user ID (or blank to cancel): ')).trim();
+  if (!partner) return;
+  while (true) {
+    const convo = await apiCall(`/api/v1/chat/dm?partnerId=${encodeURIComponent(partner)}`);
+    console.log(`\n--- DM with ${partner} ---`);
+    if (convo?.messages?.length) {
+      convo.messages
+        .slice()
+        .reverse()
+        .forEach((msg: any) => {
+          const time = new Date(msg.created_at).toLocaleTimeString();
+          const author = msg.username || (msg.sender_id === userId ? 'You' : msg.sender_id);
+          console.log(`[${time}] ${author}: ${msg.message}`);
+        });
+    } else {
+      console.log('No messages yet.');
+    }
+    console.log('\nOptions:');
+    console.log('1. Send message');
+    console.log('2. Change partner');
+    console.log('R. Refresh');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice.toLowerCase() === 'r') continue;
+    if (choice === '2') {
+      partner = (await question('Partner user ID: ')).trim();
+      if (!partner) break;
+      continue;
+    }
+    if (choice === '1') {
+      const text = await question('Message: ');
+      if (text.trim()) {
+        await apiCall('/api/v1/chat/dm', 'POST', { partnerId: partner, message: text.trim() });
+      }
+    }
+  }
+}
+
+async function capitalAffairsMenu() {
+  while (true) {
+    await refreshCapitalSnapshot();
+    const capital = capitalSnapshot;
+    console.log('\n--- Capital Affairs ---');
+    if (capital) {
+      console.log(`${capital.king.name} decrees: ${capital.king.decree}`);
+      console.log(`${capital.king.message}`);
+      console.log(`Favor Points: ${formatNumber(capital.favorPoints)}`);
+      if (capital.actions?.length) {
+        console.log('\nAvailable Contributions:');
+        capital.actions.forEach((action, idx) => {
+          const requirement = action.costCoins
+            ? `${formatNumber(action.costCoins)} coins`
+            : `${formatNumber(action.amount)} ${action.resource || action.resourceCode}`;
+          console.log(`${idx + 1}. ${action.code} - ${requirement} => +${action.reward} Favor`);
+        });
+      } else {
+        console.log('No contributions requested right now.');
+      }
+    } else {
+      console.log('Capital data unavailable.');
+    }
+    console.log('\nOptions:');
+    console.log('1. Contribute to the capital');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice === '1' && capital?.actions?.length) {
+      const raw = await question('Select action number: ');
+      const idx = parseInt(raw, 10) - 1;
+      const action = capital.actions[idx];
+      if (action) {
+        await apiCall('/api/v1/world/capital/contribute', 'POST', { action: action.code });
+        await refreshState();
+      }
+    }
+  }
+}
+
 async function simpleSellFlow(resourceCode?: string) {
   if (!resourceCode) {
     const res = pickSurplusResource();
@@ -776,6 +996,14 @@ function printDashboard() {
   console.log(`  ${gameState.city.name} (Level ${gameState.city.level})`);
   console.log(`  Region: ${gameState.city.region_name} | Pop: ${formatNumber(gameState.city.population)}`);
   console.log('==================================================');
+  if (premiumSnapshot || capitalSnapshot) {
+    const crowns = premiumSnapshot ? formatNumber(premiumSnapshot.crowns) : '0';
+    const favor = capitalSnapshot ? formatNumber(capitalSnapshot.favorPoints) : '0';
+    console.log(`Crowns: ${crowns} | Capital Favor: ${favor}`);
+    if (capitalSnapshot?.king) {
+      console.log(`Decree: ${capitalSnapshot.king.decree}`);
+    }
+  }
   
   console.log('\nResources:');
   const resStr = gameState.resources
@@ -814,6 +1042,10 @@ function printDashboard() {
   console.log('12. Council Hub');
   console.log('13. Realm Map');
   console.log('14. Capital Board');
+  console.log('15. Shop & Premium');
+  console.log('16. World Chat');
+  console.log('17. Direct Messages');
+  console.log('18. Capital Affairs');
   console.log('R. Refresh');
   console.log('Q. Quit');
   console.log('--------------------------------------------------');
@@ -893,6 +1125,18 @@ async function main() {
         break;
       case '14':
         await capitalBoardMenu();
+        break;
+      case '15':
+        await premiumMenu();
+        break;
+      case '16':
+        await worldChatMenu();
+        break;
+      case '17':
+        await directMessageMenu();
+        break;
+      case '18':
+        await capitalAffairsMenu();
         break;
       case 'r':
         await refreshState();

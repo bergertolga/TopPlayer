@@ -6,6 +6,9 @@ import { OfflineCalculator } from './game/offline';
 import { PurchaseRewards } from './game/purchases';
 import { validateUserId, validateUsername, validateEmail, validateProductId, validateAmount, validateTransactionId, ValidationError } from './utils/validation';
 import { handleRealm } from './api/realm';
+import { handleWorld } from './api/world';
+import { handleShop } from './api/v1/shop';
+import { handleChat } from './api/chat';
 
 export { MarketDO } from './durable-objects/market';
 export { RealmDO } from './durable-objects/realm-do';
@@ -58,6 +61,12 @@ export default {
       } else if (path.startsWith('/api/v1/achievements')) {
         const { handleAchievements } = await import('./api/v1/achievements');
         return handleAchievements(request, env);
+      } else if (path.startsWith('/api/v1/premium') || path.startsWith('/api/v1/shop')) {
+        return handleShop(request, env);
+      } else if (path.startsWith('/api/v1/chat')) {
+        return handleChat(request, env);
+      } else if (path.startsWith('/api/v1/world')) {
+        return handleWorld(request, env);
       }
       
       
