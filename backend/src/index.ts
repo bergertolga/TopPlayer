@@ -5,6 +5,7 @@ import { HeroManager } from './game/heroes';
 import { OfflineCalculator } from './game/offline';
 import { PurchaseRewards } from './game/purchases';
 import { validateUserId, validateUsername, validateEmail, validateProductId, validateAmount, validateTransactionId, ValidationError } from './utils/validation';
+import { handleRealm } from './api/realm';
 
 export { MarketDO } from './durable-objects/market';
 export { RealmDO } from './durable-objects/realm-do';
@@ -86,6 +87,14 @@ export default {
         }
         const { handleDailyRewards } = await import('./api/daily-rewards');
         return handleDailyRewards(request, env, userId);
+      } else if (path.startsWith('/api/v1/council')) {
+        const { handleCouncil } = await import('./api/v1/council');
+        return handleCouncil(request, env);
+      } else if (path.startsWith('/api/v1/realm')) {
+        return handleRealm(request, env);
+      } else if (path.startsWith('/api/v1/contracts')) {
+        const { handleContracts } = await import('./api/v1/contracts');
+        return handleContracts(request, env);
       } else {
         return jsonResponse({ error: 'Not found' }, 404, corsHeaders);
       }

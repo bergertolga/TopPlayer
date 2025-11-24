@@ -479,6 +479,84 @@ export async function handleCity(
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
 
+  if (request.method === 'POST' && url.pathname === '/api/v1/city/move') {
+    const body = await request.json() as { regionId: string };
+
+    if (!body.regionId) {
+      return jsonResponse({ error: 'regionId required' }, 400, corsHeaders);
+    }
+
+    const city = await env.DB.prepare(
+      'SELECT id, region_id, move_cooldown_until FROM cities WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ id: string; region_id: string; move_cooldown_until: number }>();
+
+    if (!city) {
+      return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
+    }
+
+    const now = Date.now();
+    if (city.move_cooldown_until && city.move_cooldown_until > now) {
+      return jsonResponse({ error: 'City relocation on cooldown' }, 400, corsHeaders);
+    }
+
+    const region = await env.DB.prepare(
+      'SELECT id, max_cities FROM regions WHERE id = ? OR name = ?'
+    )
+      .bind(body.regionId, body.regionId)
+      .first<{ id: string; max_cities: number }>();
+
+    if (!region) {
+      return jsonResponse({ error: 'Region not found' }, 404, corsHeaders);
+    }
+
+    const regionPopulation = await env.DB.prepare(
+      'SELECT COUNT(*) as count FROM cities WHERE region_id = ?'
+    )
+      .bind(region.id)
+      .first<{ count: number }>();
+
+    if (region.max_cities && regionPopulation && regionPopulation.count >= region.max_cities) {
+      return jsonResponse({ error: 'Region is full' }, 400, corsHeaders);
+    }
+
+    const relocationCost = 500;
+    const coinsResource = await env.DB.prepare(
+      'SELECT id FROM resources WHERE code = ?'
+    )
+      .bind('COINS')
+      .first<{ id: string }>();
+
+    if (coinsResource) {
+      const coinsRow = await env.DB.prepare(
+        'SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?'
+      )
+        .bind(city.id, coinsResource.id)
+        .first<{ amount: number }>();
+
+      if (!coinsRow || coinsRow.amount < relocationCost) {
+        return jsonResponse({ error: 'Not enough coins to relocate' }, 400, corsHeaders);
+      }
+
+      await env.DB.prepare(
+        'UPDATE city_resources SET amount = amount - ? WHERE city_id = ? AND resource_id = ?'
+      )
+        .bind(relocationCost, city.id, coinsResource.id)
+        .run();
+    }
+
+    const cooldown = now + (12 * 60 * 60 * 1000); // 12 hours
+
+    await env.DB.prepare(
+      'UPDATE cities SET region_id = ?, move_cooldown_until = ? WHERE id = ?'
+    )
+      .bind(region.id, cooldown, city.id)
+      .run();
+
+    return jsonResponse({ success: true, regionId: region.id, cooldown }, 200, corsHeaders);
+  }
+
   if (request.method === 'POST' && url.pathname === '/api/v1/city/level-up') {
     
     const city = await env.DB.prepare(

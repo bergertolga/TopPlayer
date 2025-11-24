@@ -111,6 +111,41 @@ export async function handleCouncil(
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
 
+  if (request.method === 'POST' && url.pathname === '/api/v1/council/leave') {
+    const membership = await env.DB.prepare(
+      'SELECT * FROM council_members WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ council_id: string; role: string }>();
+
+    if (!membership) {
+      return jsonResponse({ error: 'Not part of a council' }, 400, corsHeaders);
+    }
+
+    if (membership.role === 'steward') {
+      return jsonResponse({ error: 'Steward must transfer leadership before leaving' }, 400, corsHeaders);
+    }
+
+    await env.DB.prepare(
+      'DELETE FROM council_members WHERE council_id = ? AND user_id = ?'
+    )
+      .bind(membership.council_id, userId)
+      .run();
+
+    return jsonResponse({ success: true }, 200, corsHeaders);
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/council/list') {
+    const councils = await env.DB.prepare(
+      `SELECT c.*, 
+              (SELECT COUNT(*) FROM council_members cm WHERE cm.council_id = c.id) as members
+       FROM councils c
+       ORDER BY c.created_at DESC`
+    ).all();
+
+    return jsonResponse({ councils: councils.results }, 200, corsHeaders);
+  }
+
   if (request.method === 'GET' && url.pathname === '/api/v1/council') {
     
     const city = await env.DB.prepare(
@@ -164,6 +199,57 @@ export async function handleCouncil(
       members: members.results,
       publicWorks: publicWorks.results,
     }, 200, corsHeaders);
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/council/chat') {
+    const membership = await env.DB.prepare(
+      `SELECT * FROM council_members WHERE user_id = ?`
+    )
+      .bind(userId)
+      .first<{ council_id: string }>();
+
+    if (!membership) {
+      return jsonResponse({ error: 'Join a council to use chat' }, 403, corsHeaders);
+    }
+
+    const messages = await env.DB.prepare(
+      `SELECT cm.*, u.username 
+       FROM council_messages cm
+       JOIN users u ON cm.user_id = u.id
+       WHERE cm.council_id = ?
+       ORDER BY cm.created_at DESC
+       LIMIT 50`
+    )
+      .bind(membership.council_id)
+      .all();
+
+    return jsonResponse({ messages: messages.results }, 200, corsHeaders);
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/v1/council/chat') {
+    const body = await request.json() as { message: string };
+
+    if (!body.message || body.message.trim().length === 0) {
+      return jsonResponse({ error: 'Message cannot be empty' }, 400, corsHeaders);
+    }
+
+    const membership = await env.DB.prepare(
+      `SELECT * FROM council_members WHERE user_id = ?`
+    )
+      .bind(userId)
+      .first<{ council_id: string }>();
+
+    if (!membership) {
+      return jsonResponse({ error: 'Join a council to use chat' }, 403, corsHeaders);
+    }
+
+    await env.DB.prepare(
+      'INSERT INTO council_messages (id, council_id, user_id, message, created_at) VALUES (?, ?, ?, ?, ?)'
+    )
+      .bind(crypto.randomUUID(), membership.council_id, userId, body.message.trim(), Date.now())
+      .run();
+
+    return jsonResponse({ success: true }, 200, corsHeaders);
   }
 
   if (request.method === 'POST' && url.pathname === '/api/v1/council/tax') {
