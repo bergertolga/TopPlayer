@@ -133,14 +133,16 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       .prepare('SELECT * FROM capital_announcements ORDER BY created_at DESC LIMIT 1')
       .first<{ title: string; body: string; created_at: number }>();
     const stats = await getFavorStats(env.DB, userId);
-    const tiersRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
-    const tiers = tiersRows?.results || [];
+    const tierRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
+    const allTiers = (tierRows?.results || []) as any[];
     const currentTier =
-      [...tiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) || tiers[0] || null;
-    const nextTier = tiers.find((tier: any) => tier.points_required > stats.favor_points) || null;
+      (([...allTiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) as any) ||
+        (allTiers[0] as any) ||
+        null);
+    const nextTier = (allTiers.find((tier: any) => tier.points_required > stats.favor_points) as any) || null;
     const storeOffers = await env.DB
       .prepare('SELECT * FROM capital_store_offers WHERE min_tier <= ? ORDER BY min_tier ASC')
-      .bind(currentTier?.tier ?? 0)
+      .bind((currentTier?.tier as number) ?? 0)
       .all();
     const requests = await env.DB
       .prepare(
@@ -148,8 +150,9 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
          WHERE (expires_at IS NULL OR expires_at > ?) AND min_tier <= ?
          ORDER BY min_tier ASC`
       )
-      .bind(Date.now(), currentTier?.tier ?? 0)
+      .bind(Date.now(), (currentTier?.tier as number) ?? 0)
       .all();
+    const currentPerks = currentTier ? JSON.parse((currentTier.perks_json as string) || '{}') : {};
     return jsonResponse({
       king: {
         name: 'King Aurelius',
@@ -160,7 +163,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       favor: {
         points: stats.favor_points,
         tier: currentTier
-          ? { tier: currentTier.tier, name: currentTier.name, perks: JSON.parse(currentTier.perks_json || '{}') }
+          ? { tier: currentTier.tier, name: currentTier.name, perks: currentPerks }
           : null,
         nextTier: nextTier
           ? {
@@ -180,7 +183,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
         description: offer.description,
         costFavor: offer.cost_favor,
         costCoins: offer.cost_coins,
-        rewards: JSON.parse(offer.reward_json || '{}'),
+        rewards: JSON.parse((offer.reward_json as string) || '{}'),
         minTier: offer.min_tier,
       })),
       requests: (requests?.results || []).map((req: any) => ({
@@ -189,7 +192,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
         description: req.description,
         resource: req.resource_code,
         amount: req.amount_required,
-        rewards: JSON.parse(req.reward_json || '{}'),
+        rewards: JSON.parse((req.reward_json as string) || '{}'),
         minTier: req.min_tier,
       })),
     });
@@ -257,10 +260,12 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       return jsonResponse({ error: 'offerCode required' }, 400);
     }
     const stats = await getFavorStats(env.DB, userId);
-    const tiersRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
-    const tiers = tiersRows?.results || [];
-    const currentTier =
-      [...tiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) || tiers[0] || null;
+    const tierRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
+    const tiers = (tierRows?.results || []) as any[];
+    const storeTier =
+      (([...tiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) as any) ||
+        (tiers[0] as any) ||
+        null);
     const offer = await env.DB
       .prepare('SELECT * FROM capital_store_offers WHERE code = ?')
       .bind(body.offerCode)
@@ -268,10 +273,11 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
     if (!offer) {
       return jsonResponse({ error: 'Offer not found' }, 404);
     }
-    if (currentTier && currentTier.tier < offer.min_tier) {
+    if (storeTier && storeTier.tier < offer.min_tier) {
       return jsonResponse({ error: 'Tier too low for this offer' }, 403);
     }
-    const discount = currentTier ? JSON.parse(currentTier.perks_json || '{}').storeDiscount || 0 : 0;
+    const storePerks = storeTier ? JSON.parse((storeTier.perks_json as string) || '{}') : {};
+    const discount = storePerks.storeDiscount || 0;
     const favorCost = Math.max(0, Math.ceil(offer.cost_favor * (1 - discount)));
     if (stats.favor_points < favorCost) {
       return jsonResponse({ error: 'Insufficient favor' }, 400);
@@ -298,7 +304,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       .prepare('UPDATE capital_favor_stats SET favor_points = favor_points - ? WHERE user_id = ?')
       .bind(favorCost, userId)
       .run();
-    await grantRewards(env, userId, city.id, JSON.parse(offer.reward_json || '{}'));
+    await grantRewards(env, userId, city.id, JSON.parse((offer.reward_json as string) || '{}'));
     const updated = await getFavorStats(env.DB, userId);
     return jsonResponse({ success: true, favorPoints: updated.favor_points });
   }
@@ -309,10 +315,12 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       return jsonResponse({ error: 'requestCode required' }, 400);
     }
     const stats = await getFavorStats(env.DB, userId);
-    const tiersRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
-    const tiers = tiersRows?.results || [];
-    const currentTier =
-      [...tiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) || tiers[0] || null;
+    const fulfillTierRows = await env.DB.prepare('SELECT * FROM capital_favor_tiers ORDER BY tier ASC').all();
+    const fulfillTiers = (fulfillTierRows?.results || []) as any[];
+    const fulfillTier =
+      (([...fulfillTiers].reverse().find((tier: any) => stats.favor_points >= tier.points_required) as any) ||
+        (fulfillTiers[0] as any) ||
+        null);
     const req = await env.DB
       .prepare(
         `SELECT * FROM capital_requests
@@ -323,7 +331,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
     if (!req) {
       return jsonResponse({ error: 'Request not available' }, 404);
     }
-    if (currentTier && currentTier.tier < req.min_tier) {
+    if (fulfillTier && fulfillTier.tier < req.min_tier) {
       return jsonResponse({ error: 'Tier too low for this request' }, 403);
     }
     const city = await env.DB.prepare('SELECT id FROM cities WHERE user_id = ?').bind(userId).first<{ id: string }>();
@@ -345,7 +353,7 @@ export async function handleWorld(request: Request, env: Env): Promise<Response>
       .prepare('UPDATE city_resources SET amount = amount - ? WHERE city_id = ? AND resource_id = ?')
       .bind(req.amount_required, city.id, resourceId)
       .run();
-    await grantRewards(env, userId, city.id, JSON.parse(req.reward_json || '{}'));
+    await grantRewards(env, userId, city.id, JSON.parse((req.reward_json as string) || '{}'));
     const updated = await getFavorStats(env.DB, userId);
     return jsonResponse({ success: true, favorPoints: updated.favor_points });
   }
