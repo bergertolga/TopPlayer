@@ -53,10 +53,14 @@ export class KingdomDO {
     const cities = kingdomState.cities || [];
     const tickPromises = cities.map(cityId => {
       const cityDO = this.env.CITY.get(this.env.CITY.idFromName(cityId));
-      return cityDO.fetch(new Request('https://internal/tick', { method: 'POST' }));
+      return cityDO.fetch(new Request('https://internal/tick', { method: 'POST' }))
+        .catch((error: unknown) => {
+          console.error('Failed to process city tick', { cityId, error });
+          return null;
+        });
     });
 
-    await Promise.allSettled(tickPromises);
+    await Promise.all(tickPromises);
     return Response.json({ processed: cities.length });
   }
 
