@@ -16,5 +16,5 @@ INSERT OR REPLACE INTO capital_requests (id, code, name, description, resource_c
   ('req-001', 'grain_relief', 'Grain Relief', 'Send 1,000 food to feed refugees.', 'FOOD', 1000,
    json_object('favor', 6, 'coins', 1200), NULL, 0),
   ('req-002', 'stone_bastion', 'Stone Bastion', 'Deliver 900 stone for the new bastion.', 'STONE', 900,
-   json_object('favor', 7, 'boost', json_object('code','build_speed','hours',2))), NULL, 1);
+   json_object('favor', 7, 'boost', json_object('code','build_speed','hours',2)), NULL, 1);
 
