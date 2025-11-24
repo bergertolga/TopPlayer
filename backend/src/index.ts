@@ -7,6 +7,7 @@ import { PurchaseRewards } from './game/purchases';
 import { validateUserId, validateUsername, validateEmail, validateProductId, validateAmount, validateTransactionId, ValidationError } from './utils/validation';
 import { handleRealm } from './api/realm';
 import { handleWorld } from './api/world';
+import { handleWorldEvents } from './api/world-events';
 import { handleShop } from './api/v1/shop';
 import { handleChat } from './api/chat';
 
@@ -65,6 +66,8 @@ export default {
         return handleShop(request, env);
       } else if (path.startsWith('/api/v1/chat')) {
         return handleChat(request, env);
+      } else if (path.startsWith('/api/v1/world/events') || path.startsWith('/api/v1/npc')) {
+        return handleWorldEvents(request, env);
       } else if (path.startsWith('/api/v1/world')) {
         return handleWorld(request, env);
       }

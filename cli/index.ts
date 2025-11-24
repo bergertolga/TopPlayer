@@ -715,6 +715,7 @@ async function realmCapitalMenu() {
     console.log('1. Realm Map');
     console.log('2. Capital Contracts Board');
     console.log('3. Capital Affairs');
+    console.log('4. World Events');
     console.log('0. Back');
     const choice = await question('Select option: ');
     switch (choice) {
@@ -726,6 +727,9 @@ async function realmCapitalMenu() {
         break;
       case '3':
         await capitalAffairsMenu();
+        break;
+      case '4':
+        await worldEventsMenu();
         break;
       case '0':
         return;
@@ -916,6 +920,66 @@ async function capitalAffairsMenu() {
         await apiCall('/api/v1/world/capital/contribute', 'POST', { action: action.code });
         await refreshState();
       }
+    }
+  }
+}
+
+async function worldEventsMenu() {
+  while (true) {
+    const data = await apiCall('/api/v1/world/events');
+    console.log('\n--- World Events ---');
+    if (data?.events?.length) {
+      data.events.forEach((event: any, idx: number) => {
+        console.log(`${idx + 1}. ${event.name} (${event.event_type})`);
+        console.log(`   ${event.description}`);
+        const remaining = Math.max(0, Math.floor((event.ends_at - Date.now()) / (60 * 60 * 1000)));
+        console.log(`   Ends in: ${remaining}h | Progress: ${formatNumber(event.progress || 0)} / ${formatNumber(event.metadata?.goal || event.metadata?.troopRequired || 0)}`);
+      });
+    } else {
+      console.log('No active events.');
+    }
+    console.log('\nOptions:');
+    console.log('1. Contribute to event');
+    console.log('2. Claim rewards');
+    console.log('3. View NPC quests');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice === '1') {
+      const eventIdx = parseInt(await question('Event number: '), 10) - 1;
+      const event = data?.events?.[eventIdx];
+      if (!event) {
+        console.log('Invalid selection.');
+        continue;
+      }
+      let payload: any = { eventId: event.id };
+      if (event.metadata?.resource) {
+        const amount = parseInt(await question(`Amount of ${event.metadata.resource} to contribute: `), 10);
+        if (!amount || amount <= 0) {
+          console.log('Invalid amount.');
+          continue;
+        }
+        payload.amount = amount;
+      } else if (event.metadata?.troopRequired) {
+        console.log('Sending troops (placeholder).');
+      }
+      await apiCall('/api/v1/world/events/contribute', 'POST', payload);
+    } else if (choice === '2') {
+      const eventIdx = parseInt(await question('Event number: '), 10) - 1;
+      const event = data?.events?.[eventIdx];
+      if (!event) {
+        console.log('Invalid selection.');
+        continue;
+      }
+      await apiCall('/api/v1/world/events/claim', 'POST', { eventId: event.id });
+    } else if (choice === '3') {
+      const quests = await apiCall('/api/v1/npc/quests');
+      console.log('\n--- NPC Quests ---');
+      quests?.quests?.forEach((quest: any, idx: number) => {
+        console.log(`${idx + 1}. ${quest.npc_name} - ${quest.title} [${quest.status}]`);
+        console.log(`   ${quest.description}`);
+      });
+      await question('\nPress Enter to return...');
     }
   }
 }

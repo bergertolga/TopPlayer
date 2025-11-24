@@ -16,6 +16,7 @@ The CLI now uses a top-level hub so future UI layers (web/mobile) can mirror the
    - Realm map (regions, biases, relocation)
    - Capital contracts board
    - Capital affairs (king decrees, favor contributions)
+   - World events (global timers, contributions, NPC quests)
 
 3. **Market & Economy**
    - Market Hub (order book, quick buy/sell, surplus actions)
