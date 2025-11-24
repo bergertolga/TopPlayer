@@ -107,6 +107,35 @@ const formatRequirement = (label: string, have: number, need: number) => {
   return `${label}: ${formatNumber(have)}/${formatNumber(need)} (${status})`;
 };
 
+async function selectContractId(contracts: any[]): Promise<string | null> {
+  if (!contracts.length) {
+    console.log('No contracts available.');
+    return null;
+  }
+
+  const raw = (await question('Enter contract number or ID: ')).trim();
+  if (!raw) {
+    console.log('No selection provided.');
+    return null;
+  }
+
+  const numeric = Number(raw);
+  if (!Number.isNaN(numeric)) {
+    const idx = Math.floor(numeric) - 1;
+    if (idx >= 0 && idx < contracts.length) {
+      return contracts[idx].id;
+    }
+  }
+
+  const found = contracts.find((c: any) => c.id === raw || c.code === raw);
+  if (found) {
+    return found.id;
+  }
+
+  console.log('Could not find a contract with that identifier.');
+  return null;
+}
+
 // API Client
 async function apiCall(path: string, method: string = 'GET', body?: any) {
   try {
@@ -477,10 +506,13 @@ async function realmMapMenu() {
 async function capitalBoardMenu() {
   while (true) {
     const data = await apiCall('/api/v1/contracts');
+    const contracts = data?.contracts || [];
+
     console.log('\n--- Capital Contract Board ---');
-    if (data?.contracts?.length) {
-      data.contracts.forEach((contract: any, idx: number) => {
-        console.log(`${idx + 1}. ${contract.title} [${contract.resource_code}]`);
+    if (contracts.length) {
+      contracts.forEach((contract: any, idx: number) => {
+        const label = contract.id || `contract-${idx + 1}`;
+        console.log(`${idx + 1}. [${label}] ${contract.title} [${contract.resource_code}]`);
         console.log(`   Need: ${formatNumber(contract.amount_required)} | Reward: ${formatNumber(contract.reward_coins)} coins | Status: ${contract.user_status}`);
         if (contract.progress) {
           console.log(`   Progress: ${formatNumber(contract.progress)}/${formatNumber(contract.amount_required)}`);
@@ -498,16 +530,21 @@ async function capitalBoardMenu() {
     if (choice === '0') break;
 
     if (choice === '1') {
-      const id = await question('Enter contract ID: ');
-      if (id.trim()) {
-        await apiCall('/api/v1/contracts/accept', 'POST', { contractId: id.trim() });
+      const contractId = await selectContractId(contracts);
+      if (contractId) {
+        await apiCall('/api/v1/contracts/accept', 'POST', { contractId });
       }
     } else if (choice === '2') {
-      const id = await question('Contract ID: ');
+      const contractId = await selectContractId(contracts);
+      if (!contractId) {
+        continue;
+      }
       const amount = parseInt(await question('Amount to submit: '), 10);
-      if (id.trim() && amount > 0) {
-        await apiCall('/api/v1/contracts/submit', 'POST', { contractId: id.trim(), amount });
+      if (amount > 0) {
+        await apiCall('/api/v1/contracts/submit', 'POST', { contractId, amount });
         await refreshState();
+      } else {
+        console.log('Amount must be greater than zero.');
       }
     }
   }
