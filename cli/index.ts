@@ -767,6 +767,7 @@ async function socialHubMenu() {
     console.log('1. Council Hub');
     console.log('2. World Chat');
     console.log('3. Direct Messages');
+    console.log('4. Guilds');
     console.log('0. Back');
     const choice = await question('Select option: ');
     switch (choice) {
@@ -778,6 +779,9 @@ async function socialHubMenu() {
         break;
       case '3':
         await directMessageMenu();
+        break;
+      case '4':
+        await guildHubMenu();
         break;
       case '0':
         return;
@@ -980,6 +984,46 @@ async function worldEventsMenu() {
         console.log(`   ${quest.description}`);
       });
       await question('\nPress Enter to return...');
+    }
+  }
+}
+
+async function guildHubMenu() {
+  while (true) {
+    const data = await apiCall('/api/v1/guilds');
+    console.log('\n--- Guild Hub ---');
+    if (data?.membership) {
+      console.log(`Current Guild: ${data.membership.guild_code}`);
+    } else {
+      console.log('You are not in a guild.');
+    }
+    if (data?.guilds?.length) {
+      data.guilds.forEach((g: any, idx: number) => {
+        const perks = Object.entries(g.perks || {})
+          .map(([key, val]) => `${key}: ${val}`)
+          .join(', ');
+        console.log(`${idx + 1}. ${g.name} [${g.code}]${g.isMember ? ' (Member)' : ''}`);
+        console.log(`   ${g.description}`);
+        console.log(`   Perks: ${perks}`);
+      });
+    } else {
+      console.log('No guild archetypes found.');
+    }
+    console.log('\nOptions:');
+    console.log('1. Join guild');
+    console.log('2. Leave guild');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') break;
+    if (choice === '1') {
+      const code = await question('Enter guild code: ');
+      if (code.trim()) {
+        await apiCall('/api/v1/guilds/join', 'POST', { guildCode: code.trim().toUpperCase() });
+        await refreshState();
+      }
+    } else if (choice === '2') {
+      await apiCall('/api/v1/guilds/leave', 'POST', {});
+      await refreshState();
     }
   }
 }

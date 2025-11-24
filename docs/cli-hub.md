@@ -26,6 +26,7 @@ The CLI now uses a top-level hub so future UI layers (web/mobile) can mirror the
    - Council hub (list/join/leave, treasury, council chat)
    - World chat feed
    - Direct messages (DM threads)
+   - Guild hub (join archetypes, view perks)
 
 5. **Account & Rewards**
    - Daily rewards / streak tracker

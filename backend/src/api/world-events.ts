@@ -50,6 +50,7 @@ export async function handleWorldEvents(request: Request, env: Env): Promise<Res
       formatted.push({
         ...event,
         metadata: JSON.parse(event.metadata_json || '{}'),
+        phases: JSON.parse(event.phases_json || '[]'),
         progress: participation?.progress || 0,
         rewardClaimed: !!participation?.reward_claimed,
       });
@@ -65,13 +66,21 @@ export async function handleWorldEvents(request: Request, env: Env): Promise<Res
     const event = await env.DB
       .prepare('SELECT * FROM world_events WHERE id = ?')
       .bind(body.eventId)
-      .first<{ id: string; metadata_json: string }>();
+      .first<{ id: string; metadata_json: string; phases_json: string }>();
     if (!event) {
       return jsonResponse({ error: 'Event not found' }, 404);
     }
     const metadata = JSON.parse(event.metadata_json || '{}');
-    let progressGain = 0;
+    const phases = JSON.parse(event.phases_json || '[]');
+    const phaseState = await env.DB
+      .prepare('SELECT * FROM event_phase_progress WHERE event_id = ? AND user_id = ?')
+      .bind(event.id, userId)
+      .first<{ id: string; current_phase: number; phase_progress: number }>();
+    const currentPhaseIndex = phaseState?.current_phase || 0;
+    const currentPhase = phases[currentPhaseIndex];
+    const requirement = currentPhase?.requirement || metadata.goal || metadata.troopRequired || 0;
 
+    let progressGain = 0;
     if (metadata.resource) {
       if (!body.amount || body.amount <= 0) {
         return jsonResponse({ error: 'amount required' }, 400);
@@ -119,6 +128,29 @@ export async function handleWorldEvents(request: Request, env: Env): Promise<Res
         )
         .bind(crypto.randomUUID(), event.id, userId, progressGain, 0, Date.now())
         .run();
+    }
+
+    if (currentPhase) {
+      if (phaseState) {
+        const newProgress = phaseState.phase_progress + progressGain;
+        let nextPhaseIndex = phaseState.current_phase;
+        let remainingProgress = newProgress;
+        if (requirement && newProgress >= requirement) {
+          nextPhaseIndex = Math.min(phases.length - 1, phaseState.current_phase + 1);
+          remainingProgress = newProgress - requirement;
+        }
+        await env.DB
+          .prepare('UPDATE event_phase_progress SET current_phase = ?, phase_progress = ?, updated_at = ? WHERE id = ?')
+          .bind(nextPhaseIndex, remainingProgress, Date.now(), phaseState.id)
+          .run();
+      } else {
+        await env.DB
+          .prepare(
+            'INSERT INTO event_phase_progress (id, event_id, user_id, current_phase, phase_progress, updated_at) VALUES (?, ?, ?, ?, ?, ?)'
+          )
+          .bind(crypto.randomUUID(), event.id, userId, currentPhaseIndex, progressGain, Date.now())
+          .run();
+      }
     }
 
     return jsonResponse({ success: true });
