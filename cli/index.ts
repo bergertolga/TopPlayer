@@ -659,6 +659,156 @@ async function premiumMenu() {
   }
 }
 
+async function cityOperationsMenu() {
+  while (true) {
+    console.log('\n=== City Operations ===');
+    console.log('1. Collect Resources');
+    console.log('2. Upgrade Buildings');
+    console.log('3. Train Troops');
+    console.log('4. View Army');
+    console.log('5. View Trade Routes');
+    console.log('6. Building Details');
+    console.log('7. Resource & Price Insights');
+    console.log('8. Level Up City');
+    console.log('9. Auto Play (Collect Loop)');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    switch (choice) {
+      case '1':
+        await collectResources();
+        break;
+      case '2':
+        await upgradeBuilding();
+        break;
+      case '3':
+        await trainTroops();
+        break;
+      case '4':
+        await viewArmy();
+        break;
+      case '5':
+        await viewRoutes();
+        break;
+      case '6':
+        await buildingInsightsMenu();
+        break;
+      case '7':
+        await resourceInsightMenu();
+        break;
+      case '8':
+        await levelUpCity();
+        break;
+      case '9':
+        await autoPlay();
+        break;
+      case '0':
+        return;
+      default:
+        console.log('Invalid option.');
+    }
+  }
+}
+
+async function realmCapitalMenu() {
+  while (true) {
+    console.log('\n=== Realm & Capital ===');
+    console.log('1. Realm Map');
+    console.log('2. Capital Contracts Board');
+    console.log('3. Capital Affairs');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    switch (choice) {
+      case '1':
+        await realmMapMenu();
+        break;
+      case '2':
+        await capitalBoardMenu();
+        break;
+      case '3':
+        await capitalAffairsMenu();
+        break;
+      case '0':
+        return;
+      default:
+        console.log('Invalid option.');
+    }
+  }
+}
+
+async function marketEconomyMenu() {
+  while (true) {
+    console.log('\n=== Market & Economy ===');
+    console.log('1. Market Hub');
+    console.log('2. Resource & Price Insights');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    switch (choice) {
+      case '1':
+        await marketMenu();
+        break;
+      case '2':
+        await resourceInsightMenu();
+        break;
+      case '0':
+        return;
+      default:
+        console.log('Invalid option.');
+    }
+  }
+}
+
+async function socialHubMenu() {
+  while (true) {
+    console.log('\n=== Social & Chat ===');
+    console.log('1. Council Hub');
+    console.log('2. World Chat');
+    console.log('3. Direct Messages');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    switch (choice) {
+      case '1':
+        await councilHub();
+        break;
+      case '2':
+        await worldChatMenu();
+        break;
+      case '3':
+        await directMessageMenu();
+        break;
+      case '0':
+        return;
+      default:
+        console.log('Invalid option.');
+    }
+  }
+}
+
+async function accountMenu() {
+  while (true) {
+    console.log('\n=== Account & Rewards ===');
+    console.log('1. Daily Rewards');
+    console.log('2. Account Summary');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    switch (choice) {
+      case '1':
+        await dailyRewardsMenu();
+        break;
+      case '2':
+        console.log('\n--- Account Summary ---');
+        console.log(`User: ${username}`);
+        console.log(`User ID: ${userId}`);
+        console.log(`API URL: ${API_URL}`);
+        await question('\nPress Enter to return...');
+        break;
+      case '0':
+        return;
+      default:
+        console.log('Invalid option.');
+    }
+  }
+}
+
 async function worldChatMenu() {
   while (true) {
     const data = await apiCall('/api/v1/chat/world?limit=25');
@@ -1028,24 +1178,12 @@ function printDashboard() {
   console.log(`  ${formatRequirement('Stone', stone, costs.stone)}`);
 
   console.log('\n--------------------------------------------------');
-  console.log('1. Collect Resources');
-  console.log('2. Upgrade Buildings');
-  console.log('3. Train Troops');
-  console.log('4. View Army');
-  console.log('5. View Trade Routes');
-  console.log('6. Level Up City');
-  console.log('7. Daily Rewards');
-  console.log('8. Market Hub');
-  console.log('9. Auto Play (Collect Loop)');
-  console.log('10. Resource & Price Insights');
-  console.log('11. Building Details');
-  console.log('12. Council Hub');
-  console.log('13. Realm Map');
-  console.log('14. Capital Board');
-  console.log('15. Shop & Premium');
-  console.log('16. World Chat');
-  console.log('17. Direct Messages');
-  console.log('18. Capital Affairs');
+  console.log('1. City Operations');
+  console.log('2. Realm & Capital');
+  console.log('3. Market & Economy');
+  console.log('4. Social & Chat');
+  console.log('5. Account & Rewards');
+  console.log('6. Shop & Premium');
   console.log('R. Refresh');
   console.log('Q. Quit');
   console.log('--------------------------------------------------');
@@ -1085,58 +1223,22 @@ async function main() {
 
     switch (choice.toLowerCase()) {
       case '1':
-        await collectResources();
+        await cityOperationsMenu();
         break;
       case '2':
-        await upgradeBuilding();
+        await realmCapitalMenu();
         break;
       case '3':
-        await trainTroops();
+        await marketEconomyMenu();
         break;
       case '4':
-        await viewArmy();
+        await socialHubMenu();
         break;
       case '5':
-        await viewRoutes();
+        await accountMenu();
         break;
       case '6':
-        await levelUpCity();
-        break;
-      case '7':
-        await dailyRewardsMenu();
-        break;
-      case '8':
-        await marketMenu();
-        break;
-      case '9':
-        await autoPlay();
-        break;
-      case '10':
-        await resourceInsightMenu();
-        break;
-      case '11':
-        await buildingInsightsMenu();
-        break;
-      case '12':
-        await councilHub();
-        break;
-      case '13':
-        await realmMapMenu();
-        break;
-      case '14':
-        await capitalBoardMenu();
-        break;
-      case '15':
         await premiumMenu();
-        break;
-      case '16':
-        await worldChatMenu();
-        break;
-      case '17':
-        await directMessageMenu();
-        break;
-      case '18':
-        await capitalAffairsMenu();
         break;
       case 'r':
         await refreshState();
