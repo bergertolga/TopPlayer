@@ -11,7 +11,7 @@ VALUES
 
 INSERT OR IGNORE INTO npc_quests (id, npc_name, title, description, requirements_json, rewards_json, is_repeatable, created_at)
 VALUES
-  ('quest-001', 'Trader Lio', 'Escort the Caravan', 'Protect Lio\'s caravan using at least 100 troops.', 
+  ('quest-001', 'Trader Lio', 'Escort the Caravan', 'Protect Lio''s caravan using at least 100 troops.', 
    json_object('troops',100,'durationHours',4),
    json_object('coins',1500,'crowns',5),
    1, strftime('%s','now')*1000),
