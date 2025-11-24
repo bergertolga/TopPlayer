@@ -48,14 +48,20 @@ interface PremiumSnapshot {
 }
 
 interface CapitalSnapshot {
-  favorPoints: number;
   king: {
     name: string;
     decree: string;
     message: string;
     issuedAt: number;
   };
+  favor: {
+    points: number;
+    tier?: { tier: number; name: string; perks: Record<string, any> };
+    nextTier?: { tier: number; name: string; required: number };
+  };
   actions: Array<{ code: string; reward: number; [key: string]: any }>;
+  store?: Array<{ code: string; name: string; description: string; costFavor: number; costCoins: number; rewards: any; minTier: number }>;
+  requests?: Array<{ code: string; name: string; description: string; resource: string; amount: number; rewards: any; minTier: number }>;
 }
 
 const RESOURCE_METADATA: Record<string, { name: string; type: string; description: string }> = {
@@ -303,13 +309,13 @@ async function refreshState() {
   if (!data) {
     return false;
   }
-  gameState.city = data.city;
-  gameState.resources = data.resources;
-  gameState.buildings = data.buildings;
+    gameState.city = data.city;
+    gameState.resources = data.resources;
+    gameState.buildings = data.buildings;
 
   await Promise.all([refreshPremiumSnapshot(), refreshCapitalSnapshot()]);
-  return true;
-}
+    return true;
+  }
 
 async function refreshPremiumSnapshot() {
   const premium = await apiCall('/api/v1/premium/balance');
@@ -896,7 +902,11 @@ async function capitalAffairsMenu() {
     if (capital) {
       console.log(`${capital.king.name} decrees: ${capital.king.decree}`);
       console.log(`${capital.king.message}`);
-      console.log(`Favor Points: ${formatNumber(capital.favorPoints)}`);
+      const tierName = capital.favor?.tier ? `${capital.favor.tier.name} (Tier ${capital.favor.tier.tier})` : 'Citizen';
+      console.log(`Favor: ${formatNumber(capital.favor?.points || 0)} | Tier: ${tierName}`);
+      if (capital.favor?.nextTier) {
+        console.log(`Next Tier: ${capital.favor.nextTier.name} at ${formatNumber(capital.favor.nextTier.required)} favor`);
+      }
       if (capital.actions?.length) {
         console.log('\nAvailable Contributions:');
         capital.actions.forEach((action, idx) => {
@@ -908,11 +918,31 @@ async function capitalAffairsMenu() {
       } else {
         console.log('No contributions requested right now.');
       }
+      if (capital.store?.length) {
+        console.log('\nCapital Store:');
+        capital.store.forEach((offer, idx) => {
+          console.log(`${idx + 1}. ${offer.name} [${offer.code}] (Tier ${offer.minTier}+ )`);
+          console.log(
+            `   Cost: ${offer.costFavor} favor${offer.costCoins ? ` + ${formatNumber(offer.costCoins)} coins` : ''}`
+          );
+          console.log(`   ${offer.description}`);
+        });
+      }
+      if (capital.requests?.length) {
+        console.log('\nCapital Requests:');
+        capital.requests.forEach((req, idx) => {
+          console.log(`${idx + 1}. ${req.name} [${req.code}] (Tier ${req.minTier}+ )`);
+          console.log(`   Deliver ${formatNumber(req.amount)} ${req.resource}`);
+          console.log(`   ${req.description}`);
+        });
+      }
     } else {
       console.log('Capital data unavailable.');
     }
     console.log('\nOptions:');
     console.log('1. Contribute to the capital');
+    console.log('2. Purchase from capital store');
+    console.log('3. Fulfill capital request');
     console.log('0. Back');
     const choice = await question('Select option: ');
     if (choice === '0') break;
@@ -922,6 +952,26 @@ async function capitalAffairsMenu() {
       const action = capital.actions[idx];
       if (action) {
         await apiCall('/api/v1/world/capital/contribute', 'POST', { action: action.code });
+        await refreshState();
+      }
+    } else if (choice === '2') {
+      if (!capital?.store?.length) {
+        console.log('No offers available.');
+        continue;
+      }
+      const code = await question('Enter offer code: ');
+      if (code.trim()) {
+        await apiCall('/api/v1/world/capital/store/purchase', 'POST', { offerCode: code.trim() });
+        await refreshState();
+      }
+    } else if (choice === '3') {
+      if (!capital?.requests?.length) {
+        console.log('No requests available.');
+        continue;
+      }
+      const code = await question('Enter request code: ');
+      if (code.trim()) {
+        await apiCall('/api/v1/world/capital/requests/fulfill', 'POST', { requestCode: code.trim() });
         await refreshState();
       }
     }
@@ -1256,7 +1306,7 @@ function printDashboard() {
   console.log('==================================================');
   if (premiumSnapshot || capitalSnapshot) {
     const crowns = premiumSnapshot ? formatNumber(premiumSnapshot.crowns) : '0';
-    const favor = capitalSnapshot ? formatNumber(capitalSnapshot.favorPoints) : '0';
+    const favor = capitalSnapshot ? formatNumber(capitalSnapshot.favor?.points || 0) : '0';
     console.log(`Crowns: ${crowns} | Capital Favor: ${favor}`);
     if (capitalSnapshot?.king) {
       console.log(`Decree: ${capitalSnapshot.king.decree}`);
