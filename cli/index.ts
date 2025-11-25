@@ -1085,40 +1085,99 @@ async function worldEventsMenu() {
 
 async function guildHubMenu() {
   while (true) {
-    const data = await apiCall('/api/v1/guilds');
+    const [archetypes, councilInfo] = await Promise.all([
+      apiCall('/api/v1/guilds'),
+      apiCall('/api/v1/council'),
+    ]);
+
+    const currentGuild = councilInfo?.council;
     console.log('\n--- Guild Hub ---');
-    if (data?.membership) {
-      console.log(`Current Guild: ${data.membership.guild_code}`);
+    if (currentGuild) {
+      console.log(`Guild: ${currentGuild.name} (${councilInfo?.guild?.name || 'Unaligned'})`);
+      if (councilInfo?.guild?.perks) {
+        const perks = Object.entries(councilInfo.guild.perks)
+          .map(([key, val]) => `${key}: ${val}`)
+          .join(', ');
+        console.log(`Perks: ${perks}`);
+      }
     } else {
       console.log('You are not in a guild.');
     }
-    if (data?.guilds?.length) {
-      data.guilds.forEach((g: any, idx: number) => {
-        const perks = Object.entries(g.perks || {})
+
+    if (archetypes?.guilds?.length) {
+      console.log('\nArchetypes:');
+      archetypes.guilds.forEach((guild: any) => {
+        const perks = Object.entries(guild.perks || {})
           .map(([key, val]) => `${key}: ${val}`)
           .join(', ');
-        console.log(`${idx + 1}. ${g.name} [${g.code}]${g.isMember ? ' (Member)' : ''}`);
-        console.log(`   ${g.description}`);
-        console.log(`   Perks: ${perks}`);
+        console.log(`- ${guild.name} [${guild.code}] -> ${perks}`);
       });
-    } else {
-      console.log('No guild archetypes found.');
     }
-    console.log('\nOptions:');
-    console.log('1. Join guild');
-    console.log('2. Leave guild');
-    console.log('0. Back');
-    const choice = await question('Select option: ');
-    if (choice === '0') break;
-    if (choice === '1') {
-      const code = await question('Enter guild code: ');
-      if (code.trim()) {
-        await apiCall('/api/v1/guilds/join', 'POST', { guildCode: code.trim().toUpperCase() });
+
+    if (!currentGuild) {
+      console.log('\nOptions:');
+      console.log('1. Create guild');
+      console.log('2. Join existing guild');
+      console.log('0. Back');
+      const choice = await question('Select option: ');
+      if (choice === '0') break;
+      if (choice === '1') {
+        const name = await question('Guild name: ');
+        console.log('Select archetype code from list above.');
+        const code = await question('Guild code: ').then((s) => s.trim().toUpperCase());
+        if (name.trim() && code) {
+          await apiCall('/api/v1/council/create', 'POST', { name: name.trim(), guildCode: code });
+          await refreshState();
+        }
+      } else if (choice === '2') {
+        const list = await apiCall('/api/v1/council/list');
+        if (list?.councils?.length) {
+          console.log('\nAvailable Guilds:');
+          list.councils.forEach((c: any, idx: number) => {
+            console.log(`${idx + 1}. ${c.name} [${c.id}] ${c.guild_code ? `(${c.guild_code})` : ''} (Region ${c.region_id})`);
+          });
+        } else {
+          console.log('No guilds available yet. Create one!');
+        }
+        const id = await question('Enter guild/council ID to join: ');
+        if (id.trim()) {
+          await apiCall('/api/v1/council/join', 'POST', { councilId: id.trim() });
+          await refreshState();
+        }
+      }
+    } else {
+      console.log('\nOptions:');
+      console.log('1. View guild quests');
+      console.log('2. Contribute to guild quest');
+      console.log('3. Leave guild');
+      console.log('0. Back');
+      const choice = await question('Select option: ');
+      if (choice === '0') break;
+      if (choice === '1') {
+        const quests = await apiCall('/api/v1/council/quests');
+        console.log('\n--- Guild Quests ---');
+        if (quests?.quests?.length) {
+          quests.quests.forEach((quest: any) => {
+            const remaining = (quest.requirement.amount || 0) - (quest.progress || 0);
+            console.log(`${quest.id} - ${quest.title} [${quest.status}]`);
+            console.log(`   ${quest.description}`);
+            console.log(`   Requirement: ${formatNumber(quest.requirement.amount)} ${quest.requirement.resource}`);
+            console.log(`   Progress: ${formatNumber(quest.progress || 0)} / ${formatNumber(quest.requirement.amount)} (Remaining ${formatNumber(Math.max(0, remaining))})`);
+          });
+        } else {
+          console.log('No guild quests right now.');
+        }
+        await question('\nPress Enter to continue...');
+      } else if (choice === '2') {
+        const questId = await question('Quest ID: ');
+        const amountInput = await question('Contribution amount (press Enter for max): ');
+        const amount = amountInput.trim() ? parseInt(amountInput, 10) : undefined;
+        await apiCall('/api/v1/council/quests/contribute', 'POST', { questId: questId.trim(), amount });
+        await refreshState();
+      } else if (choice === '3') {
+        await apiCall('/api/v1/council/leave', 'POST', {});
         await refreshState();
       }
-    } else if (choice === '2') {
-      await apiCall('/api/v1/guilds/leave', 'POST', {});
-      await refreshState();
     }
   }
 }

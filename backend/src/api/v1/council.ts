@@ -14,6 +14,112 @@ function jsonResponse(data: any, status: number = 200, headers: Record<string, s
   });
 }
 
+async function getCityForUser(db: D1Database, userId: string) {
+  return db.prepare('SELECT * FROM cities WHERE user_id = ?').bind(userId).first<{
+    id: string;
+    region_id: string;
+    level: number;
+  }>();
+}
+
+async function ensurePremiumBalance(db: D1Database, userId: string) {
+  const balance = await db.prepare('SELECT * FROM premium_balances WHERE user_id = ?').bind(userId).first();
+  if (!balance) {
+    await db.prepare('INSERT INTO premium_balances (user_id, crowns, last_stipend_claimed) VALUES (?, ?, ?)').bind(userId, 0, 0).run();
+  }
+}
+
+async function adjustCrowns(db: D1Database, userId: string, delta: number) {
+  await ensurePremiumBalance(db, userId);
+  await db.prepare('UPDATE premium_balances SET crowns = MAX(0, crowns + ?) WHERE user_id = ?').bind(delta, userId).run();
+}
+
+async function adjustCityResource(db: D1Database, cityId: string, resourceCode: string, delta: number) {
+  const resource = await db.prepare('SELECT id FROM resources WHERE code = ?').bind(resourceCode).first<{ id: string }>();
+  if (!resource) {
+    throw new Error(`Resource ${resourceCode} not found`);
+  }
+  await db.prepare(
+    `INSERT INTO city_resources (city_id, resource_id, amount, protected)
+     VALUES (?, ?, MAX(0, ?), 0)
+     ON CONFLICT(city_id, resource_id) DO UPDATE SET amount = MAX(0, city_resources.amount + ?)`
+  )
+    .bind(cityId, resource.id, delta, delta)
+    .run();
+}
+
+async function adjustFavor(db: D1Database, userId: string, delta: number) {
+  await db.prepare(
+    `INSERT INTO capital_favor_stats (user_id, favor_points, last_contribution)
+     VALUES (?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET favor_points = favor_points + excluded.favor_points`
+  )
+    .bind(userId, delta, Date.now())
+    .run();
+}
+
+async function grantGuildRewards(env: Env, userId: string, cityId: string, rewards: any) {
+  if (!rewards) return;
+  if (rewards.coins) {
+    await adjustCityResource(env.DB, cityId, 'COINS', rewards.coins);
+  }
+  if (rewards.crowns) {
+    await adjustCrowns(env.DB, userId, rewards.crowns);
+  }
+  if (rewards.favor) {
+    await adjustFavor(env.DB, userId, rewards.favor);
+  }
+  if (rewards.resources && typeof rewards.resources === 'object') {
+    for (const [code, amount] of Object.entries(rewards.resources)) {
+      await adjustCityResource(env.DB, cityId, code, amount as number);
+    }
+  }
+  if (rewards.boost) {
+    await env.DB.prepare(
+      'INSERT INTO boost_activations (id, user_id, boost_code, metadata_json, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+    )
+      .bind(
+        crypto.randomUUID(),
+        userId,
+        rewards.boost.code,
+        JSON.stringify(rewards.boost),
+        Date.now() + Math.floor((rewards.boost.hours ?? rewards.boost.duration ?? 0) * 60 * 60 * 1000),
+        Date.now()
+      )
+      .run();
+  }
+  if (Array.isArray(rewards.boosts)) {
+    for (const boost of rewards.boosts) {
+      await env.DB.prepare(
+        'INSERT INTO boost_activations (id, user_id, boost_code, metadata_json, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+      )
+        .bind(
+          crypto.randomUUID(),
+          userId,
+          boost.code,
+          JSON.stringify(boost),
+          Date.now() + Math.floor((boost.hours ?? boost.duration ?? 0) * 60 * 60 * 1000),
+          Date.now()
+        )
+        .run();
+    }
+  }
+}
+
+async function syncGuildMembership(db: D1Database, userId: string, guildCode?: string) {
+  if (!guildCode) {
+    await db.prepare('DELETE FROM guild_membership WHERE user_id = ?').bind(userId).run();
+    return;
+  }
+  await db.prepare(
+    `INSERT INTO guild_membership (user_id, guild_code, joined_at)
+     VALUES (?, ?, ?)
+     ON CONFLICT(user_id) DO UPDATE SET guild_code = excluded.guild_code, joined_at = excluded.joined_at`
+  )
+    .bind(userId, guildCode, Date.now())
+    .run();
+}
+
 export async function handleCouncil(
   request: Request,
   env: Env
@@ -37,18 +143,18 @@ export async function handleCouncil(
   }
 
   if (request.method === 'POST' && url.pathname === '/api/v1/council/create') {
-    const body = await request.json() as { name: string };
+    const body = await request.json() as { name: string; guildCode: string };
 
     if (!body.name || body.name.length < 3 || body.name.length > 30) {
       return jsonResponse({ error: 'Council name must be 3-30 characters' }, 400, corsHeaders);
     }
 
+    if (!body.guildCode) {
+      return jsonResponse({ error: 'guildCode required' }, 400, corsHeaders);
+    }
+
     
-    const city = await env.DB.prepare(
-      'SELECT region_id, level FROM cities WHERE user_id = ?'
-    )
-      .bind(userId)
-      .first<{ region_id: string; level: number }>();
+    const city = await getCityForUser(env.DB, userId);
 
     if (!city) {
       return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
@@ -58,23 +164,22 @@ export async function handleCouncil(
       return jsonResponse({ error: 'Council unlocks at city level 10' }, 403, corsHeaders);
     }
 
-    
-    const existing = await env.DB.prepare(
-      'SELECT id FROM councils WHERE region_id = ? LIMIT 1'
+    const archetype = await env.DB.prepare(
+      'SELECT * FROM guild_archetypes WHERE code = ?'
     )
-      .bind(city.region_id)
+      .bind(body.guildCode)
       .first();
 
-    if (existing) {
-      return jsonResponse({ error: 'Council already exists in this region' }, 409, corsHeaders);
+    if (!archetype) {
+      return jsonResponse({ error: 'Unknown guild archetype' }, 404, corsHeaders);
     }
 
     
     const councilId = crypto.randomUUID();
     await env.DB.prepare(
-      'INSERT INTO councils (id, name, steward_user_id, region_id, tax_rate, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+      'INSERT INTO councils (id, name, steward_user_id, region_id, tax_rate, guild_code, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
     )
-      .bind(councilId, body.name, userId, city.region_id, 0.01, Date.now())
+      .bind(councilId, body.name, userId, city.region_id, 0.01, body.guildCode, Date.now())
       .run();
 
     
@@ -83,6 +188,7 @@ export async function handleCouncil(
     )
       .bind(councilId, userId, 'steward', Date.now())
       .run();
+    await syncGuildMembership(env.DB, userId, body.guildCode);
 
     return jsonResponse({ councilId, name: body.name }, 200, corsHeaders);
   }
@@ -108,6 +214,11 @@ export async function handleCouncil(
       .bind(body.councilId, userId, 'member', Date.now())
       .run();
 
+    const council = await env.DB.prepare('SELECT guild_code FROM councils WHERE id = ?').bind(body.councilId).first<{ guild_code: string | null }>();
+    if (council?.guild_code) {
+      await syncGuildMembership(env.DB, userId, council.guild_code);
+    }
+
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
 
@@ -131,6 +242,7 @@ export async function handleCouncil(
     )
       .bind(membership.council_id, userId)
       .run();
+    await syncGuildMembership(env.DB, userId, undefined);
 
     return jsonResponse({ success: true }, 200, corsHeaders);
   }
@@ -162,15 +274,36 @@ export async function handleCouncil(
       return jsonResponse({ error: 'Council unlocks at city level 10' }, 403, corsHeaders);
     }
 
-    const council = await env.DB.prepare(
+    const membership = await env.DB.prepare(
+      'SELECT council_id FROM council_members WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ council_id: string }>();
+
+    let councilQuery = env.DB.prepare(
       `SELECT c.*, u.username as steward_name, 
               COALESCE(c.treasury_balance, 0) as treasury_balance
        FROM councils c
        JOIN users u ON c.steward_user_id = u.id
-       WHERE c.region_id = ?`
-    )
-      .bind(city.region_id)
-      .first();
+       WHERE c.id = ?`
+    );
+
+    let council;
+
+    if (membership) {
+      council = await councilQuery.bind(membership.council_id).first();
+    } else {
+      council = await env.DB.prepare(
+        `SELECT c.*, u.username as steward_name, 
+                COALESCE(c.treasury_balance, 0) as treasury_balance
+         FROM councils c
+         JOIN users u ON c.steward_user_id = u.id
+         WHERE c.region_id = ?
+         ORDER BY c.created_at DESC`
+      )
+        .bind(city.region_id)
+        .first();
+    }
 
     if (!council) {
       return jsonResponse({ council: null }, 200, corsHeaders);
@@ -194,10 +327,25 @@ export async function handleCouncil(
       .bind((council as any).id, 'active')
       .all();
 
+    let guild = null;
+    if ((council as any).guild_code) {
+      guild = await env.DB.prepare('SELECT * FROM guild_archetypes WHERE code = ?')
+        .bind((council as any).guild_code)
+        .first<{ code: string; name: string; description: string; perk_json: string }>();
+    }
+
     return jsonResponse({
       council,
       members: members.results,
       publicWorks: publicWorks.results,
+      guild: guild
+        ? {
+            code: guild.code,
+            name: guild.name,
+            description: guild.description,
+            perks: JSON.parse(guild.perk_json || '{}'),
+          }
+        : null,
     }, 200, corsHeaders);
   }
 
@@ -373,6 +521,115 @@ export async function handleCouncil(
       completionPercentage: result.completionPercentage,
       message: 'Contribution successful'
     }, 200, corsHeaders);
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/council/quests') {
+    const membership = await env.DB.prepare('SELECT council_id FROM council_members WHERE user_id = ?').bind(userId).first<{ council_id: string }>();
+    if (!membership) {
+      return jsonResponse({ error: 'Join a guild to see quests' }, 403, corsHeaders);
+    }
+    const council = await env.DB.prepare('SELECT guild_code FROM councils WHERE id = ?').bind(membership.council_id).first<{ guild_code: string | null }>();
+    if (!council?.guild_code) {
+      return jsonResponse({ quests: [] }, 200, corsHeaders);
+    }
+    const quests = await env.DB.prepare('SELECT * FROM guild_quests WHERE guild_code = ? AND is_active = 1').bind(council.guild_code).all();
+    const progressRows = await env.DB.prepare('SELECT * FROM guild_quest_progress WHERE user_id = ?').bind(userId).all();
+    const progressMap: Record<string, any> = {};
+    for (const row of progressRows.results as any[]) {
+      progressMap[row.quest_id] = row;
+    }
+    const formatted = (quests.results as any[]).map((quest) => ({
+      id: quest.id,
+      guildCode: quest.guild_code,
+      title: quest.title,
+      description: quest.description,
+      requirement: JSON.parse(quest.requirement_json || '{}'),
+      reward: JSON.parse(quest.reward_json || '{}'),
+      status: progressMap[quest.id]?.status || 'active',
+      progress: progressMap[quest.id]?.progress || 0,
+    }));
+    return jsonResponse({ quests: formatted }, 200, corsHeaders);
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/v1/council/quests/contribute') {
+    const body = await request.json() as { questId: string; amount?: number };
+    if (!body.questId) {
+      return jsonResponse({ error: 'questId required' }, 400, corsHeaders);
+    }
+    const membership = await env.DB.prepare('SELECT council_id FROM council_members WHERE user_id = ?').bind(userId).first<{ council_id: string }>();
+    if (!membership) {
+      return jsonResponse({ error: 'Join a guild to contribute' }, 403, corsHeaders);
+    }
+    const council = await env.DB.prepare('SELECT guild_code FROM councils WHERE id = ?').bind(membership.council_id).first<{ guild_code: string | null }>();
+    if (!council?.guild_code) {
+      return jsonResponse({ error: 'Council is not aligned to a guild archetype yet' }, 400, corsHeaders);
+    }
+    const city = await getCityForUser(env.DB, userId);
+    if (!city) {
+      return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
+    }
+    const quest = await env.DB.prepare('SELECT * FROM guild_quests WHERE id = ?').bind(body.questId).first<{ guild_code: string; requirement_json: string; reward_json: string }>();
+    if (!quest || quest.guild_code !== council.guild_code) {
+      return jsonResponse({ error: 'Quest not found for your guild' }, 404, corsHeaders);
+    }
+    const requirement = JSON.parse(quest.requirement_json || '{}');
+    if (!requirement.resource || !requirement.amount) {
+      return jsonResponse({ error: 'Quest configuration invalid' }, 500, corsHeaders);
+    }
+    const resource = await env.DB.prepare(
+      `SELECT cr.amount, r.id as resource_id FROM city_resources cr
+       JOIN resources r ON cr.resource_id = r.id
+       WHERE cr.city_id = ? AND r.code = ?`
+    )
+      .bind(city.id, requirement.resource)
+      .first<{ amount: number; resource_id: string }>();
+    const contribution = Math.min(requirement.amount, Math.max(0, body.amount || requirement.amount));
+    if (!resource || resource.amount < contribution) {
+      return jsonResponse({ error: 'Insufficient resources' }, 400, corsHeaders);
+    }
+    let progress = await env.DB.prepare('SELECT * FROM guild_quest_progress WHERE quest_id = ? AND user_id = ?')
+      .bind(body.questId, userId)
+      .first<{ id: string; progress: number; status: string }>();
+    if (progress && progress.status === 'claimed') {
+      return jsonResponse({ error: 'Quest already claimed' }, 400, corsHeaders);
+    }
+    const target = requirement.amount;
+    const currentProgress = progress ? progress.progress : 0;
+    if (currentProgress >= target) {
+      return jsonResponse({ error: 'Quest already completed' }, 400, corsHeaders);
+    }
+    const allowableContribution = Math.min(contribution, target - currentProgress);
+    await env.DB.prepare('UPDATE city_resources SET amount = amount - ? WHERE city_id = ? AND resource_id = ?')
+      .bind(allowableContribution, city.id, resource.resource_id)
+      .run();
+    if (progress) {
+      await env.DB.prepare('UPDATE guild_quest_progress SET progress = progress + ?, status = ?, updated_at = ? WHERE id = ?')
+        .bind(
+          allowableContribution,
+          currentProgress + allowableContribution >= target ? 'claimed' : 'active',
+          Date.now(),
+          progress.id
+        )
+        .run();
+    } else {
+      await env.DB.prepare('INSERT INTO guild_quest_progress (id, quest_id, user_id, progress, status, updated_at) VALUES (?, ?, ?, ?, ?, ?)')
+        .bind(
+          crypto.randomUUID(),
+          body.questId,
+          userId,
+          allowableContribution,
+          allowableContribution >= target ? 'claimed' : 'active',
+          Date.now()
+        )
+        .run();
+      progress = await env.DB.prepare('SELECT * FROM guild_quest_progress WHERE quest_id = ? AND user_id = ?')
+        .bind(body.questId, userId)
+        .first();
+    }
+    if ((progress?.progress || 0) >= target) {
+      await grantGuildRewards(env, userId, city.id, JSON.parse(quest.reward_json || '{}'));
+    }
+    return jsonResponse({ success: true, progress: Math.min(target, (progress?.progress || 0)), target }, 200, corsHeaders);
   }
 
   if (request.method === 'POST' && url.pathname === '/api/v1/council/treasury/withdraw') {
