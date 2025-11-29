@@ -1,0 +1,54 @@
+{
+  "daily": [
+    {
+      "code": "daily_food_collection",
+      "title": "Harvest Supplies",
+      "description": "Deliver 500 FOOD to the capital storehouses.",
+      "type": "resource_delivery",
+      "resource": "FOOD",
+      "amount": 500,
+      "reward": { "coins": 200, "gems": 2 }
+    },
+    {
+      "code": "daily_wood_logistics",
+      "title": "Timber Logistics",
+      "description": "Ship 400 WOOD along your routes.",
+      "type": "resource_delivery",
+      "resource": "WOOD",
+      "amount": 400,
+      "reward": { "coins": 250, "gems": 2 }
+    },
+    {
+      "code": "daily_stone_support",
+      "title": "Stone for Public Works",
+      "description": "Provide 350 STONE to support realm projects.",
+      "type": "resource_delivery",
+      "resource": "STONE",
+      "amount": 350,
+      "reward": { "coins": 220, "gems": 1 }
+    }
+  ],
+  "weekly": [
+    {
+      "code": "weekly_capital_fortifications",
+      "title": "Capital Fortifications",
+      "description": "Deliver 2500 STONE to bolster the capital walls.",
+      "type": "resource_delivery",
+      "resource": "STONE",
+      "amount": 2500,
+      "reward": { "coins": 1500, "gems": 10 }
+    },
+    {
+      "code": "weekly_grain_reserves",
+      "title": "Realm Grain Reserves",
+      "description": "Contribute 3000 FOOD for the realm reserves.",
+      "type": "resource_delivery",
+      "resource": "FOOD",
+      "amount": 3000,
+      "reward": { "coins": 1800, "gems": 12 }
+    }
+  ]
+}
+
+
+

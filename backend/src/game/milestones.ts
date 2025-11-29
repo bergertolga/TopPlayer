@@ -6,6 +6,9 @@ export interface MilestoneReward {
 
 export interface MilestoneDefinition {
   type: string;
+  title: string;
+  description: string;
+  targetValue?: number;
   checkValue: (value: number) => boolean;
   getReward: (value: number) => MilestoneReward;
 }
@@ -13,46 +16,55 @@ export interface MilestoneDefinition {
 const MILESTONE_DEFINITIONS: Record<string, MilestoneDefinition> = {
   city_level_5: {
     type: 'city_level_5',
+    title: 'Growing Town',
+    description: 'Reach City Level 5 to unlock key infrastructure.',
+    targetValue: 5,
     checkValue: (level) => level >= 5,
     getReward: () => ({ coins: 500, gems: 10 }),
   },
   city_level_10: {
     type: 'city_level_10',
+    title: 'Thriving City',
+    description: 'Reach City Level 10 and prepare for regional play.',
+    targetValue: 10,
     checkValue: (level) => level >= 10,
     getReward: () => ({ coins: 2000, gems: 25 }),
   },
   city_level_15: {
     type: 'city_level_15',
+    title: 'Metropolis',
+    description: 'Reach City Level 15 to command the realm economy.',
+    targetValue: 15,
     checkValue: (level) => level >= 15,
     getReward: () => ({ coins: 5000, gems: 50 }),
   },
-  hero_level_10: {
-    type: 'hero_level_10',
-    checkValue: (level) => level >= 10,
-    getReward: () => ({ coins: 300, gems: 5 }),
-  },
-  hero_level_20: {
-    type: 'hero_level_20',
-    checkValue: (level) => level >= 20,
-    getReward: () => ({ coins: 1000, gems: 15 }),
-  },
   first_market_trade: {
     type: 'first_market_trade',
+    title: 'Market Debut',
+    description: 'Complete your first market trade.',
     checkValue: () => true,
     getReward: () => ({ coins: 200, gems: 3 }),
   },
   first_route: {
     type: 'first_route',
+    title: 'Logistics Launch',
+    description: 'Start your first trade route.',
     checkValue: () => true,
     getReward: () => ({ coins: 150, gems: 2 }),
   },
   warehouse_level_5: {
     type: 'warehouse_level_5',
+    title: 'Storage Upgrade I',
+    description: 'Upgrade your warehouse to level 5.',
+    targetValue: 5,
     checkValue: (level) => level >= 5,
     getReward: () => ({ coins: 400, gems: 8 }),
   },
   warehouse_level_10: {
     type: 'warehouse_level_10',
+    title: 'Storage Upgrade II',
+    description: 'Upgrade your warehouse to level 10.',
+    targetValue: 10,
     checkValue: (level) => level >= 10,
     getReward: () => ({ coins: 1500, gems: 20 }),
   },
@@ -101,6 +113,18 @@ export class MilestoneSystem {
         reward.coins || 0,
         reward.gems || 0,
         reward.resources ? JSON.stringify(reward.resources) : null
+      )
+      .run();
+
+    await db.prepare(
+      'INSERT INTO analytics_events (id, user_id, event_type, event_data, created_at) VALUES (?, ?, ?, ?, ?)'
+    )
+      .bind(
+        crypto.randomUUID(),
+        userId,
+        'milestone_achieved',
+        JSON.stringify({ milestoneType, reward }),
+        now
       )
       .run();
 
@@ -227,6 +251,22 @@ export class MilestoneSystem {
       .run();
 
     return { success: true };
+  }
+
+  static listDefinitions(): Array<{
+    type: string;
+    title: string;
+    description: string;
+    targetValue?: number;
+    reward: MilestoneReward;
+  }> {
+    return Object.values(MILESTONE_DEFINITIONS).map((definition) => ({
+      type: definition.type,
+      title: definition.title,
+      description: definition.description,
+      targetValue: definition.targetValue,
+      reward: definition.getReward(definition.targetValue ?? 0),
+    }));
   }
 }
 

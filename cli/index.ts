@@ -39,6 +39,7 @@ interface City {
   name: string;
   level: number;
   population: number;
+  region_id: string;
   region_name: string;
 }
 
@@ -90,6 +91,7 @@ const RESOURCE_METADATA: Record<string, { name: string; type: string; descriptio
   GEMS: { name: 'Gems', type: 'special', description: 'Precious stones' },
   MANA: { name: 'Mana', type: 'special', description: 'Magical energy' },
   COINS: { name: 'Coins', type: 'special', description: 'Currency' },
+  RATIONS: { name: 'Rations', type: 'consumable', description: 'Long-lasting provisions for troops' },
 };
 
 // State
@@ -103,6 +105,13 @@ let gameState: GameState = {
 };
 let premiumSnapshot: PremiumSnapshot | null = null;
 let capitalSnapshot: CapitalSnapshot | null = null;
+let milestoneSnapshot: any = null;
+const AUTO_COLLECT_INTERVAL_MS = 30000;
+let autoCollectEnabled = false;
+let autoCollectTimer: NodeJS.Timeout | null = null;
+let autoCollectInFlight = false;
+const MAX_NOTIFICATIONS = 5;
+let notificationQueue: string[] = [];
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -140,6 +149,14 @@ const formatRequirement = (label: string, have: number, need: number) => {
   const delta = need - have;
   const status = delta <= 0 ? 'ready' : `need ${formatNumber(delta)}`;
   return `${label}: ${formatNumber(have)}/${formatNumber(need)} (${status})`;
+};
+
+const pushNotification = (message: string) => {
+  const stamp = new Date().toLocaleTimeString();
+  notificationQueue.unshift(`[${stamp}] ${message}`);
+  if (notificationQueue.length > MAX_NOTIFICATIONS) {
+    notificationQueue = notificationQueue.slice(0, MAX_NOTIFICATIONS);
+  }
 };
 
 async function selectContractId(contracts: any[]): Promise<string | null> {
@@ -323,7 +340,11 @@ async function refreshState() {
   gameState.buildings = data.buildings;
   gameState.buildingCatalog = data.buildingCatalog || [];
 
-  await Promise.all([refreshPremiumSnapshot(), refreshCapitalSnapshot()]);
+  await Promise.all([
+    refreshPremiumSnapshot(),
+    refreshCapitalSnapshot(),
+  ]);
+  await refreshMilestoneSnapshot();
     return true;
   }
 
@@ -341,7 +362,14 @@ async function refreshCapitalSnapshot() {
   }
 }
 
-async function collectResources() {
+async function refreshMilestoneSnapshot() {
+  const snapshot = await apiCall('/api/v1/city/milestones');
+  if (snapshot) {
+    milestoneSnapshot = snapshot;
+  }
+}
+
+async function collectResources(suppressNotification: boolean = false) {
   console.log('Collecting resources...');
   const result = await apiCall('/api/v1/city/collect', 'POST', {});
   if (result) {
@@ -351,9 +379,83 @@ async function collectResources() {
       Object.entries(result.collected).forEach(([res, amount]) => {
         console.log(`+${formatNumber(amount as number)} ${res}`);
       });
+      if (!suppressNotification) {
+        const summary = Object.entries(result.collected)
+          .slice(0, 3)
+          .map(([res, amount]) => `${formatNumber(amount as number)} ${res}`)
+          .join(', ');
+        pushNotification(`Collected ${summary || 'resources'}.`);
+      }
+    } else if (!suppressNotification) {
+      pushNotification('Collected resources from city.');
     }
   }
   await refreshState();
+}
+
+function scheduleAutoCollectCycle() {
+  if (!autoCollectEnabled) {
+    return;
+  }
+  if (autoCollectTimer) {
+    clearTimeout(autoCollectTimer);
+  }
+  autoCollectTimer = setTimeout(() => {
+    void runAutoCollectCycle();
+  }, AUTO_COLLECT_INTERVAL_MS);
+}
+
+async function runAutoCollectCycle() {
+  if (!autoCollectEnabled) {
+    return;
+  }
+  if (autoCollectInFlight) {
+    scheduleAutoCollectCycle();
+    return;
+  }
+
+  autoCollectInFlight = true;
+  try {
+    console.log(`\n[${new Date().toLocaleTimeString()}] Auto-collecting...`);
+    await collectResources(true);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Auto collect failed: ${message}`);
+  } finally {
+    autoCollectInFlight = false;
+    scheduleAutoCollectCycle();
+  }
+}
+
+function enableAutoCollect() {
+  if (autoCollectEnabled) {
+    console.log('Auto collect is already enabled.');
+    return;
+  }
+  autoCollectEnabled = true;
+  console.log(`Auto collect enabled. Collecting every ${AUTO_COLLECT_INTERVAL_MS / 1000} seconds.`);
+  void runAutoCollectCycle();
+}
+
+function disableAutoCollect() {
+  if (!autoCollectEnabled) {
+    console.log('Auto collect is already disabled.');
+    return;
+  }
+  autoCollectEnabled = false;
+  if (autoCollectTimer) {
+    clearTimeout(autoCollectTimer);
+    autoCollectTimer = null;
+  }
+  console.log('Auto collect disabled.');
+}
+
+function toggleAutoCollectSetting() {
+  if (autoCollectEnabled) {
+    disableAutoCollect();
+  } else {
+    enableAutoCollect();
+  }
 }
 
 async function upgradeBuilding() {
@@ -453,26 +555,175 @@ async function viewArmy() {
 }
 
 async function viewRoutes() {
+  while (true) {
     console.log('\n--- Trade Routes ---');
     const data = await apiCall('/api/v1/routes');
-    if (data && data.routes) {
-        if (data.routes.length === 0) {
-            console.log('No active trade routes.');
-        } else {
-            data.routes.forEach((r: any) => {
-                if (r.in_transit_qty > 0) {
-                    const arrival = new Date(r.arrival_at).toLocaleTimeString();
-                    console.log(`Route to ${r.to_region_name} (${r.destination_city_name || 'Unknown City'}) - ${r.resource_name}`);
-                    console.log(`   In transit: ${formatNumber(r.in_transit_qty)} arriving at ${arrival}`);
-                } else {
-                    const nextDept = new Date(r.next_departure).toLocaleTimeString();
-                    console.log(`Route to ${r.to_region_name} (${r.destination_city_name || 'Unknown City'}) - ${r.resource_name}`);
-                    console.log(`   Next departure: ${nextDept}`);
-                }
-            });
-        }
+    if (data?.error) {
+      console.log(data.error);
+      await question('\nPress Enter to return...');
+      return;
     }
-    await question('\nPress Enter to continue...');
+    const routes = data?.routes || [];
+    if (!routes.length) {
+      console.log('No active trade routes.');
+    } else {
+      routes.forEach((r: any, idx: number) => {
+        const label = `${idx + 1}. Route to ${r.to_region_name} (${r.destination_city_name || 'Unknown City'}) - ${r.resource_name}`;
+        console.log(label);
+        if (r.in_transit_qty > 0 && r.arrival_at) {
+          const arrival = new Date(r.arrival_at).toLocaleTimeString();
+          console.log(`   In transit: ${formatNumber(r.in_transit_qty)} arriving at ${arrival}`);
+        } else {
+          const nextDept = new Date(r.next_departure).toLocaleTimeString();
+          console.log(`   Next departure: ${nextDept}`);
+        }
+      });
+    }
+
+    console.log('\nOptions:');
+    console.log('1. Create trade route');
+    console.log('2. Cancel trade route');
+    console.log('R. Refresh');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    if (choice === '0') {
+      return;
+    }
+    if (choice === '1') {
+      await createRouteFlow();
+      continue;
+    }
+    if (choice === '2') {
+      await cancelRouteFlow(routes);
+      continue;
+    }
+    if (choice.toLowerCase() === 'r') {
+      continue;
+    }
+    console.log('Invalid option.');
+  }
+}
+
+async function createRouteFlow() {
+  if (!gameState.city) {
+    await refreshState();
+  }
+  if (!gameState.city || !gameState.city.region_id) {
+    console.log('City data unavailable. Try refreshing first.');
+    return;
+  }
+
+  const regionsData = await apiCall('/api/v1/realm/regions');
+  const regions = regionsData?.regions || [];
+  if (!regions.length) {
+    console.log('No region data available.');
+    return;
+  }
+
+  const destinationRegions = regions.filter((region: any) => region.id !== gameState.city?.region_id);
+  if (!destinationRegions.length) {
+    console.log('No destination regions available yet.');
+    return;
+  }
+
+  console.log('\nAvailable destination regions:');
+  destinationRegions.forEach((region: any, idx: number) => {
+    console.log(`${idx + 1}. ${region.name} (Tier ${region.tier})`);
+  });
+  const regionChoice = parseInt(await question('Select destination region number: '), 10) - 1;
+  if (Number.isNaN(regionChoice) || regionChoice < 0 || regionChoice >= destinationRegions.length) {
+    console.log('Invalid region selection.');
+    return;
+  }
+  const selectedRegion = destinationRegions[regionChoice];
+
+  const destinationData = await apiCall(
+    `/api/v1/routes/destinations?regionId=${encodeURIComponent(selectedRegion.id)}`
+  );
+  const destinations = destinationData?.destinations || [];
+  if (!destinations.length) {
+    console.log('No partner cities available in that region.');
+    return;
+  }
+
+  console.log('\nPartner cities:');
+  destinations.forEach((city: any, idx: number) => {
+    console.log(`${idx + 1}. ${city.name} (Lvl ${city.level}) - Steward ${city.owner_name || 'Unknown'}`);
+  });
+  const destinationChoice = parseInt(await question('Select destination city number: '), 10) - 1;
+  if (
+    Number.isNaN(destinationChoice) ||
+    destinationChoice < 0 ||
+    destinationChoice >= destinations.length
+  ) {
+    console.log('Invalid city selection.');
+    return;
+  }
+  const destinationCity = destinations[destinationChoice];
+
+  if (gameState.resources.length) {
+    console.log('\nYour resources:');
+    gameState.resources.forEach((res) => {
+      console.log(`- ${res.code}: ${formatNumber(res.amount)}`);
+    });
+  }
+
+  const resourceCode = (await question('Resource code to ship (e.g., WOOD): ')).trim().toUpperCase();
+  if (!resourceCode) {
+    console.log('Resource code required.');
+    return;
+  }
+
+  const qty = parseInt(await question('Quantity per trip: '), 10);
+  if (Number.isNaN(qty) || qty <= 0) {
+    console.log('Quantity must be a positive number.');
+    return;
+  }
+
+  const payload = {
+    fromRegion: gameState.city.region_id,
+    toRegion: selectedRegion.id,
+    resource: resourceCode,
+    qtyPerTrip: qty,
+    destinationCityId: destinationCity.id,
+  };
+
+  const result = await apiCall('/api/v1/routes/create', 'POST', payload);
+  if (result?.error) {
+    console.log(result.error);
+    return;
+  }
+
+  console.log('Trade route created successfully.');
+  await refreshState();
+}
+
+async function cancelRouteFlow(routes: any[]) {
+  if (!routes.length) {
+    console.log('No active routes to cancel.');
+    return;
+  }
+
+  const selection = await question('Enter route number or ID to cancel: ');
+  const trimmed = selection.trim();
+  if (!trimmed) {
+    console.log('No selection provided.');
+    return;
+  }
+
+  let routeId = trimmed;
+  const numeric = parseInt(trimmed, 10);
+  if (!Number.isNaN(numeric) && numeric >= 1 && numeric <= routes.length) {
+    routeId = routes[numeric - 1].id;
+  } else {
+    const matchedRoute = routes.find((route: any) => route.id === trimmed);
+    if (matchedRoute) {
+      routeId = matchedRoute.id;
+    }
+  }
+
+  await apiCall('/api/v1/routes/cancel', 'POST', { routeId });
+  console.log('Route cancelled.');
 }
 
 async function levelUpCity() {
@@ -496,21 +747,6 @@ async function levelUpCity() {
     await refreshState();
 }
 
-async function autoPlay() {
-    console.log('\n--- Auto Play Mode ---');
-    console.log('Press Ctrl+C to stop.');
-    
-    while (true) {
-        console.log(`\n[${new Date().toLocaleTimeString()}] Auto-collecting...`);
-        await collectResources();
-        // Also try to upgrade cheapest building if affordable? 
-        // For now, just collect.
-        
-        console.log('Waiting 30 seconds...');
-        await new Promise(resolve => setTimeout(resolve, 30000));
-    }
-}
-
 async function councilHub() {
   while (true) {
     console.log('\n--- Council Hub ---');
@@ -526,12 +762,19 @@ async function councilHub() {
     } else {
       console.log('You are not part of a council.');
     }
+    const cityLevel = gameState.city?.level || 1;
+    if (cityLevel < 10) {
+      console.log(`(Council creation unlocks at City Level 10. Current level: ${cityLevel})`);
+    }
     console.log('\nOptions:');
     console.log('1. List councils');
     console.log('2. Join council');
-    console.log('3. Leave council');
-    console.log('4. View chat');
-    console.log('5. Send message');
+    console.log('3. Create council');
+    console.log('4. Leave council');
+    console.log('5. View chat');
+    console.log('6. Send message');
+    console.log('7. View guild quests');
+    console.log('8. Contribute to guild quest');
     console.log('0. Back');
     const choice = await question('Select option: ');
     if (choice === '0') break;
@@ -552,16 +795,49 @@ async function councilHub() {
       const id = await question('Enter council ID to join: ');
       if (id.trim()) {
         await apiCall('/api/v1/council/join', 'POST', { councilId: id.trim() });
+        await refreshState();
       }
       continue;
     }
 
     if (choice === '3') {
-      await apiCall('/api/v1/council/leave', 'POST', {});
+      if (cityLevel < 10) {
+        console.log('You must reach City Level 10 before creating a council.');
+        continue;
+      }
+      const guilds = await apiCall('/api/v1/guilds');
+      if (guilds?.guilds?.length) {
+        console.log('\nSelect a guild archetype:');
+        guilds.guilds.forEach((guild: any) => {
+          const perks = Object.entries(guild.perks || {})
+            .map(([key, val]) => `${key}: ${val}`)
+            .join(', ');
+          console.log(`- ${guild.code}: ${guild.name}${perks ? ` (${perks})` : ''}`);
+        });
+      } else {
+        console.log('No guild archetypes configured. Creation requires a valid archetype code.');
+      }
+      const name = await question('Council name: ');
+      const guildCode = await question('Guild archetype code: ');
+      if (name.trim() && guildCode.trim()) {
+        await apiCall('/api/v1/council/create', 'POST', {
+          name: name.trim(),
+          guildCode: guildCode.trim().toUpperCase(),
+        });
+        await refreshState();
+      } else {
+        console.log('Council name and guild code are required.');
+      }
       continue;
     }
 
     if (choice === '4') {
+      await apiCall('/api/v1/council/leave', 'POST', {});
+      await refreshState();
+      continue;
+    }
+
+    if (choice === '5') {
       const chat = await apiCall('/api/v1/council/chat');
       if (chat?.messages?.length) {
         chat.messages.slice().reverse().forEach((msg: any) => {
@@ -575,11 +851,51 @@ async function councilHub() {
       continue;
     }
 
-    if (choice === '5') {
+    if (choice === '6') {
       const content = await question('Message: ');
       if (content.trim()) {
         await apiCall('/api/v1/council/chat', 'POST', { message: content.trim() });
       }
+      continue;
+    }
+
+    if (choice === '7') {
+      const quests = await apiCall('/api/v1/council/quests');
+      console.log('\n--- Guild Quests ---');
+      if (quests?.quests?.length) {
+        quests.quests.forEach((quest: any) => {
+          const remaining = (quest.requirement.amount || 0) - (quest.progress || 0);
+          console.log(`${quest.id} - ${quest.title} [${quest.status}]`);
+          console.log(`   ${quest.description}`);
+          console.log(
+            `   Requirement: ${formatNumber(quest.requirement.amount)} ${quest.requirement.resource}`
+          );
+          console.log(
+            `   Progress: ${formatNumber(quest.progress || 0)} / ${formatNumber(
+              quest.requirement.amount
+            )} (Remaining ${formatNumber(Math.max(0, remaining))})`
+          );
+        });
+      } else {
+        console.log('No guild quests active right now.');
+      }
+      await question('\nPress Enter to continue...');
+      continue;
+    }
+
+    if (choice === '8') {
+      const questId = await question('Quest ID: ');
+      if (!questId.trim()) {
+        console.log('Quest ID required.');
+        continue;
+      }
+      const amountInput = await question('Contribution amount (press Enter for max): ');
+      const amount = amountInput.trim() ? parseInt(amountInput, 10) : undefined;
+      await apiCall('/api/v1/council/quests/contribute', 'POST', {
+        questId: questId.trim(),
+        amount,
+      });
+      await refreshState();
       continue;
     }
   }
@@ -687,6 +1003,18 @@ async function premiumMenu() {
         if (bundle.description) {
           console.log(`   ${bundle.description}`);
         }
+        if (bundle.iapProductId) {
+          console.log(`   Cash Product: ${bundle.iapProductId}`);
+        }
+        if (bundle.contents) {
+          const parts = Object.entries(bundle.contents)
+            .filter(([, value]) => typeof value === 'number')
+            .map(([key, value]) => `${key}: ${formatNumber(value as number)}`)
+            .join(', ');
+          if (parts) {
+            console.log(`   Contents: ${parts}`);
+          }
+        }
       });
     } else {
       console.log('\nNo bundles available.');
@@ -694,17 +1022,251 @@ async function premiumMenu() {
 
     console.log('\nOptions:');
     console.log('1. Claim daily stipend');
-    console.log('2. Purchase bundle');
+    console.log('2. Purchase bundle with Crowns');
+    console.log('3. Purchase bundle with cash');
     console.log('0. Back');
     const choice = await question('Select option: ');
     if (choice === '0') break;
     if (choice === '1') {
       await apiCall('/api/v1/premium/stipend', 'POST', {});
     } else if (choice === '2') {
-      const bundleCode = await selectBundleCode(bundles);
-      if (bundleCode) {
-        await apiCall('/api/v1/shop/purchase', 'POST', { bundleCode });
-        await refreshState();
+      await purchaseBundleWithCrowns(bundles);
+    } else if (choice === '3') {
+      await purchaseBundleWithCash(bundles);
+    }
+  }
+}
+
+async function purchaseBundleWithCrowns(bundles: any[]) {
+  const bundleCode = await selectBundleCode(bundles);
+  if (!bundleCode) {
+    return;
+  }
+  await apiCall('/api/v1/shop/purchase', 'POST', { bundleCode, paymentMethod: 'crowns' });
+  await refreshState();
+}
+
+async function purchaseBundleWithCash(bundles: any[]) {
+  const bundleCode = await selectBundleCode(bundles);
+  if (!bundleCode) {
+    return;
+  }
+  const bundle = bundles.find((b: any) => b.code === bundleCode);
+  if (!bundle?.iapProductId) {
+    console.log('That bundle is not available for cash purchases yet.');
+    return;
+  }
+  const confirm = await question(
+    `Verify real-money purchase for ${bundle.name}? (y/n): `
+  );
+  if (confirm.toLowerCase() !== 'y') {
+    return;
+  }
+  const transactionId = (await question('Transaction ID: ')).trim();
+  if (!transactionId) {
+    console.log('Transaction ID is required.');
+    return;
+  }
+  const receiptDataRaw = await question('Receipt data (press Enter to skip): ');
+  const amountInput = await question('Amount paid (USD, optional): ');
+  const parsedAmount = amountInput.trim() ? parseFloat(amountInput.trim()) : undefined;
+
+  await apiCall('/api/v1/shop/purchase', 'POST', {
+    bundleCode,
+    paymentMethod: 'cash',
+    transactionId,
+    receiptData: receiptDataRaw.trim() ? receiptDataRaw.trim() : undefined,
+    amount:
+      typeof parsedAmount === 'number' && Number.isFinite(parsedAmount)
+        ? parsedAmount
+        : undefined,
+  });
+  await refreshState();
+}
+
+function formatRewardSummary(reward: any): string {
+  const parts: string[] = [];
+  if (reward?.coins) parts.push(`${formatNumber(reward.coins)} Coins`);
+  if (reward?.gems) parts.push(`${formatNumber(reward.gems)} Gems`);
+  if (reward?.resources) {
+    Object.entries(reward.resources).forEach(([code, amount]) => {
+      parts.push(`${formatNumber(amount as number)} ${code}`);
+    });
+  }
+  return parts.length ? parts.join(', ') : 'No reward';
+}
+
+async function milestonesMenu() {
+  while (true) {
+    const data = await apiCall('/api/v1/city/milestones');
+    if (!data) {
+      console.log('Unable to load milestone data.');
+      await question('\nPress Enter to return...');
+      return;
+    }
+    milestoneSnapshot = data;
+
+    const completedSet = new Set(
+      (data.completed || []).map((m: any) => m.milestone_type)
+    );
+
+    const pendingDefinitions = (data.definitions || []).filter(
+      (def: any) => !completedSet.has(def.type)
+    );
+
+    console.log('\n=== Milestones & Goals ===');
+    console.log(`City Level: ${data.cityLevel || gameState.city?.level || 'Unknown'}`);
+
+    if (pendingDefinitions.length) {
+      console.log('\n-- Upcoming Milestones --');
+      pendingDefinitions.forEach((def: any, idx: number) => {
+        const targetLabel = def.targetValue ? ` (Target: ${def.targetValue})` : '';
+        console.log(`${idx + 1}. ${def.title}${targetLabel}`);
+        console.log(`   ${def.description}`);
+        console.log(`   Reward: ${formatRewardSummary(def.reward)}`);
+      });
+    } else {
+      console.log('\nAll milestones completed! New ones will appear in future updates.');
+    }
+
+    if (data.completed?.length) {
+      console.log('\n-- Completed Milestones --');
+      data.completed.slice(0, 10).forEach((m: any) => {
+        const claimed = m.claimed_at ? 'Claimed' : 'Unclaimed';
+        const achievedAt = new Date(m.achieved_at).toLocaleDateString();
+        console.log(`- ${m.milestone_type} (${claimed}) on ${achievedAt} ${m.claimed_at ? '' : '[ID: ' + m.id + ']'}`);
+      });
+      if (data.completed.length > 10) {
+        console.log(`...and ${data.completed.length - 10} more`);
+      }
+    }
+
+    console.log('\nOptions:');
+    console.log('C. Claim Reward');
+    console.log('R. Refresh');
+    console.log('0. Back');
+    const choice = await question('Select option: ');
+    
+    if (choice.trim().toLowerCase() === '0') {
+      return;
+    }
+    if (choice.trim().toLowerCase() === 'r') {
+      continue;
+    }
+    if (choice.trim().toLowerCase() === 'c') {
+      const unclaimed = (data.completed || []).filter((m: any) => !m.claimed_at);
+      if (unclaimed.length === 0) {
+        console.log('No unclaimed milestones.');
+        continue;
+      }
+      
+      const id = await question('Enter Milestone ID to claim: ');
+      if (id.trim()) {
+        const result = await apiCall('/api/v1/city/milestones/claim', 'POST', { milestoneId: id.trim() });
+        if (result && result.success) {
+          console.log('Reward claimed successfully!');
+          await refreshState();
+        } else {
+          console.log(`Claim failed: ${result?.error || 'Unknown error'}`);
+        }
+      }
+      continue;
+    }
+  }
+}
+
+async function questsMenu() {
+  while (true) {
+    const data = await apiCall('/api/v1/quests');
+    if (!data) {
+      console.log('Unable to load quests right now.');
+      await question('\nPress Enter to return...');
+      return;
+    }
+
+    const questEntries: Array<{ label: string; quest: any }> = [];
+    let counter = 1;
+
+    const renderGroup = (items: any[], label: string) => {
+      if (!items?.length) return;
+      console.log(`\n-- ${label} --`);
+      items.forEach((quest: any) => {
+        const remaining = Math.max(0, (quest.requirement?.amount || 0) - (quest.progress || 0));
+        const statusLabel = quest.status === 'completed' ? 'Completed' : `In Progress (${formatNumber(quest.progress || 0)}/${formatNumber(quest.requirement?.amount || 0)})`;
+        console.log(
+          `${counter}. ${quest.title} [${statusLabel}]`
+        );
+        console.log(`   ${quest.description}`);
+        if (quest.requirement?.resource) {
+          console.log(`   Target: ${formatNumber(quest.requirement.amount)} ${quest.requirement.resource}`);
+        }
+        console.log(`   Reward: ${formatRewardSummary(quest.reward)}`);
+        questEntries.push({ label: `${counter}`, quest });
+        counter += 1;
+      });
+    };
+
+    renderGroup(data.daily, 'Daily Quests');
+    renderGroup(data.weekly, 'Weekly Quests');
+
+    if (!questEntries.length) {
+      console.log('\nNo active quests at the moment. Check back soon!');
+      await question('\nPress Enter to return...');
+      return;
+    }
+
+    const choice = await question('\nSelect quest number to contribute, R to refresh, or 0 to back: ');
+    const trimmed = choice.trim().toLowerCase();
+    if (trimmed === '0') {
+      return;
+    }
+    if (trimmed === 'r') {
+      continue;
+    }
+
+    const selection = parseInt(trimmed, 10);
+    if (Number.isNaN(selection) || selection < 1 || selection > questEntries.length) {
+      console.log('Invalid selection.');
+      continue;
+    }
+
+    const quest = questEntries[selection - 1].quest;
+    if (quest.status !== 'active') {
+      console.log('That quest is already completed or unavailable.');
+      continue;
+    }
+
+    const remaining = Math.max(0, (quest.requirement?.amount || 0) - (quest.progress || 0));
+    if (remaining <= 0) {
+      console.log('Quest already complete.');
+      continue;
+    }
+
+    const amountAnswer = await question(
+      `Amount to contribute (press Enter for ${formatNumber(remaining)}): `
+    );
+    const amount = amountAnswer.trim() ? parseInt(amountAnswer.trim(), 10) : remaining;
+    if (!amount || amount <= 0) {
+      console.log('Contribution must be a positive number.');
+      continue;
+    }
+
+    const result = await apiCall('/api/v1/quests/turn-in', 'POST', {
+      questId: quest.id,
+      amount,
+    });
+
+    if (result?.error) {
+      console.log(result.error);
+    } else {
+      console.log('Contribution recorded.');
+      const delta = result.quest?.delta || amount;
+      const resourceLabel = quest.requirement?.resource || '';
+      pushNotification(
+        `Contributed ${formatNumber(delta)} ${resourceLabel} to ${quest.title}`
+      );
+      if (result.quest?.status === 'completed') {
+        pushNotification(`${quest.title} completed!`);
       }
     }
   }
@@ -721,7 +1283,7 @@ async function cityOperationsMenu() {
     console.log('6. Building Details');
     console.log('7. Resource & Price Insights');
     console.log('8. Level Up City');
-    console.log('9. Auto Play (Collect Loop)');
+    console.log(`9. ${autoCollectEnabled ? 'Disable' : 'Enable'} Auto Collect (30s)`);
     console.log('0. Back');
     const choice = await question('Select option: ');
     switch (choice) {
@@ -750,7 +1312,7 @@ async function cityOperationsMenu() {
         await levelUpCity();
         break;
       case '9':
-        await autoPlay();
+        toggleAutoCollectSetting();
         break;
       case '0':
         return;
@@ -1085,99 +1647,37 @@ async function worldEventsMenu() {
 
 async function guildHubMenu() {
   while (true) {
-    const [archetypes, councilInfo] = await Promise.all([
-      apiCall('/api/v1/guilds'),
-      apiCall('/api/v1/council'),
-    ]);
-
-    const currentGuild = councilInfo?.council;
-    console.log('\n--- Guild Hub ---');
-    if (currentGuild) {
-      console.log(`Guild: ${currentGuild.name} (${councilInfo?.guild?.name || 'Unaligned'})`);
-      if (councilInfo?.guild?.perks) {
-        const perks = Object.entries(councilInfo.guild.perks)
-          .map(([key, val]) => `${key}: ${val}`)
-          .join(', ');
-        console.log(`Perks: ${perks}`);
-      }
-    } else {
-      console.log('You are not in a guild.');
-    }
-
-    if (archetypes?.guilds?.length) {
-      console.log('\nArchetypes:');
-      archetypes.guilds.forEach((guild: any) => {
+    const guildData = await apiCall('/api/v1/guilds');
+    console.log('\n--- Guild Archetypes ---');
+    if (guildData?.guilds?.length) {
+      guildData.guilds.forEach((guild: any) => {
         const perks = Object.entries(guild.perks || {})
           .map(([key, val]) => `${key}: ${val}`)
           .join(', ');
-        console.log(`- ${guild.name} [${guild.code}] -> ${perks}`);
+        console.log(`${guild.name} [${guild.code}]`);
+        if (guild.description) {
+          console.log(`   ${guild.description}`);
+        }
+        if (perks) {
+          console.log(`   Perks: ${perks}`);
+        }
       });
+    } else {
+      console.log('No guild archetypes configured.');
     }
 
-    if (!currentGuild) {
-      console.log('\nOptions:');
-      console.log('1. Create guild');
-      console.log('2. Join existing guild');
-      console.log('0. Back');
-      const choice = await question('Select option: ');
-      if (choice === '0') break;
-      if (choice === '1') {
-        const name = await question('Guild name: ');
-        console.log('Select archetype code from list above.');
-        const code = await question('Guild code: ').then((s) => s.trim().toUpperCase());
-        if (name.trim() && code) {
-          await apiCall('/api/v1/council/create', 'POST', { name: name.trim(), guildCode: code });
-          await refreshState();
-        }
-      } else if (choice === '2') {
-        const list = await apiCall('/api/v1/council/list');
-        if (list?.councils?.length) {
-          console.log('\nAvailable Guilds:');
-          list.councils.forEach((c: any, idx: number) => {
-            console.log(`${idx + 1}. ${c.name} [${c.id}] ${c.guild_code ? `(${c.guild_code})` : ''} (Region ${c.region_id})`);
-          });
-        } else {
-          console.log('No guilds available yet. Create one!');
-        }
-        const id = await question('Enter guild/council ID to join: ');
-        if (id.trim()) {
-          await apiCall('/api/v1/council/join', 'POST', { councilId: id.trim() });
-          await refreshState();
-        }
-      }
+    if (guildData?.council) {
+      console.log(
+        `\nCurrent Council: ${guildData.council.name} (${guildData.council.guildCode || 'Unaligned'})`
+      );
     } else {
-      console.log('\nOptions:');
-      console.log('1. View guild quests');
-      console.log('2. Contribute to guild quest');
-      console.log('3. Leave guild');
-      console.log('0. Back');
-      const choice = await question('Select option: ');
-      if (choice === '0') break;
-      if (choice === '1') {
-        const quests = await apiCall('/api/v1/council/quests');
-        console.log('\n--- Guild Quests ---');
-        if (quests?.quests?.length) {
-          quests.quests.forEach((quest: any) => {
-            const remaining = (quest.requirement.amount || 0) - (quest.progress || 0);
-            console.log(`${quest.id} - ${quest.title} [${quest.status}]`);
-            console.log(`   ${quest.description}`);
-            console.log(`   Requirement: ${formatNumber(quest.requirement.amount)} ${quest.requirement.resource}`);
-            console.log(`   Progress: ${formatNumber(quest.progress || 0)} / ${formatNumber(quest.requirement.amount)} (Remaining ${formatNumber(Math.max(0, remaining))})`);
-          });
-        } else {
-          console.log('No guild quests right now.');
-        }
-        await question('\nPress Enter to continue...');
-      } else if (choice === '2') {
-        const questId = await question('Quest ID: ');
-        const amountInput = await question('Contribution amount (press Enter for max): ');
-        const amount = amountInput.trim() ? parseInt(amountInput, 10) : undefined;
-        await apiCall('/api/v1/council/quests/contribute', 'POST', { questId: questId.trim(), amount });
-        await refreshState();
-      } else if (choice === '3') {
-        await apiCall('/api/v1/council/leave', 'POST', {});
-        await refreshState();
-      }
+      console.log('\nYou are not aligned to a council yet.');
+    }
+    console.log('Manage membership through the Council Hub.');
+
+    const choice = await question('\nPress R to refresh or 0 to go back: ');
+    if (choice.trim().toLowerCase() === '0') {
+      break;
     }
   }
 }
@@ -1460,6 +1960,17 @@ function printDashboard() {
   console.log(`  ${formatRequirement('Coins', coins, costs.coins)}`);
   console.log(`  ${formatRequirement('Wood', wood, costs.wood)}`);
   console.log(`  ${formatRequirement('Stone', stone, costs.stone)}`);
+  console.log(`Auto Collect: ${autoCollectEnabled ? `ON (every ${AUTO_COLLECT_INTERVAL_MS / 1000}s)` : 'OFF'}`);
+  if (milestoneSnapshot?.nextTier) {
+    const tier = milestoneSnapshot.nextTier;
+    const unlocks = Array.isArray(tier.unlocks) ? tier.unlocks.join(', ') : 'New benefits coming soon';
+    console.log(`Next Tier (${tier.title}) at Level ${tier.level}: ${unlocks}`);
+  }
+
+  if (notificationQueue.length) {
+    console.log('\nNotifications:');
+    notificationQueue.slice(0, 3).forEach((msg) => console.log(`- ${msg}`));
+  }
 
   console.log('\n--------------------------------------------------');
   console.log('1. City Operations');
@@ -1468,6 +1979,8 @@ function printDashboard() {
   console.log('4. Social & Chat');
   console.log('5. Account & Rewards');
   console.log('6. Shop & Premium');
+  console.log('7. Milestones & Goals');
+  console.log('8. Quests & Contracts');
   console.log('R. Refresh');
   console.log('Q. Quit');
   console.log('--------------------------------------------------');
@@ -1524,10 +2037,17 @@ async function main() {
       case '6':
         await premiumMenu();
         break;
+      case '7':
+        await milestonesMenu();
+        break;
+      case '8':
+        await questsMenu();
+        break;
       case 'r':
         await refreshState();
         break;
       case 'q':
+        disableAutoCollect();
         console.log('Goodbye!');
         rl.close();
         return;

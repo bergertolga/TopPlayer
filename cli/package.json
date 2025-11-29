@@ -4,11 +4,16 @@
   "description": "CLI for Idle Adventure Game",
   "main": "index.ts",
   "scripts": {
-    "start": "tsx index.ts"
+    "start": "tsx index.ts",
+    "simulate": "TSX_TRANSPILE_ONLY=1 tsx tools/simulate.ts",
+    "profile": "tsx tools/profileEconomy.ts"
   },
   "dependencies": {
     "@types/node": "^20.0.0",
+    "better-sqlite3": "^12.4.6",
     "tsx": "^4.7.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13"
   }
 }
-

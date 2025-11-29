@@ -1,5 +1,7 @@
+
 import { Env } from '../../types';
 import { validateUserId } from '../../utils/validation';
+import { EventManager } from '../../game/events';
 
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -7,73 +9,81 @@ function jsonResponse(data: any, status: number = 200, headers: Record<string, s
     headers: {
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       ...headers,
     },
   });
 }
 
-export async function handleEvents(
-  request: Request,
-  env: Env
-): Promise<Response> {
+export async function handleEvents(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  };
+  const path = url.pathname;
+  const method = request.method.toUpperCase();
 
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+  if (method === 'OPTIONS') {
+    return jsonResponse({ ok: true });
   }
 
   let userId: string;
   try {
     userId = validateUserId(url.searchParams.get('userId') || request.headers.get('X-User-ID'));
-  } catch (error: any) {
-    return jsonResponse({ error: error.message }, 400, corsHeaders);
+  } catch (err: any) {
+    return jsonResponse({ error: err.message }, 400);
   }
 
-  if (request.method === 'GET' && url.pathname === '/api/v1/events') {
-    const limit = parseInt(url.searchParams.get('limit') || '20');
-    const since = parseInt(url.searchParams.get('since') || '0');
+  if (method === 'GET' && path === '/api/v1/events/active') {
+    const active = await EventManager.getActiveEvents(env.DB);
+    const participation = await env.DB.prepare(
+      `SELECT instance_id, score, rank, rewards_claimed_at 
+       FROM event_participation 
+       WHERE participant_id = ? AND instance_id IN (SELECT id FROM event_instances WHERE status = 'active')`
+    ).bind(userId).all<{instance_id: string, score: number, rank: number, rewards_claimed_at: number}>();
 
-    
-    const events = await env.DB.prepare(
-      `SELECT * FROM analytics_events 
-       WHERE user_id = ? AND created_at > ?
-       ORDER BY created_at DESC
-       LIMIT ?`
-    )
-      .bind(userId, since, limit)
-      .all();
-
-    
-    const formattedEvents = events.results.map((event: any) => {
-      const eventData = typeof event.event_data === 'string' 
-        ? JSON.parse(event.event_data) 
-        : event.event_data;
-
-      return {
-        id: event.id,
-        type: event.event_type,
-        data: eventData,
-        timestamp: event.created_at,
-      };
+    const myStats: Record<string, any> = {};
+    participation.results.forEach(p => {
+      myStats[p.instance_id] = { score: p.score, rank: p.rank, claimed: !!p.rewards_claimed_at };
     });
 
-    return jsonResponse({ events: formattedEvents }, 200, corsHeaders);
+    return jsonResponse({
+      events: active.map(e => ({
+        id: e.id,
+        definitionId: e.definition_id,
+        startAt: e.start_at,
+        endAt: e.end_at,
+        metadata: e.metadata,
+        myScore: myStats[e.id]?.score || 0,
+        myRank: myStats[e.id]?.rank || null
+      }))
+    });
   }
 
-  if (request.method === 'POST' && url.pathname === '/api/v1/events/mark-read') {
-    const body = await request.json() as { eventIds: string[] };
+  if (method === 'GET' && path === '/api/v1/events/leaderboard') {
+    const instanceId = url.searchParams.get('instanceId');
+    if (!instanceId) return jsonResponse({ error: 'instanceId required' }, 400);
 
-    
-    return jsonResponse({ success: true }, 200, corsHeaders);
+    const limit = Math.min(100, Number(url.searchParams.get('limit') || 50));
+    const offset = Number(url.searchParams.get('offset') || 0);
+
+    const rows = await env.DB.prepare(
+      `SELECT ep.score, ep.rank, u.username, c.name as council_name
+       FROM event_participation ep
+       LEFT JOIN users u ON ep.participant_type = 'user' AND u.id = ep.participant_id
+       LEFT JOIN councils c ON ep.participant_type = 'council' AND c.id = ep.participant_id
+       WHERE ep.instance_id = ?
+       ORDER BY ep.score DESC
+       LIMIT ? OFFSET ?`
+    ).bind(instanceId, limit, offset).all();
+
+    return jsonResponse({
+      instanceId,
+      rankings: rows.results.map((r: any) => ({
+        name: r.username || r.council_name || 'Unknown',
+        score: r.score,
+        rank: r.rank
+      }))
+    });
   }
 
-  return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);
+  return jsonResponse({ error: 'Not found' }, 404);
 }
-

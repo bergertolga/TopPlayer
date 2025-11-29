@@ -126,6 +126,18 @@
       "unlockLevel": 4
     },
     {
+      "code": "RATIONS_KITCHEN",
+      "name": "Rations Kitchen",
+      "category": "processing",
+      "inputResources": {"FOOD": 4},
+      "outputResources": {"RATIONS": 3},
+      "workersRequired": 2,
+      "upkeepCoins": 4,
+      "maxLevel": 10,
+      "description": "Turns fresh food into long-lasting military rations",
+      "unlockLevel": 3
+    },
+    {
       "code": "WORKSHOP",
       "name": "Workshop",
       "category": "processing",

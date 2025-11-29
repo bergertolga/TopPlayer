@@ -1,14 +1,10 @@
 import { Env } from '../../types';
-import { validateUserId } from '../../utils/validation';
+import { validateUserId, validateTransactionId, validateAmount } from '../../utils/validation';
+import { verifyAppleTransaction, verifyAppleReceipt } from '../../utils/apple-receipt';
+import { getPremiumWallet, mutatePremiumWallet, PremiumWallet } from '../../utils/premium';
 
 const CROWNS_STIPEND_AMOUNT = 5;
 const STIPEND_INTERVAL_MS = 24 * 60 * 60 * 1000;
-
-interface PremiumBalance {
-  user_id: string;
-  crowns: number;
-  last_stipend_claimed: number;
-}
 
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -21,20 +17,6 @@ function jsonResponse(data: any, status: number = 200, headers: Record<string, s
       ...headers,
     },
   });
-}
-
-async function getOrCreateBalance(db: D1Database, userId: string): Promise<PremiumBalance> {
-  const existing = await db.prepare('SELECT * FROM premium_balances WHERE user_id = ?').bind(userId).first<PremiumBalance>();
-  if (existing) return existing;
-  await db.prepare('INSERT INTO premium_balances (user_id, crowns, last_stipend_claimed) VALUES (?, ?, ?)').bind(userId, 0, 0).run();
-  return { user_id: userId, crowns: 0, last_stipend_claimed: 0 };
-}
-
-async function adjustCrowns(db: D1Database, userId: string, delta: number): Promise<PremiumBalance> {
-  const balance = await getOrCreateBalance(db, userId);
-  const nextValue = Math.max(0, balance.crowns + delta);
-  await db.prepare('UPDATE premium_balances SET crowns = ? WHERE user_id = ?').bind(nextValue, userId).run();
-  return { ...balance, crowns: nextValue };
 }
 
 async function ensureCityId(db: D1Database, userId: string): Promise<string | null> {
@@ -93,11 +75,11 @@ async function activateBoost(db: D1Database, userId: string, boost: { code: stri
     .run();
 }
 
-async function applyBundleContents(env: Env, userId: string, contents: any) {
+async function applyBundleContents(env: Env, userId: string, bundleCode: string | null, contents: any) {
   const db = env.DB;
   const cityId = await ensureCityId(db, userId);
   if (typeof contents.crowns === 'number' && contents.crowns > 0) {
-    await adjustCrowns(db, userId, contents.crowns);
+    await mutatePremiumWallet(db, userId, { crowns: contents.crowns }, { reason: 'shop_bundle_contents', metadata: { bundle: bundleCode } });
   }
   if (cityId && typeof contents.coins === 'number' && contents.coins > 0) {
     await addCoins(db, cityId, contents.coins);
@@ -138,28 +120,29 @@ export async function handleShop(request: Request, env: Env): Promise<Response> 
   }
 
   if (method === 'GET' && path === '/api/v1/premium/balance') {
-    const balance = await getOrCreateBalance(env.DB, userId);
+    const balance = await getPremiumWallet(env.DB, userId);
     const boosts = await getActiveBoosts(env.DB, userId);
-    return jsonResponse({ crowns: balance.crowns, lastStipendAt: balance.last_stipend_claimed, boosts });
+    return jsonResponse({ crowns: balance.crowns, lastStipendAt: balance.last_stipend_claim, boosts });
   }
 
   if (method === 'POST' && path === '/api/v1/premium/stipend') {
-    const balance = await getOrCreateBalance(env.DB, userId);
+    const balance = await getPremiumWallet(env.DB, userId);
     const now = Date.now();
-    if (balance.last_stipend_claimed && now - balance.last_stipend_claimed < STIPEND_INTERVAL_MS) {
+    if (balance.last_stipend_claim && now - balance.last_stipend_claim < STIPEND_INTERVAL_MS) {
       return jsonResponse({ error: 'Stipend already claimed. Come back later.' }, 400);
     }
-    await env.DB
-      .prepare('UPDATE premium_balances SET crowns = crowns + ?, last_stipend_claimed = ? WHERE user_id = ?')
-      .bind(CROWNS_STIPEND_AMOUNT, now, userId)
-      .run();
-    const updated = await getOrCreateBalance(env.DB, userId);
-    return jsonResponse({ crowns: updated.crowns, lastStipendAt: now });
+    const updated = await mutatePremiumWallet(
+      env.DB,
+      userId,
+      { crowns: CROWNS_STIPEND_AMOUNT },
+      { reason: 'daily_stipend', metadata: { source: 'stipend' }, updateStipendAt: now }
+    );
+    return jsonResponse({ crowns: updated.crowns, lastStipendAt: updated.last_stipend_claim });
   }
 
   if (method === 'GET' && path === '/api/v1/shop/bundles') {
     const bundles = await env.DB
-      .prepare('SELECT id, code, name, description, price_crowns, contents_json FROM shop_bundles WHERE is_active = 1')
+      .prepare('SELECT id, code, name, description, price_crowns, contents_json, iap_product_id FROM shop_bundles WHERE is_active = 1')
       .all();
     const formatted = (bundles?.results || []).map((row: any) => ({
       id: row.id,
@@ -168,33 +151,124 @@ export async function handleShop(request: Request, env: Env): Promise<Response> 
       description: row.description,
       price: row.price_crowns,
       contents: JSON.parse(row.contents_json || '{}'),
+      iapProductId: row.iap_product_id || null,
     }));
     return jsonResponse({ bundles: formatted });
   }
 
   if (method === 'POST' && path === '/api/v1/shop/purchase') {
-    const body = (await request.json()) as { bundleCode: string };
+    const body = (await request.json()) as {
+      bundleCode: string;
+      paymentMethod?: 'crowns' | 'cash';
+      transactionId?: string;
+      receiptData?: string;
+      amount?: number;
+    };
     if (!body?.bundleCode) {
       return jsonResponse({ error: 'Missing bundleCode' }, 400);
     }
     const bundle = await env.DB
       .prepare('SELECT * FROM shop_bundles WHERE code = ? AND is_active = 1')
       .bind(body.bundleCode)
-      .first<{ id: string; price_crowns: number; contents_json: string }>();
+      .first<{ id: string; price_crowns: number; contents_json: string; iap_product_id?: string }>();
     if (!bundle) {
       return jsonResponse({ error: 'Bundle not found' }, 404);
     }
-    const balance = await getOrCreateBalance(env.DB, userId);
-    if (balance.crowns < bundle.price_crowns) {
-      return jsonResponse({ error: 'Insufficient Crowns' }, 400);
-    }
-    await adjustCrowns(env.DB, userId, -bundle.price_crowns);
+    const paymentMethod = body.paymentMethod === 'cash' ? 'cash' : 'crowns';
     const contents = JSON.parse(bundle.contents_json || '{}');
-    await applyBundleContents(env, userId, contents);
+
+    if (paymentMethod === 'crowns') {
+      const balance = await getPremiumWallet(env.DB, userId);
+      if (balance.crowns < bundle.price_crowns) {
+        return jsonResponse({ error: 'Insufficient Crowns' }, 400);
+      }
+      await mutatePremiumWallet(
+        env.DB,
+        userId,
+        { crowns: -bundle.price_crowns },
+        { reason: 'bundle_purchase', metadata: { bundleCode: bundle.code } }
+      );
+      await applyBundleContents(env, userId, bundle.code, contents);
+      return jsonResponse({
+        success: true,
+        bundleId: bundle.id,
+        remainingCrowns: (await getPremiumWallet(env.DB, userId)).crowns,
+      });
+    }
+
+    if (!bundle.iap_product_id) {
+      return jsonResponse({ error: 'This bundle cannot be purchased with cash yet.' }, 400);
+    }
+
+    if (!body.transactionId) {
+      return jsonResponse({ error: 'transactionId required for cash purchases' }, 400);
+    }
+
+    let transactionId: string;
+    try {
+      transactionId = validateTransactionId(body.transactionId);
+    } catch (err: any) {
+      return jsonResponse({ error: err.message }, 400);
+    }
+
+    const existingPurchase = await env.DB
+      .prepare('SELECT id FROM purchases WHERE transaction_id = ?')
+      .bind(transactionId)
+      .first<{ id: string }>();
+
+    if (existingPurchase) {
+      return jsonResponse({ error: 'Transaction already processed' }, 400);
+    }
+
+    let amountValue = bundle.price_crowns;
+    if (typeof body.amount === 'number') {
+      try {
+        amountValue = validateAmount(body.amount);
+      } catch (err: any) {
+        return jsonResponse({ error: err.message }, 400);
+      }
+    }
+
+    let verification = await verifyAppleTransaction(
+      transactionId,
+      bundle.iap_product_id,
+      'Sandbox',
+      body.receiptData
+    );
+
+    if (!verification.verified && body.receiptData) {
+      verification = await verifyAppleReceipt(body.receiptData, bundle.iap_product_id, 'Sandbox');
+    }
+
+    if (!verification.verified) {
+      return jsonResponse({
+        error: verification.error || 'Unable to verify purchase',
+      }, 400);
+    }
+
+    const purchaseId = crypto.randomUUID();
+    await env.DB.prepare(
+      'INSERT INTO purchases (id, user_id, product_id, transaction_id, receipt_data, amount, currency, verified, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    )
+      .bind(
+        purchaseId,
+        userId,
+        bundle.iap_product_id,
+        transactionId,
+        body.receiptData || null,
+        amountValue,
+        'USD',
+        1,
+        Date.now()
+      )
+      .run();
+
+    await applyBundleContents(env, userId, bundle.code, contents);
+
     return jsonResponse({
       success: true,
       bundleId: bundle.id,
-      remainingCrowns: (await getOrCreateBalance(env.DB, userId)).crowns,
+      purchaseId,
     });
   }
 

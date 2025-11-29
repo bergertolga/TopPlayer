@@ -1,4 +1,5 @@
-import { CityManager } from './city';
+import { CityManager, FALLBACK_BALANCE_RULES } from './city';
+import { ConfigLoader } from '../utils/config';
 
 const BUILDING_STORAGE_BASE = 1000;
 const BUILDING_STORAGE_PER_LEVEL = 500;
@@ -150,6 +151,7 @@ export class BuildingProductionManager {
     const baseProduction = JSON.parse(building.base_production_json || '{}');
     const inputResources = JSON.parse(building.input_resources_json || '{}');
     const outputResources = JSON.parse(building.output_resources_json || '{}');
+    const balanceRules = await ConfigLoader.getBalanceRules(db).catch(() => FALLBACK_BALANCE_RULES);
 
     // Calculate production per minute, then multiply by minutes elapsed
     if (Object.keys(baseProduction).length > 0) {
@@ -160,7 +162,8 @@ export class BuildingProductionManager {
           regionBias,
           governorBonus,
           happiness: city.happiness,
-        }
+        },
+        balanceRules
       );
 
       // Calculate total production for elapsed time
@@ -174,7 +177,7 @@ export class BuildingProductionManager {
         storage[resource] = newAmount;
       }
     } else if (Object.keys(inputResources).length > 0 && Object.keys(outputResources).length > 0) {
-      const levelMultiplier = 1 + (0.15 * (building.level - 1));
+      const levelMultiplier = 1 + (balanceRules.production.baseMultiplierPerLevel * (building.level - 1));
       let effectiveMinutes = minutesElapsed;
       const inputStatus: Record<string, { resourceId: string; amount: number }> = {};
 

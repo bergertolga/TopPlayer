@@ -1,3 +1,7 @@
+import { ConfigLoader } from '../utils/config';
+
+import { SeasonManager } from './seasons';
+
 const BALANCE_CONFIG = {
   production: { baseMultiplierPerLevel: 0.15 },
   refining: { baseEfficiency: 0.9, efficiencyPerLevel: 0.02 },
@@ -159,7 +163,7 @@ export class CityManager {
     )
       .bind(cityId)
       .all();
-
+      
     const resources = await db.prepare(
       'SELECT resource_id, amount FROM city_resources WHERE city_id = ?'
     )
@@ -178,6 +182,20 @@ export class CityManager {
         resourceMap[resource.code] = Math.max(0, res.amount);
       }
     }
+
+    // Check for Season and Crisis
+    const activeSeason = await SeasonManager.getActiveSeason(db).catch(() => null);
+    const seasonMultiplier = activeSeason?.rules.productionMultiplier || 1.0;
+    const happinessDecay = activeSeason?.rules.happinessDecay || 0.0;
+    
+    // Check for crisis (Phase 3: Sinks/Crises)
+    // Simple check: if food < 100, trigger "Famine" crisis
+    const foodAmount = resourceMap['FOOD'] || 0;
+    const isFamine = foodAmount < 100; // Hardcoded threshold for now, could be dynamic
+    if (isFamine) {
+       notes.push('CRISIS: Famine! Production halved, happiness suffers.');
+    }
+    const crisisMultiplier = isFamine ? 0.5 : 1.0;
 
     const warehouseBuilding = buildings.results.find((b: any) => b.code === 'WAREHOUSE') as any;
     const warehouseLevel: number = warehouseBuilding?.level || 1;
@@ -250,7 +268,9 @@ export class CityManager {
         );
 
         for (const [resource, amount] of Object.entries(production)) {
-          delta[resource] = (delta[resource] || 0) + amount;
+          // Apply Season and Crisis Multipliers
+          const adjustedAmount = Math.floor(amount * seasonMultiplier * crisisMultiplier);
+          delta[resource] = (delta[resource] || 0) + adjustedAmount;
         }
       } else if (Object.keys(inputResources).length > 0) {
         let canProcess = true;
@@ -328,6 +348,20 @@ export class CityManager {
     }
 
     newHappiness = this.calculateHappiness(city.happiness, foodDeficit, fabricDeficit, false);
+
+    // Apply Seasonal Happiness Decay (Phase 3)
+    if (happinessDecay > 0) {
+      newHappiness -= happinessDecay;
+    }
+    
+    // Apply Hoarding Penalty (Phase 3: Resource Sinks)
+    // If stockpiles > 5x capacity, decay happiness slightly
+    if (currentTotalResources > warehouseCapacity * 5) {
+       newHappiness -= 0.05;
+       notes.push('Happiness penalty: Hoarding');
+    }
+
+    newHappiness = Math.max(0, Math.min(1.0, newHappiness));
 
     let totalResourceChange = 0;
     for (const change of Object.values(delta)) {

@@ -29,6 +29,13 @@
       "description": "Sustains your population"
     },
     {
+      "code": "RATIONS",
+      "name": "Rations",
+      "type": "consumable",
+      "baseValue": 2.2,
+      "description": "Preserved meals for keeping armies active"
+    },
+    {
       "code": "FIBER",
       "name": "Fiber",
       "type": "raw",

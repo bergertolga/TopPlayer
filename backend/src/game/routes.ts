@@ -32,23 +32,40 @@ export class RouteProcessor {
           continue;
         }
 
-        // Find destination city in the destination region
-        // For now, routes deliver to any city in the destination region
-        // In a full implementation, you might want destination_city_id in routes table
-        const destinationCity = await db.prepare(
-          'SELECT id FROM cities WHERE region_id = ? AND id != ? LIMIT 1'
-        )
-          .bind(route.to_region_id, route.city_id)
-          .first<{ id: string }>();
+        let destinationCityId = route.destination_city_id as string | null;
+        if (!destinationCityId) {
+          const destinationCity = await db.prepare(
+            'SELECT id FROM cities WHERE region_id = ? AND id != ? LIMIT 1'
+          )
+            .bind(route.to_region_id, route.city_id)
+            .first<{ id: string }>();
 
-        if (!destinationCity) {
-          // No destination city found - pause route
-          await db.prepare('UPDATE routes SET status = ? WHERE id = ?')
-            .bind('paused', route.id).run();
-          continue;
+          if (!destinationCity) {
+            await db.prepare('UPDATE routes SET status = ? WHERE id = ?')
+              .bind('paused', route.id)
+              .run();
+            continue;
+          }
+
+          destinationCityId = destinationCity.id;
+          await db.prepare('UPDATE routes SET destination_city_id = ? WHERE id = ?')
+            .bind(destinationCityId, route.id)
+            .run();
+          route.destination_city_id = destinationCityId;
         }
 
-        const destinationCityId = destinationCity.id;
+        const destinationCityInfo = await db.prepare(
+          'SELECT id, name FROM cities WHERE id = ?'
+        )
+          .bind(destinationCityId)
+          .first<{ id: string; name: string }>();
+
+        if (!destinationCityInfo) {
+          await db.prepare('UPDATE routes SET status = ? WHERE id = ?')
+            .bind('paused', route.id)
+            .run();
+          continue;
+        }
 
         const riskChance = Math.max(
           0.01,
@@ -106,7 +123,7 @@ export class RouteProcessor {
             `SELECT cb.level FROM city_buildings cb
              JOIN buildings b ON cb.building_id = b.id
              WHERE cb.city_id = ? AND b.code = 'WAREHOUSE' AND cb.is_active = 1`
-          ).bind(destinationCityId).first<{ level: number }>();
+          ).bind(destinationCityInfo.id).first<{ level: number }>();
           
           const warehouseLevel = destinationWarehouse?.level || 1;
           const { CityManager } = await import('./city');
@@ -114,7 +131,7 @@ export class RouteProcessor {
 
           const destinationResources = await db.prepare(
             'SELECT amount FROM city_resources WHERE city_id = ?'
-          ).bind(destinationCityId).all<{ amount: number }>();
+          ).bind(destinationCityInfo.id).all<{ amount: number }>();
           
           let destinationTotalResources = 0;
           for (const res of destinationResources.results) {
@@ -123,7 +140,7 @@ export class RouteProcessor {
 
           const destinationResourceCurrent = await db.prepare(
             'SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?'
-          ).bind(destinationCityId, route.resource_id).first<{ amount: number }>();
+          ).bind(destinationCityInfo.id, route.resource_id).first<{ amount: number }>();
           
           const destinationResourceAmount = Math.max(0, destinationResourceCurrent?.amount || 0);
           const availableCapacity = Math.max(0, warehouseCapacity - destinationTotalResources);
@@ -131,7 +148,10 @@ export class RouteProcessor {
 
           if (actualDelivered < resourcesDelivered) {
             eventType = eventType || 'warehouse_full';
-            eventMessage = eventMessage || `Warehouse full. Only ${actualDelivered} of ${resourcesDelivered} units delivered.`;
+            const cityLabel = destinationCityInfo.name || 'destination city';
+            eventMessage =
+              eventMessage ||
+              `Warehouse full in ${cityLabel}. Only ${actualDelivered} of ${resourcesDelivered} units delivered.`;
             resourcesDelivered = actualDelivered;
           }
 
@@ -142,7 +162,7 @@ export class RouteProcessor {
                VALUES (?, ?, ?, ?)
                ON CONFLICT(city_id, resource_id) DO UPDATE SET amount = ?`
             )
-              .bind(destinationCityId, route.resource_id, newAmount, 0, newAmount)
+              .bind(destinationCityInfo.id, route.resource_id, newAmount, 0, newAmount)
               .run();
           }
         }

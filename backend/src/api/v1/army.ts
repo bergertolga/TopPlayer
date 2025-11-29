@@ -2,6 +2,8 @@ import { Env } from '../../types';
 import { validateUserId } from '../../utils/validation';
 import { ArmyManager } from '../../game/army';
 
+const LOW_TIER_TROOPS = new Set(['MILITIA', 'SPEARMAN']);
+
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
     status,
@@ -42,7 +44,7 @@ export async function handleArmy(
   // GET /api/v1/army/troop-types - List all troop types
   if (request.method === 'GET' && url.pathname === '/api/v1/army/troop-types') {
     const troopTypes = await env.DB.prepare(
-      'SELECT * FROM troop_types ORDER BY category, base_power'
+      'SELECT *, COALESCE(upkeep_resources_json, \"{}\") as upkeep_json FROM troop_types ORDER BY category, base_power'
     )
       .all();
 
@@ -55,6 +57,7 @@ export async function handleArmy(
       baseCostCoins: t.base_cost_coins,
       baseCostResources: JSON.parse(t.base_cost_resources_json || '{}'),
       upkeepCoins: t.upkeep_coins,
+      upkeepResources: JSON.parse(t.upkeep_json || '{}'),
       trainingTimeSeconds: t.training_time_seconds,
       maxLevel: t.max_level,
       description: t.description,
@@ -97,13 +100,16 @@ export async function handleArmy(
     const body = await request.json() as { troopTypeId: string; quantity: number };
     
     const troopType = await env.DB.prepare(
-      'SELECT * FROM troop_types WHERE id = ?'
+      'SELECT code, base_cost_coins, base_cost_resources_json, base_power, upkeep_resources_json, upkeep_coins FROM troop_types WHERE id = ?'
     )
       .bind(body.troopTypeId)
       .first<{
+        code: string;
         base_cost_coins: number;
         base_cost_resources_json: string;
         base_power: number;
+        upkeep_resources_json: string | null;
+        upkeep_coins: number;
       }>();
 
     if (!troopType) {
@@ -111,6 +117,7 @@ export async function handleArmy(
     }
 
     const costResources = JSON.parse(troopType.base_cost_resources_json || '{}');
+    const upkeepResources = JSON.parse(troopType.upkeep_resources_json || '{}');
     
     // Check if city has required resources
     const coinsResource = await env.DB.prepare(
@@ -164,6 +171,36 @@ export async function handleArmy(
         )
           .bind(totalNeeded, city.id, resource.id)
           .run();
+      }
+    }
+
+    if (Object.keys(upkeepResources).length > 0) {
+      for (const [resourceCode, perUnit] of Object.entries(upkeepResources)) {
+        const resource = await env.DB.prepare(
+          'SELECT id FROM resources WHERE code = ?'
+        )
+          .bind(resourceCode)
+          .first<{ id: string }>();
+
+        if (!resource) {
+          continue;
+        }
+
+        const cityResource = await env.DB.prepare(
+          'SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?'
+        )
+          .bind(city.id, resource.id)
+          .first<{ amount: number }>();
+
+        const isLowTier = troopType.code ? LOW_TIER_TROOPS.has(troopType.code) : false;
+        const bufferMultiplier = isLowTier ? 1.5 : 2;
+        const bufferNeeded = Math.max(
+          1,
+          Math.floor((perUnit as number) * body.quantity * bufferMultiplier)
+        );
+        if (!cityResource || cityResource.amount < bufferNeeded) {
+          return jsonResponse({ error: `Insufficient ${resourceCode} to sustain upkeep` }, 400, corsHeaders);
+        }
       }
     }
 

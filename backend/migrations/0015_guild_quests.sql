@@ -30,3 +30,4 @@ CREATE TABLE IF NOT EXISTS guild_quest_progress (
 
 CREATE INDEX IF NOT EXISTS idx_guild_quest_progress_user ON guild_quest_progress(user_id);
 
+

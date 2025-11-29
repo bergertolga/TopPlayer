@@ -2,6 +2,7 @@ import { Env } from '../../types';
 import { CityManager } from '../../game/city';
 import { validateUserId } from '../../utils/validation';
 import { MilestoneSystem } from '../../game/milestones';
+import cityRoadmap from '../../config/city-roadmap.json';
 
 export async function syncTotalCurrency(db: D1Database, userId: string): Promise<void> {
   const city = await db.prepare(
@@ -117,7 +118,8 @@ export async function handleCity(
           WOOD: 200,
           STONE: 200,
           FOOD: 300,
-          COINS: 1000
+          COINS: 1000,
+          RATIONS: 50
         };
 
         for (const [resourceCode, amount] of Object.entries(startingResources)) {
@@ -940,6 +942,39 @@ export async function handleCity(
       success: true,
       message: 'Governor unassigned successfully'
     }, 200, corsHeaders);
+  }
+
+  if (request.method === 'GET' && url.pathname === '/api/v1/city/milestones') {
+    const city = await env.DB.prepare(
+      'SELECT level FROM cities WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ level: number }>();
+
+    const milestones = await MilestoneSystem.getUserMilestones(env.DB, userId);
+
+    return jsonResponse({
+      cityLevel: city?.level ?? 0,
+      definitions: MilestoneSystem.listDefinitions(),
+      completed: milestones,
+      roadmap: cityRoadmap,
+      nextTier: (cityRoadmap as any[]).find((tier) => tier.level > (city?.level ?? 0)) || null,
+    }, 200, corsHeaders);
+  }
+
+  if (request.method === 'POST' && url.pathname === '/api/v1/city/milestones/claim') {
+    const body = await request.json() as { milestoneId: string };
+    if (!body.milestoneId) {
+      return jsonResponse({ error: 'milestoneId required' }, 400, corsHeaders);
+    }
+
+    const result = await MilestoneSystem.claimMilestoneReward(env.DB, userId, body.milestoneId);
+    if (!result.success) {
+      return jsonResponse({ error: result.error || 'Failed to claim reward' }, 400, corsHeaders);
+    }
+
+    await syncTotalCurrency(env.DB, userId);
+    return jsonResponse({ success: true }, 200, corsHeaders);
   }
 
   return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders);

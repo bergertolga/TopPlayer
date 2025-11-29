@@ -38,6 +38,37 @@ export async function handleRoutes(
     return jsonResponse({ error: error.message }, 400, corsHeaders);
   }
 
+  if (request.method === 'GET' && url.pathname === '/api/v1/routes/destinations') {
+    
+    const regionId = url.searchParams.get('regionId');
+
+    if (!regionId) {
+      return jsonResponse({ error: 'regionId required' }, 400, corsHeaders);
+    }
+
+    const city = await env.DB.prepare(
+      'SELECT id FROM cities WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ id: string }>();
+
+    if (!city) {
+      return jsonResponse({ error: 'City not found' }, 404, corsHeaders);
+    }
+
+    const destinations = await env.DB.prepare(
+      `SELECT c.id, c.name, c.level, u.username as owner_name
+       FROM cities c
+       JOIN users u ON c.user_id = u.id
+       WHERE c.region_id = ? AND c.id != ?
+       ORDER BY c.level DESC`
+    )
+      .bind(regionId, city.id)
+      .all();
+
+    return jsonResponse({ destinations: destinations.results }, 200, corsHeaders);
+  }
+
   if (request.method === 'GET' && url.pathname === '/api/v1/routes') {
     
     const city = await env.DB.prepare(
@@ -80,6 +111,7 @@ export async function handleRoutes(
       toRegion: string;
       resource: string;
       qtyPerTrip: number;
+      destinationCityId?: string;
       repeats?: number; 
     };
 
@@ -120,15 +152,31 @@ export async function handleRoutes(
       return jsonResponse({ error: 'Destination region must be different from origin region' }, 400, corsHeaders);
     }
 
-    // Validate destination region has at least one city (other than origin)
-    const destinationCityExists = await env.DB.prepare(
-      'SELECT id FROM cities WHERE region_id = ? AND id != ? LIMIT 1'
-    )
-      .bind(toRegion.id, city.id)
-      .first<{ id: string }>();
+    let destinationCityId: string;
+    if (body.destinationCityId?.trim()) {
+      const destinationCity = await env.DB.prepare(
+        'SELECT id FROM cities WHERE id = ? AND region_id = ? AND id != ?'
+      )
+        .bind(body.destinationCityId.trim(), toRegion.id, city.id)
+        .first<{ id: string }>();
 
-    if (!destinationCityExists) {
-      return jsonResponse({ error: 'No destination city found in target region' }, 400, corsHeaders);
+      if (!destinationCity) {
+        return jsonResponse({ error: 'Destination city not found in target region' }, 400, corsHeaders);
+      }
+
+      destinationCityId = destinationCity.id;
+    } else {
+      const fallbackDestination = await env.DB.prepare(
+        'SELECT id FROM cities WHERE region_id = ? AND id != ? LIMIT 1'
+      )
+        .bind(toRegion.id, city.id)
+        .first<{ id: string }>();
+
+      if (!fallbackDestination) {
+        return jsonResponse({ error: 'No destination city found in target region' }, 400, corsHeaders);
+      }
+
+      destinationCityId = fallbackDestination.id;
     }
 
     
@@ -159,7 +207,7 @@ export async function handleRoutes(
        JOIN buildings b ON cb.building_id = b.id
        WHERE cb.city_id = ? AND b.code = 'WAREHOUSE' AND cb.is_active = 1`
     )
-      .bind(destinationCityExists.id)
+      .bind(destinationCityId)
       .first<{ level: number }>();
 
     const warehouseLevel = destinationWarehouse?.level || 1;
@@ -169,7 +217,7 @@ export async function handleRoutes(
     const destinationResources = await env.DB.prepare(
       'SELECT amount FROM city_resources WHERE city_id = ?'
     )
-      .bind(destinationCityExists.id)
+      .bind(destinationCityId)
       .all<{ amount: number }>();
 
     let destinationTotalResources = 0;
@@ -200,7 +248,7 @@ export async function handleRoutes(
         city.id,
         fromRegion.id,
         toRegion.id,
-        destinationCityExists.id,
+        destinationCityId,
         body.qtyPerTrip,
         resource.id,
         body.qtyPerTrip,

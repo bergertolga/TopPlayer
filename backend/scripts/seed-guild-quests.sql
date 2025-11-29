@@ -24,3 +24,4 @@ INSERT OR REPLACE INTO guild_quests (id, guild_code, title, description, require
    json_object('coins',2600,'favor',8,'crowns',5),
    NULL, 1, strftime('%s','now')*1000);
 
+

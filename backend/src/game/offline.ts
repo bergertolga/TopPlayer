@@ -117,9 +117,7 @@ export class OfflineCalculator {
       .run();
 
     if (earnings.experience > 0) {
-      const { ExperienceSystem } = await import('./experience');
-      const expSystem = new ExperienceSystem();
-      await expSystem.distributeExperience(db, userId, earnings.experience);
+      // Experience system removed
     }
   }
 }

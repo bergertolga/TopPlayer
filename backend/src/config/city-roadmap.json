@@ -1,0 +1,39 @@
+[
+  {
+    "level": 1,
+    "title": "Settlement",
+    "unlocks": [
+      "Starting Buildings: Farm, Lumber Mill, Warehouse",
+      "Manual resource collection",
+      "Auto-storage base capacity"
+    ]
+  },
+  {
+    "level": 3,
+    "title": "Hamlet",
+    "unlocks": [
+      "Unlock route planning + scouting",
+      "New Building: Rations Kitchen",
+      "New Building: Pasture",
+      "Regional trade visibility"
+    ]
+  },
+  {
+    "level": 6,
+    "title": "Town",
+    "unlocks": [
+      "New Building: Market Stall",
+      "New Building: Caravanserai",
+      "+1 trade fleet slot"
+    ]
+  },
+  {
+    "level": 10,
+    "title": "City",
+    "unlocks": [
+      "Create Councils + Capital Requests",
+      "Advanced market orders",
+      "Army logistics unlock"
+    ]
+  }
+]

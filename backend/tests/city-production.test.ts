@@ -6,16 +6,16 @@ import { DEFAULT_BUILD_TIME_TICKS } from '../src/durable-objects/city-do';
 describe('CityDO resource production', () => {
   let runtime: TestRuntime | undefined;
 
-  beforeEach(async () => {
+beforeEach(async () => {
     runtime = await createTestRuntime();
-  });
+}, 40000);
 
-  afterEach(async () => {
+afterEach(async () => {
     if (runtime) {
       await runtime.dispose();
       runtime = undefined;
     }
-  });
+}, 40000);
 
   it('applies baseline production per tick without going negative', async () => {
     const initialState = createCityState();
@@ -52,6 +52,20 @@ describe('CityDO resource production', () => {
     expect(nextState.resources.timber).toBeCloseTo(initialState.resources.timber + 8 + 1 * 4, 3);
     expect(nextState.resources.stone).toBeCloseTo(initialState.resources.stone + 5 + 3 * 3, 3);
     expect(nextState.resources.coins).toBeCloseTo(initialState.resources.coins + 5 + 2 * 2, 3);
+  });
+
+  it('consumes grain (FOOD) when labor upkeep exceeds production', async () => {
+    const initialState = createCityState({
+      resources: { grain: 25, timber: 0, stone: 0, coins: 0, rations: 0 },
+      labor: { free: 600000, assigned: {} },
+      units: { worker: 0 },
+    });
+    const city = await runtime!.newCityStub(initialState);
+
+    const nextState = await city.processTick();
+
+    expect(nextState.resources.grain).toBeGreaterThanOrEqual(0);
+    expect(nextState.resources.grain).toBeLessThan(initialState.resources.grain);
   });
 
   it('never lets upkeep drop resources below zero', async () => {

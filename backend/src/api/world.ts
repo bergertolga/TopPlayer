@@ -1,5 +1,6 @@
 import { Env } from '../types';
 import { validateUserId } from '../utils/validation';
+import { mutatePremiumWallet } from '../utils/premium';
 
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -27,21 +28,6 @@ async function getFavorStats(db: D1Database, userId: string) {
     stats = { favor_points: 0, last_contribution: 0 };
   }
   return stats;
-}
-
-async function ensurePremiumBalance(db: D1Database, userId: string) {
-  const existing = await db
-    .prepare('SELECT * FROM premium_balances WHERE user_id = ?')
-    .bind(userId)
-    .first<{ crowns: number }>();
-  if (existing) return existing;
-  await db.prepare('INSERT INTO premium_balances (user_id, crowns, last_stipend_claimed) VALUES (?, ?, ?)').bind(userId, 0, 0).run();
-  return { crowns: 0 };
-}
-
-async function adjustCrowns(db: D1Database, userId: string, delta: number) {
-  await ensurePremiumBalance(db, userId);
-  await db.prepare('UPDATE premium_balances SET crowns = MAX(0, crowns + ?) WHERE user_id = ?').bind(delta, userId).run();
 }
 
 async function getResourceId(db: D1Database, code: string) {
@@ -87,9 +73,10 @@ async function grantRewards(env: Env, userId: string, cityId: string, reward: an
     await adjustCityResource(env.DB, cityId, 'COINS', reward.coins);
   }
   if (reward.crowns) {
-    await adjustCrowns(env.DB, userId, reward.crowns);
+    await mutatePremiumWallet(env.DB, userId, { crowns: reward.crowns }, { reason: 'capital_reward', metadata: { source: 'capital' } });
   }
   if (reward.favor) {
+    await mutatePremiumWallet(env.DB, userId, { favor: reward.favor }, { reason: 'capital_reward', metadata: { source: 'capital' } });
     await env.DB
       .prepare('UPDATE capital_favor_stats SET favor_points = favor_points + ? WHERE user_id = ?')
       .bind(reward.favor, userId)

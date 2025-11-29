@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "generatedAt": "2025-11-27T02:45:21.945Z",
+    "players": 20,
+    "ticks": 2000,
+    "sampleEvery": 50,
+    "policy": "diversified",
+    "cli": "tools/simulate.ts"
+  },
+  "metrics": {
+    "medianTicks": {
+      "Hamlet": 55,
+      "Town": 751,
+      "City": 1874
+    },
+    "netResourceDrift": {
+      "coins": 126580,
+      "grain": -2569,
+      "timber": 109524,
+      "stone": 109097,
+      "rations": 6061
+    },
+    "militarizationRate": 0.35,
+    "happinessStdDev": 0.213,
+    "stagnationTicksMedian": 0,
+    "purchasePressure": {
+      "slowProgressPercent": 30,
+      "thresholds": {
+        "town": 1200,
+        "city": 1800
+      }
+    }
+  },
+  "generatedAt": "2025-11-27T02:45:27.359Z"
+}

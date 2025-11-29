@@ -56,7 +56,8 @@
       "WOOD": 200,
       "STONE": 200,
       "FOOD": 300,
-      "COINS": 1000
+      "COINS": 1000,
+      "RATIONS": 50
     },
     "buildings": [
       {"code": "TOWN_HALL", "level": 1},

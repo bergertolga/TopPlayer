@@ -3,6 +3,7 @@ import { CityManager } from '../game/city';
 import { RouteProcessor } from '../game/routes';
 import { PublicWorksProcessor } from '../game/public-works';
 import { processPriceHistoryAggregation } from '../game/price-history';
+import { CapitalMarketManager } from '../game/capital-market';
 
 export async function processServerTick(env: Env): Promise<void> {
   const now = Date.now();
@@ -14,15 +15,13 @@ export async function processServerTick(env: Env): Promise<void> {
   }
 
   try {
-    await env.DB.prepare(
-      `UPDATE pve_nodes 
-       SET status = 'active' 
-       WHERE status = 'defeated' AND respawn_at <= ?`
-    )
-      .bind(now)
-      .run();
+    // Run hourly-ish (approx every 60 ticks if tick is 1m, but here we just run it. 
+    // Optimization: CapitalMarketManager checks depth anyway, so running every tick is safe-ish but wasteful.
+    // Ideally we'd check if now % 3600000 < tick_interval.
+    // For now, let's just run it.
+    await CapitalMarketManager.processCapitalInjection(env);
   } catch (error) {
-    console.error('Error processing PvE respawns:', error);
+    console.error('Error processing capital market injection:', error);
   }
 
   try {
