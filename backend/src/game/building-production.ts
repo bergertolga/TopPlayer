@@ -162,8 +162,7 @@ export class BuildingProductionManager {
           regionBias,
           governorBonus,
           happiness: city.happiness,
-        },
-        balanceRules
+        }
       );
 
       // Calculate total production for elapsed time

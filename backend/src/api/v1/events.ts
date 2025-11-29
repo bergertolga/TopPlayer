@@ -74,7 +74,7 @@ export async function handleEvents(request: Request, env: Env): Promise<Response
        ORDER BY ep.score DESC
        LIMIT ? OFFSET ?`
     ).bind(instanceId, limit, offset).all();
-
+    
     return jsonResponse({
       instanceId,
       rankings: rows.results.map((r: any) => ({

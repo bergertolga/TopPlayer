@@ -15,6 +15,7 @@ interface SimulationFile {
       totalUnits: number;
       totalBuildings: number;
       surplus: Record<string, number>;
+      combatStats?: CombatStats;
     };
     timeline: Array<{
       tick: number;
@@ -26,6 +27,11 @@ interface SimulationFile {
       rations: number;
     }>;
   }>;
+}
+
+interface CombatStats {
+  attackerDead: number;
+  attackerWounded: number;
 }
 
 interface ProfileOptions {
@@ -197,6 +203,10 @@ function buildMetrics(sim: SimulationFile) {
     return slowTown || slowCity || stuckAfterTown;
   }).length;
 
+  const totalDead = sim.results.reduce((sum, r) => sum + (r.summary.combatStats?.attackerDead || 0), 0);
+  const totalWounded = sim.results.reduce((sum, r) => sum + (r.summary.combatStats?.attackerWounded || 0), 0);
+  const playersWithCasualties = sim.results.filter(r => (r.summary.combatStats?.attackerDead || 0) + (r.summary.combatStats?.attackerWounded || 0) > 0).length;
+
   return {
     medianTicks: tierMedians,
     netResourceDrift: driftTotals,
@@ -208,6 +218,11 @@ function buildMetrics(sim: SimulationFile) {
         sim.results.length === 0 ? 0 : Number(((slowCount / sim.results.length) * 100).toFixed(1)),
       thresholds: { town: 1200, city: 1800 },
     },
+    combat: {
+      totalDead,
+      totalWounded,
+      participationRate: sim.results.length > 0 ? Number((playersWithCasualties / sim.results.length).toFixed(2)) : 0
+    }
   };
 }
 
@@ -293,6 +308,9 @@ function prettyPrint(
       HappinessStdDev: metrics.happinessStdDev,
       StagnationMedianTicks: metrics.stagnationTicksMedian ?? '-',
       PurchasePressure: `${metrics.purchasePressure.slowProgressPercent}% (T>${metrics.purchasePressure.thresholds.town} | C>${metrics.purchasePressure.thresholds.city})`,
+      CombatParticipation: `${(metrics.combat.participationRate * 100).toFixed(1)}%`,
+      TotalDead: metrics.combat.totalDead,
+      TotalWounded: metrics.combat.totalWounded,
     },
   ]);
 

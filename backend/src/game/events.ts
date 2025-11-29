@@ -18,6 +18,7 @@ export interface EventInstance {
   end_at: number;
   status: 'upcoming' | 'active' | 'calculating' | 'completed';
   metadata: Record<string, any>;
+  metadata_json?: string;
 }
 
 export class EventManager {

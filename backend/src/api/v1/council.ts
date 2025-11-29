@@ -1,6 +1,7 @@
 import { Env } from '../../types';
 import { validateUserId } from '../../utils/validation';
 import { mutatePremiumWallet } from '../../utils/premium';
+import { handleCouncilTech } from './council-tech';
 
 function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(data), {
@@ -130,6 +131,53 @@ export async function handleCouncil(
     userId = validateUserId(url.searchParams.get('userId') || request.headers.get('X-User-ID'));
   } catch (error: any) {
     return jsonResponse({ error: error.message }, 400, corsHeaders);
+  }
+
+  // Tech Routes delegation
+  if (url.pathname.includes('/tech')) {
+    const member = await env.DB.prepare('SELECT council_id FROM council_members WHERE user_id = ?').bind(userId).first<{ council_id: string }>();
+    if (!member) return jsonResponse({ error: 'Not in a council' }, 400, corsHeaders);
+    return handleCouncilTech(request, env, userId, member.council_id);
+  }
+
+  if (request.method === 'GET' && url.pathname.match(/^\/api\/v1\/council\/profile\/[\w-]+$/)) {
+    const councilId = url.pathname.split('/').pop()!;
+    
+    const council = await env.DB.prepare(`
+      SELECT c.*, 
+             u.username as steward_name,
+             (SELECT COUNT(*) FROM council_members WHERE council_id = c.id) as members_count
+      FROM councils c
+      JOIN users u ON c.steward_user_id = u.id
+      WHERE c.id = ?
+    `).bind(councilId).first<any>();
+
+    if (!council) return jsonResponse({ error: 'Council not found' }, 404, corsHeaders);
+
+    // Get active tech
+    const tech = await env.DB.prepare(`
+        SELECT t.name, p.status 
+        FROM council_tech_progress p 
+        JOIN council_tech_tree t ON p.tech_id = t.id 
+        WHERE p.council_id = ? AND p.status = 'completed'
+    `).bind(councilId).all();
+
+    return jsonResponse({
+      identity: {
+        id: council.id,
+        name: council.name,
+        motto: council.motto,
+        focus: council.primary_focus,
+        badgeId: council.badge_id,
+        prestige: council.prestige_score || 0
+      },
+      stats: {
+        members: council.members_count,
+        treasury: council.treasury_balance || 0
+      },
+      tech: tech.results || [],
+      leader: council.steward_name
+    }, 200, corsHeaders);
   }
 
   if (request.method === 'POST' && url.pathname === '/api/v1/council/create') {

@@ -2,12 +2,14 @@ import { ConfigLoader } from '../utils/config';
 
 import { SeasonManager } from './seasons';
 
-const BALANCE_CONFIG = {
+export const FALLBACK_BALANCE_RULES = {
   production: { baseMultiplierPerLevel: 0.15 },
   refining: { baseEfficiency: 0.9, efficiencyPerLevel: 0.02 },
   happiness: { base: 0.9, foodDeficitPenalty: -0.1, fabricDeficitPenalty: -0.05, festivalBonus: 0.02, min: 0.0, max: 1.0 },
   warehouse: { baseCapacity: 5000, capacityMultiplier: 1.5 },
 };
+
+const BALANCE_CONFIG = FALLBACK_BALANCE_RULES;
 
 export interface CityState {
   id: string;
@@ -163,7 +165,7 @@ export class CityManager {
     )
       .bind(cityId)
       .all();
-      
+
     const resources = await db.prepare(
       'SELECT resource_id, amount FROM city_resources WHERE city_id = ?'
     )
@@ -180,7 +182,7 @@ export class CityManager {
       
       if (resource) {
         resourceMap[resource.code] = Math.max(0, res.amount);
-      }
+    }
     }
 
     // Check for Season and Crisis
@@ -217,12 +219,14 @@ export class CityManager {
 
     let totalHeroPower = 0;
     if (userHeroes.results.length > 0) {
+      /*
       const { HeroManager } = await import('./heroes');
       const heroManager = new HeroManager();
       for (const hero of userHeroes.results as any[]) {
         const power = heroManager.calculateHeroPower(hero.base_power, hero.level, hero.stars);
         totalHeroPower += power;
       }
+      */
     }
 
     const heroBonus = Math.min(0.5, (totalHeroPower / 1000) * 0.1);
@@ -393,16 +397,16 @@ export class CityManager {
 
         if (resource) {
           const finalChange = Math.max(0, change);
-          const currentAmount = Math.max(0, resourceMap[resourceCode] || 0);
+      const currentAmount = Math.max(0, resourceMap[resourceCode] || 0);
           const newAmount = Math.max(0, currentAmount + finalChange);
-          
-          await db.prepare(
-            `INSERT INTO city_resources (city_id, resource_id, amount)
-             VALUES (?, ?, ?)
-             ON CONFLICT(city_id, resource_id) DO UPDATE SET amount = ?`
-          )
+
+      await db.prepare(
+        `INSERT INTO city_resources (city_id, resource_id, amount)
+         VALUES (?, ?, ?)
+         ON CONFLICT(city_id, resource_id) DO UPDATE SET amount = ?`
+      )
             .bind(cityId, resource.id, newAmount, newAmount)
-            .run();
+        .run();
         }
       }
     }

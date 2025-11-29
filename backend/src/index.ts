@@ -9,6 +9,7 @@ import { handleWorldEvents } from './api/world-events';
 import { handleGuilds } from './api/guilds';
 import { handleShop } from './api/v1/shop';
 import { handleChat } from './api/chat';
+import { jsonResponse } from './utils/responses';
 
 export { MarketDO } from './durable-objects/market';
 export { RealmDO } from './durable-objects/realm-do';
@@ -24,7 +25,7 @@ export default {
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-User-ID',
     };
 
     
@@ -110,6 +111,12 @@ export default {
       } else if (path.startsWith('/api/v1/contracts')) {
         const { handleContracts } = await import('./api/v1/contracts');
         return handleContracts(request, env);
+      } else if (path.startsWith('/api/v1/combat')) {
+        const { handleCombat } = await import('./api/v1/combat');
+        return handleCombat(request, env);
+      } else if (path.startsWith('/api/v1/client/overview')) {
+        const { handleClientSummary } = await import('./api/v1/client-summary');
+        return handleClientSummary(request, env);
       } else {
         return jsonResponse({ error: 'Not found' }, 404, corsHeaders);
       }
@@ -123,16 +130,6 @@ export default {
     }
   },
 };
-
-function jsonResponse(data: any, status: number = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
-  });
-}
 
 async function handleAuth(request: Request, env: Env, corsHeaders: Record<string, string>): Promise<Response> {
   const url = new URL(request.url);

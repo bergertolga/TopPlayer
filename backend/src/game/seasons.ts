@@ -1,5 +1,5 @@
 
-import { Env } from '../index';
+import { Env } from '../types';
 import { D1Database } from '@cloudflare/workers-types';
 import { mutatePremiumWallet } from '../utils/premium';
 

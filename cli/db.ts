@@ -12,6 +12,13 @@ export interface SimulationConfig {
   buildingBehavior: Record<string, { constructionOrder: string[]; desiredLevels: Record<string, number> }>;
   startingCity: StartingCityConfig;
   economyTargets: Record<string, number>;
+  combatThresholds: {
+    base_min_troops: number;
+    mult_balanced: number;
+    mult_militarist: number;
+    mult_trader: number;
+    militarist_training_mult: number;
+  };
 }
 
 export interface PolicyBehavior {
@@ -131,6 +138,13 @@ export function loadSimulationConfig(db: BetterSqlite3.Database): SimulationConf
       buildings: {},
     },
     economyTargets: economyGroup.default || {},
+    combatThresholds: (loadGroup(db, 'cfg-balance') as any)?.combat_thresholds || {
+        base_min_troops: 10,
+        mult_balanced: 1.0,
+        mult_militarist: 0.7,
+        mult_trader: 1.3,
+        militarist_training_mult: 1.5
+    },
   };
 }
 

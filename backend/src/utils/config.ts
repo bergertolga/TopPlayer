@@ -116,8 +116,9 @@ export class ConfigLoader {
       if (typeof config === 'number') {
         resolvedBuildings[code] = config;
       } else if (typeof config === 'object' && config !== null) {
-        const fallback = typeof config.default === 'number' ? config.default : 0;
-        resolvedBuildings[code] = typeof config[policy] === 'number' ? config[policy] : fallback;
+        const conf = config as any;
+        const fallback = typeof conf.default === 'number' ? conf.default : 0;
+        resolvedBuildings[code] = typeof conf[policy] === 'number' ? conf[policy] : fallback;
       }
     }
     return {

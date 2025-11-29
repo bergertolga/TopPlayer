@@ -15,6 +15,7 @@ interface SimOptions {
   sampleEvery: number;
   policy: PolicyInput;
   seasons: number; // Number of seasons to run
+  combat: boolean;
   out?: string;
   dbPath?: string;
 }
@@ -36,6 +37,8 @@ interface SimCityState {
   // Seasonal extensions
   season: number;
   legacyBonuses: Record<string, number>; // e.g., starting gold from prev season
+  hospital?: { total: number };
+  stats?: { attackerDead: number; attackerWounded: number };
 }
 
 interface CityResult {
@@ -47,6 +50,7 @@ interface CityResult {
     totalUnits: number;
     totalBuildings: number;
     surplus: Record<string, number>;
+    combatStats?: { attackerDead: number; attackerWounded: number };
   };
   timeline: Array<{
     tick: number;
@@ -68,6 +72,7 @@ const DEFAULT_OPTIONS: SimOptions = {
   sampleEvery: 50,
   policy: 'balanced',
   seasons: 1,
+  combat: false,
 };
 
 const RESOURCE_KEYS = ['FOOD', 'WOOD', 'STONE', 'RATIONS', 'FIBER'] as const;
@@ -83,6 +88,13 @@ interface RuntimeConfig {
   buildingBehavior: Record<Policy | 'default', { order: string[]; desiredLevels: Record<string, number> }>;
   startingCity: StartingCityConfig;
   economyTargets: Record<string, number>;
+  combatThresholds: {
+    base_min_troops: number;
+    mult_balanced: number;
+    mult_militarist: number;
+    mult_trader: number;
+    militarist_training_mult: number;
+  };
 }
 
 interface StartingCityConfig {
@@ -175,6 +187,10 @@ function parseArgs(argv: string[]): SimOptions {
         options.seasons = Number(value);
         i++;
         break;
+      case 'combat':
+        options.combat = value === 'true';
+        i++;
+        break;
       case 'out':
         options.out = value;
         i++;
@@ -206,6 +222,7 @@ Options:
   --sample <n>     Snapshot cadence in ticks (default ${DEFAULT_OPTIONS.sampleEvery})
   --policy <p>     balanced | militarist | trader | diversified (default balanced)
   --seasons <n>    Number of seasons to chain (default ${DEFAULT_OPTIONS.seasons})
+  --combat <bool>  Enable combat simulation (default false)
   --out <file>     Path to write JSON results (defaults to stdout)
   --db <file>      Path to D1 sqlite file (auto-discovered if omitted)
 `);
@@ -276,6 +293,13 @@ function buildRuntimeConfig(config: SimulationConfig): RuntimeConfig {
     buildingBehavior,
     startingCity,
     economyTargets: config.economyTargets || {},
+    combatThresholds: config.combatThresholds || {
+        base_min_troops: 10,
+        mult_balanced: 1.0,
+        mult_militarist: 0.7,
+        mult_trader: 1.3,
+        militarist_training_mult: 1.5
+    }
   };
 }
 
@@ -416,6 +440,98 @@ function applyUpkeep(city: SimCityState) {
   city.coins = Math.max(0, city.coins - coinCost);
 }
 
+function maybeBattle(city: SimCityState, tick: number, behavior: PolicyBehavior, tuning: RuntimeConfig) {
+  // Config-driven threshold
+  const thresholds = tuning.combatThresholds;
+  let minTroops = thresholds.base_min_troops;
+  if (city.policy === 'militarist') minTroops *= thresholds.mult_militarist;
+  else if (city.policy === 'trader') minTroops *= thresholds.mult_trader;
+  else minTroops *= thresholds.mult_balanced;
+
+  const troops = totalTroops(city);
+  if (troops < minTroops) return; 
+
+  // Chance to attack based on policy
+  let chance = behavior.troopFocus * 0.05; // e.g. 0.4 * 0.05 = 2% per tick
+  if (city.policy === 'militarist') chance *= 1.5; // Bonus aggression
+
+  if (city.rng() > chance) return;
+
+  // Battle Outcome
+  // Win chance scales with troops
+  const winChance = Math.min(0.9, troops / 100);
+  
+  if (city.rng() < winChance) {
+    // Win: Loot
+    const lootCoins = Math.floor(100 + city.rng() * 500);
+    const lootFood = Math.floor(200 + city.rng() * 800);
+    city.coins += lootCoins;
+    city.resources.FOOD += lootFood;
+    // Small losses
+    const totalLoss = Math.floor(troops * 0.05 * city.rng());
+    
+    // CASUALTY SPLIT (Attacker)
+    // Base 0.25 wounded ratio
+    const woundedRatio = 0.25; 
+    const wounded = Math.floor(totalLoss * woundedRatio);
+    const dead = totalLoss - wounded;
+
+    // Apply Dead
+    city.troops.MILITIA = Math.max(0, (city.troops.MILITIA || 0) - dead);
+    
+    // Apply Wounded (Hospital)
+    // Simple hospital: capacity = 500 + level * 200
+    const cap = 500 + city.level * 200;
+    const currentWounded = city.hospital?.total || 0;
+    const canHeal = Math.min(wounded, Math.max(0, cap - currentWounded));
+    
+    if (!city.hospital) city.hospital = { total: 0 };
+    city.hospital.total += canHeal;
+    // Overflow dies
+    const overflowDead = wounded - canHeal;
+    city.troops.MILITIA = Math.max(0, (city.troops.MILITIA || 0) - overflowDead);
+
+    // Track stats (Attacker side)
+    if (!city.stats) city.stats = { attackerDead: 0, attackerWounded: 0 };
+    city.stats.attackerDead += (dead + overflowDead);
+    city.stats.attackerWounded += canHeal;
+
+  } else {
+    // Defeat: Losses
+    const totalLoss = Math.floor(troops * 0.20 * city.rng());
+    
+    // Defeat often implies rout, maybe fewer wounded? Or standard ratio?
+    const woundedRatio = 0.25; 
+    const wounded = Math.floor(totalLoss * woundedRatio);
+    const dead = totalLoss - wounded;
+
+    city.troops.MILITIA = Math.max(0, (city.troops.MILITIA || 0) - dead);
+    
+    const cap = 500 + city.level * 200;
+    const currentWounded = city.hospital?.total || 0;
+    const canHeal = Math.min(wounded, Math.max(0, cap - currentWounded));
+    
+    if (!city.hospital) city.hospital = { total: 0 };
+    city.hospital.total += canHeal;
+    const overflowDead = wounded - canHeal;
+    city.troops.MILITIA = Math.max(0, (city.troops.MILITIA || 0) - overflowDead);
+    
+    if (!city.stats) city.stats = { attackerDead: 0, attackerWounded: 0 };
+    city.stats.attackerDead += (dead + overflowDead);
+    city.stats.attackerWounded += canHeal;
+  }
+}
+
+function maybeResearch(city: SimCityState, tick: number) {
+  // Placeholder for tech contribution
+  // If excess coins, "contribute" to abstract tech
+  if (city.coins > 2000) {
+    city.coins -= 500;
+    // Assume implicit buff handled by season or global tuning for now
+    // In real sim, we'd track tech levels
+  }
+}
+
 function maybeConstruct(city: SimCityState, tick: number, tuning: RuntimeConfig) {
   if (tick % 60 !== 0) return;
   const behavior = tuning.buildingBehavior[city.policy] ?? tuning.buildingBehavior.default;
@@ -439,17 +555,22 @@ function maybeConstruct(city: SimCityState, tick: number, tuning: RuntimeConfig)
   }
 }
 
-function maybeTrainTroops(city: SimCityState, behavior: PolicyBehavior) {
+function maybeTrainTroops(city: SimCityState, behavior: PolicyBehavior, tuning: RuntimeConfig) {
   const troops = totalTroops(city);
   const econScore =
     city.coins + city.resources.FOOD + city.resources.WOOD + city.resources.STONE + city.resources.RATIONS * 2;
-  const rawTarget = Math.floor(econScore * behavior.troopFocus / 500) + behavior.troopBatch * 2;
+  
+  let batch = behavior.troopBatch;
+  if (city.policy === 'militarist') {
+      batch = Math.floor(batch * tuning.combatThresholds.militarist_training_mult);
+  }
+
+  const rawTarget = Math.floor(econScore * behavior.troopFocus / 500) + batch * 2;
   const maxTroopsByPop = Math.floor(city.population * 0.6);
   const targetTroops = Math.min(rawTarget, maxTroopsByPop);
   if (troops >= targetTroops) return;
   if (city.coins < behavior.coinBuffer || city.resources.RATIONS < behavior.rationBuffer) return;
 
-  const batch = behavior.troopBatch;
   const rationCost = batch * 2;
   const coinCost = batch * 40;
   if (city.resources.RATIONS < rationCost || city.coins < coinCost) return;
@@ -531,6 +652,7 @@ function summarize(city: SimCityState) {
       stone: Math.round(city.resources.STONE),
       rations: Math.round(city.resources.RATIONS),
     },
+    combatStats: city.stats || { attackerDead: 0, attackerWounded: 0 },
   };
 }
 
@@ -556,6 +678,7 @@ async function simulateCity(options: {
   ticks: number;
   sampleEvery: number;
   seasons: number;
+  combat: boolean;
   tuning: RuntimeConfig;
 }): Promise<CityResult> {
   const city = createInitialCity(options.id, options.policy, options.tuning);
@@ -567,16 +690,20 @@ async function simulateCity(options: {
       applySeasonReset(city, s);
     }
     const tickOffset = (s - 1) * options.ticks;
-    for (let tick = 0; tick < options.ticks; tick++) {
+  for (let tick = 0; tick < options.ticks; tick++) {
       runEconomy(city, options.tuning);
       maybeConstruct(city, tick, options.tuning);
-      maybeTrainTroops(city, behavior);
-      applyUpkeep(city);
+      maybeTrainTroops(city, behavior, options.tuning);
+      if (options.combat) {
+        maybeBattle(city, tick, behavior, options.tuning);
+      }
+      maybeResearch(city, tick);
+    applyUpkeep(city);
       maybeLevelUp(city, tick, options.tuning);
 
-      if (tick % options.sampleEvery === 0 || tick === options.ticks - 1) {
+    if (tick % options.sampleEvery === 0 || tick === options.ticks - 1) {
         timeline.push({ ...snapshot(city, tick), tick: tickOffset + tick, season: s } as any);
-      }
+    }
     }
     if (options.players <= 5) {
        process.stdout.write(`Player ${options.id} Season ${s} complete\n`);
@@ -593,6 +720,7 @@ async function simulateCity(options: {
       totalUnits: summary.totalUnits,
       totalBuildings: summary.totalBuildings,
       surplus: summary.surplus,
+      combatStats: city.stats || { attackerDead: 0, attackerWounded: 0 },
     },
     timeline,
   };
@@ -608,6 +736,7 @@ async function runSimulation(options: SimOptions, tuning: RuntimeConfig): Promis
       ticks: options.ticks,
       sampleEvery: options.sampleEvery,
       seasons: options.seasons,
+      combat: options.combat,
       tuning,
     });
     results.push(result);

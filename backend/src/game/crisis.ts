@@ -1,5 +1,5 @@
 
-import { Env } from '../index';
+import { Env } from '../types';
 import { SeasonManager } from './seasons';
 
 export class CrisisManager {

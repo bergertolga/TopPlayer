@@ -170,7 +170,7 @@ export async function handleShop(request: Request, env: Env): Promise<Response> 
     const bundle = await env.DB
       .prepare('SELECT * FROM shop_bundles WHERE code = ? AND is_active = 1')
       .bind(body.bundleCode)
-      .first<{ id: string; price_crowns: number; contents_json: string; iap_product_id?: string }>();
+      .first<{ id: string; code: string; price_crowns: number; contents_json: string; iap_product_id?: string }>();
     if (!bundle) {
       return jsonResponse({ error: 'Bundle not found' }, 404);
     }

@@ -170,3 +170,50 @@ VALUES
   ('npc-bandit-1', 'BANDIT_CAMP', 1, 'region-1', '{"MILITIA":20, "ARCHER":5}', '{"resources":{"COINS":500, "FOOD":1000}}', 'active'),
   ('npc-bandit-2', 'BANDIT_CAMP', 2, 'region-1', '{"SOLDIER":20, "ARCHER":20}', '{"resources":{"COINS":1200, "RATIONS":200}}', 'active'),
   ('npc-ruins-1', 'ANCIENT_RUIN', 3, 'region-1', '{"KNIGHT":5, "SOLDIER":50}', '{"resources":{"COINS":5000, "GEMS":10}}', 'active');
+
+-- Hospital & Casualty Config
+INSERT OR REPLACE INTO sim_config_values (id, group_id, key, value_json)
+VALUES
+  ('cfg-combat-casualty', 'cfg-balance', 'casualty_ratios', json_object(
+    'attacker_wounded_base', 0.25,
+    'defender_wounded_base', 0.70,
+    'min_death_ratio', 0.10,
+    'max_wounded_ratio', 0.90
+  ));
+
+-- Premium Items (Hospital)
+INSERT OR IGNORE INTO premium_items (id, code, type, rarity, title, description, payload_json, price_crowns, limited_run)
+VALUES
+  ('item-medboost-small', 'MEDBOOST_SMALL', 'consumable', 'common', 'Field Medics', '+10% Wounded Ratio for 24h', '{"effect":"buff","type":"wounded_ratio","value":0.10,"duration":1440}', 20, 0),
+  ('item-medboost-large', 'MEDBOOST_LARGE', 'consumable', 'rare', 'Royal Surgeons', '+30% Wounded Ratio for 24h', '{"effect":"buff","type":"wounded_ratio","value":0.30,"duration":1440}', 50, 0);
+
+-- Council Tech (Hospital)
+INSERT OR IGNORE INTO council_tech_tree (id, code, name, description, tier, cost_json, prerequisites_json, buff_json)
+VALUES
+  ('tech-field-surgeons', 'FIELD_SURGEONS', 'Elite Field Surgeons', 'Attacker wounded ratio +10%', 2, '{"COINS":15000,"RATIONS":3000}', '["CONSCRIPTION"]', '{"combat":{"attackerWoundedRatio":0.10}}');
+
+
+-- Phase 5: Combat Tuning
+INSERT OR REPLACE INTO sim_config_values (id, group_id, key, value_json)
+VALUES
+  ('cfg-combat-thresholds', 'cfg-balance', 'combat_thresholds', json_object(
+    'base_min_troops', 10,
+    'mult_balanced', 1.0,
+    'mult_militarist', 0.7,
+    'mult_trader', 1.3,
+    'militarist_training_mult', 1.5
+  ));
+
+-- Phase 5: Cosmetics & Banners
+INSERT OR IGNORE INTO premium_items (id, code, type, rarity, title, description, payload_json, price_crowns, limited_run)
+VALUES
+  ('cosm-banner-gold', 'BANNER_GOLD', 'council_banner', 'rare', 'Golden Lion Banner', 'Prestige banner for wealthy councils.', '{"effect":"prestige_bonus","value":0.05}', 200, 0),
+  ('cosm-banner-dragon', 'BANNER_DRAGON', 'council_banner', 'epic', 'Dragon Scale Banner', 'Intimidating banner. +2% War Score.', '{"effect":"war_score","value":0.02}', 500, 1),
+  ('cosm-monument-fountain', 'MONUMENT_FOUNTAIN', 'city_monument', 'uncommon', 'Marble Fountain', 'Increases happiness by 1%', '{"effect":"happiness","value":0.01}', 100, 0),
+  ('cosm-monument-statue', 'MONUMENT_WARRIOR', 'city_monument', 'rare', 'Warrior Statue', 'Increases max troops by 5%', '{"effect":"troop_cap","value":0.05}', 250, 0);
+
+-- Phase 5: Council Events
+INSERT OR IGNORE INTO event_definitions (id, code, type, name, description, scoring_config_json, rewards_json, scope)
+VALUES
+  ('evt-council-builder', 'COUNCIL_BUILDER', 'council_contribution', 'Council Builder Week', 'Contribute Stone to Council Projects', '{"metric":"contribution_resource","resource":"STONE"}', '{"rank_1":{"prestige":100, "crowns":1000}}', 'council');
+

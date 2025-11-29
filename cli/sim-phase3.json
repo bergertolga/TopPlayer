@@ -1,0 +1,7815 @@
+{
+  "meta": {
+    "generatedAt": "2025-11-27T23:43:06.840Z",
+    "players": 10,
+    "ticks": 1000,
+    "sampleEvery": 50,
+    "policy": "balanced",
+    "seasons": 2,
+    "cli": "tools/simulate.ts",
+    "runId": "d410ee15-ed83-49c3-ad4a-0da8b38f34ba",
+    "db": "/Users/tolgaberger/Desktop/BergerAndBerger/TopPlayer/backend/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/d598ef165adce403a9c35fa9c9a7763af7f608dda4db618d4718317edbc7ec1d.sqlite"
+  },
+  "results": [
+    {
+      "playerId": "player-0",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-1",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-2",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-3",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-4",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-5",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-6",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-7",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-8",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    },
+    {
+      "playerId": "player-9",
+      "summary": {
+        "policy": "balanced",
+        "finalTier": "Hamlet",
+        "ticksToTier": {
+          "Settlement": 0,
+          "Hamlet": 337,
+          "Town": null,
+          "City": null
+        },
+        "totalUnits": 8,
+        "totalBuildings": 10,
+        "surplus": {
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20
+        }
+      },
+      "timeline": [
+        {
+          "tick": 0,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 320.07,
+            "WOOD": 139.25,
+            "STONE": 116.25,
+            "RATIONS": 52.64,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 846,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 53,
+          "season": 1
+        },
+        {
+          "tick": 50,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 127.8,
+            "WOOD": 202.44,
+            "STONE": 179.44,
+            "RATIONS": 112.17,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 391,
+          "grain": 128,
+          "timber": 202,
+          "stone": 179,
+          "rations": 112,
+          "season": 1
+        },
+        {
+          "tick": 100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 71.75,
+            "WOOD": 195.9,
+            "STONE": 191.9,
+            "RATIONS": 110.28,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 72,
+          "timber": 196,
+          "stone": 192,
+          "rations": 110,
+          "season": 1
+        },
+        {
+          "tick": 150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.74,
+            "WOOD": 264.9,
+            "STONE": 260.9,
+            "RATIONS": 80.52,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 265,
+          "stone": 261,
+          "rations": 81,
+          "season": 1
+        },
+        {
+          "tick": 200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.43,
+            "WOOD": 333.9,
+            "STONE": 329.9,
+            "RATIONS": 48.66,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 334,
+          "stone": 330,
+          "rations": 49,
+          "season": 1
+        },
+        {
+          "tick": 250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 67.28,
+            "WOOD": 402.87,
+            "STONE": 398.87,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 67,
+          "timber": 403,
+          "stone": 399,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 300,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 62.53,
+            "WOOD": 469.9,
+            "STONE": 465.9,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 470,
+          "stone": 466,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 56.35,
+            "WOOD": 536.36,
+            "STONE": 532.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 56,
+          "timber": 536,
+          "stone": 532,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.22,
+            "WOOD": 600.86,
+            "STONE": 596.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 601,
+          "stone": 597,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.06,
+            "WOOD": 665.36,
+            "STONE": 661.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 665,
+          "stone": 661,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 729.86,
+            "STONE": 725.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 730,
+          "stone": 726,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 794.36,
+            "STONE": 790.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 794,
+          "stone": 790,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 858.86,
+            "STONE": 854.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 859,
+          "stone": 855,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 923.36,
+            "STONE": 919.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 923,
+          "stone": 919,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 987.86,
+            "STONE": 983.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 988,
+          "stone": 984,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1052.36,
+            "STONE": 1048.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1052,
+          "stone": 1048,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1116.86,
+            "STONE": 1112.86,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1117,
+          "stone": 1113,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 54.04,
+            "WOOD": 1181.36,
+            "STONE": 1177.36,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 54,
+          "timber": 1181,
+          "stone": 1177,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.44,
+            "WOOD": 1251.03,
+            "STONE": 1247.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 57,
+          "timber": 1251,
+          "stone": 1247,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.75,
+            "WOOD": 1321.03,
+            "STONE": 1317.03,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1321,
+          "stone": 1317,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 57.78,
+            "WOOD": 1389.63,
+            "STONE": 1385.63,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 58,
+          "timber": 1390,
+          "stone": 1386,
+          "rations": 20,
+          "season": 1
+        },
+        {
+          "tick": 1000,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 319.77,
+            "WOOD": 139.07,
+            "STONE": 116.07,
+            "RATIONS": 51.78,
+            "FIBER": 100
+          },
+          "totalUnits": 4,
+          "coins": 848,
+          "grain": 320,
+          "timber": 139,
+          "stone": 116,
+          "rations": 52,
+          "season": 2
+        },
+        {
+          "tick": 1050,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 115.86,
+            "WOOD": 193.08,
+            "STONE": 170.08,
+            "RATIONS": 25.38,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 494,
+          "grain": 116,
+          "timber": 193,
+          "stone": 170,
+          "rations": 25,
+          "season": 2
+        },
+        {
+          "tick": 1100,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 65.3,
+            "WOOD": 176.81,
+            "STONE": 172.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 63,
+          "grain": 65,
+          "timber": 177,
+          "stone": 173,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1150,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.58,
+            "WOOD": 235.81,
+            "STONE": 231.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 62,
+          "timber": 236,
+          "stone": 232,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1200,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.29,
+            "WOOD": 294.81,
+            "STONE": 290.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 295,
+          "stone": 291,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1250,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 353.81,
+            "STONE": 349.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 354,
+          "stone": 350,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1300,
+          "tier": "Settlement",
+          "resources": {
+            "FOOD": 61.27,
+            "WOOD": 412.81,
+            "STONE": 408.81,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 61,
+          "timber": 413,
+          "stone": 409,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1350,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 63.09,
+            "WOOD": 473.24,
+            "STONE": 469.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 63,
+          "timber": 473,
+          "stone": 469,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1400,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.86,
+            "WOOD": 537.74,
+            "STONE": 533.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 538,
+          "stone": 534,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1450,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 64.99,
+            "WOOD": 602.24,
+            "STONE": 598.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 602,
+          "stone": 598,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1500,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 666.74,
+            "STONE": 662.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 667,
+          "stone": 663,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1550,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 731.24,
+            "STONE": 727.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 731,
+          "stone": 727,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1600,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 795.74,
+            "STONE": 791.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 796,
+          "stone": 792,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1650,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 860.24,
+            "STONE": 856.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 860,
+          "stone": 856,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1700,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 924.74,
+            "STONE": 920.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 925,
+          "stone": 921,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1750,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 989.24,
+            "STONE": 985.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 989,
+          "stone": 985,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1800,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1053.74,
+            "STONE": 1049.74,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1054,
+          "stone": 1050,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1850,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65,
+            "WOOD": 1118.24,
+            "STONE": 1114.24,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1118,
+          "stone": 1114,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1900,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 65.37,
+            "WOOD": 1182.96,
+            "STONE": 1178.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 65,
+          "timber": 1183,
+          "stone": 1179,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1950,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.48,
+            "WOOD": 1252.96,
+            "STONE": 1248.96,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 68,
+          "timber": 1253,
+          "stone": 1249,
+          "rations": 20,
+          "season": 2
+        },
+        {
+          "tick": 1999,
+          "tier": "Hamlet",
+          "resources": {
+            "FOOD": 68.72,
+            "WOOD": 1321.56,
+            "STONE": 1317.56,
+            "RATIONS": 20,
+            "FIBER": 100
+          },
+          "totalUnits": 8,
+          "coins": 0,
+          "grain": 69,
+          "timber": 1322,
+          "stone": 1318,
+          "rations": 20,
+          "season": 2
+        }
+      ]
+    }
+  ]
+}

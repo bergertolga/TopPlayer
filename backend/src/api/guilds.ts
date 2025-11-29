@@ -239,7 +239,7 @@ export async function handleGuilds(request: Request, env: Env): Promise<Response
            LIMIT ?`
         )
         .bind(councilId, limit)
-        .all<{ id: string; username: string | null; message: string; metadata_json: string | null; created_at: number }>();
+        .all<{ id: string; user_id: string; username: string | null; message: string; metadata_json: string | null; created_at: number }>();
 
       return jsonResponse({
         councilId,
