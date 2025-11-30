@@ -38,7 +38,10 @@ export async function handleCouncilTech(request: Request, env: Env, userId: stri
 
     // Check resources
     for (const [res, amount] of Object.entries(body.resources)) {
-        const has = await env.DB.prepare('SELECT amount FROM city_resources WHERE city_id = ? AND resource_type = ?').bind(city.id, res).first<{ amount: number }>();
+        const resource = await env.DB.prepare('SELECT id FROM resources WHERE code = ?').bind(res).first<{ id: string }>();
+        if (!resource) return jsonResponse({ error: `Resource ${res} not found` }, 400);
+
+        const has = await env.DB.prepare('SELECT amount FROM city_resources WHERE city_id = ? AND resource_id = ?').bind(city.id, resource.id).first<{ amount: number }>();
         if (!has || has.amount < amount) {
             return jsonResponse({ error: `Insufficient ${res}` }, 400);
         }
@@ -46,7 +49,10 @@ export async function handleCouncilTech(request: Request, env: Env, userId: stri
 
     // Deduct resources
     for (const [res, amount] of Object.entries(body.resources)) {
-        await env.DB.prepare('UPDATE city_resources SET amount = amount - ? WHERE city_id = ? AND resource_type = ?').bind(amount, city.id, res).run();
+        const resource = await env.DB.prepare('SELECT id FROM resources WHERE code = ?').bind(res).first<{ id: string }>();
+        if (resource) {
+            await env.DB.prepare('UPDATE city_resources SET amount = amount - ? WHERE city_id = ? AND resource_id = ?').bind(amount, city.id, resource.id).run();
+        }
     }
 
     const result = await TechManager.contributeToTech(env.DB, councilId, userId, body.techCode, body.resources);

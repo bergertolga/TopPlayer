@@ -6,9 +6,12 @@ export interface ResourceMap {
 export interface Building {
   type: string;
   level: number;
+  upgradeCost?: number;
+  canUpgrade?: boolean;
 }
 
 export interface Troop {
+  typeId?: string;
   type: string;
   count: number;
 }
@@ -23,6 +26,7 @@ export interface CitySummary {
   id: string;
   name: string;
   level: number;
+  region_id?: string;
   resources: ResourceMap;
   buildings: Building[];
   troops: Troop[];

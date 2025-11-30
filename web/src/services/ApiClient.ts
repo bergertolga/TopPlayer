@@ -1,7 +1,10 @@
 
 import type { ClientOverview, TechNode, CombatEntity, BattleLog, AuthResponse } from './types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (isLocal ? 'http://localhost:8787' : 'https://idle-adventure-backend.tolga-730.workers.dev');
+
+console.log('API_BASE_URL:', API_BASE_URL);
 
 class ApiClient {
   private userId: string | null = localStorage.getItem('top_player_user_id');
@@ -77,6 +80,13 @@ class ApiClient {
     });
   }
 
+  async purchaseCapitalItem(offerCode: string): Promise<any> {
+    return this.request('/api/v1/world/capital/store/purchase', {
+      method: 'POST',
+      body: JSON.stringify({ offerCode }),
+    });
+  }
+
   // Market
   async getMarketBook(resourceCode: string): Promise<any> {
     return this.request(`/api/v1/market/book?resource=${resourceCode}`);
@@ -90,13 +100,7 @@ class ApiClient {
   }
 
   async getMyOrders(): Promise<any> {
-    // Currently no dedicated endpoint for "my orders", but we can filter from book or add one.
-    // For now, we'll assume the overview or book returns relevant data, or we add a stub.
-    // Actually, backend doesn't have "get my orders" endpoint explicitly exposed in the snippet I saw.
-    // I'll add a placeholder or use what's available.
-    // Let's check backend/src/api/v1/market.ts again if needed.
-    // For now, let's assume we might need to add it or it's missing.
-    return []; 
+    return this.request('/api/v1/market/my-orders');
   }
 
   async cancelOrder(orderId: string): Promise<any> {
@@ -112,8 +116,25 @@ class ApiClient {
   }
 
   async claimQuestReward(questId: string): Promise<any> {
-    return this.request(`/api/v1/quests/${questId}/claim`, {
+    // Note: The endpoint is /turn-in but effectively claims/contributes.
+    // If it's a "fetch quest" style, we might use contribute with 0 amount or similar?
+    // Based on backend code: turn-in takes amount. If quest is "gather", we might need to send amount?
+    // Or if it's "claim", maybe amount is ignored or we assume it's a completion check.
+    // Let's assume for simple UI we just call turn-in.
+    return this.request('/api/v1/quests/turn-in', {
       method: 'POST',
+      body: JSON.stringify({ questId })
+    });
+  }
+
+  async getMilestones(): Promise<any> {
+    return this.request('/api/v1/city/milestones');
+  }
+
+  async claimMilestone(milestoneId: string): Promise<any> {
+    return this.request('/api/v1/city/milestones/claim', {
+      method: 'POST',
+      body: JSON.stringify({ milestoneId })
     });
   }
 
@@ -131,24 +152,51 @@ class ApiClient {
 
   async constructBuilding(type: string): Promise<any> {
       // POST /api/v1/city/construct { buildingType: ... }
-      // Need to verify this endpoint exists.
       return this.request('/api/v1/city/construct', {
           method: 'POST',
           body: JSON.stringify({ buildingType: type })
       });
   }
 
-  async trainTroops(type: string, amount: number): Promise<any> {
-      // POST /api/v1/army/train { type, amount }
+  async upgradeBuilding(buildingCode: string): Promise<any> {
+      return this.request('/api/v1/city/upgrade', {
+          method: 'POST',
+          body: JSON.stringify({ buildingCode })
+      });
+  }
+
+  async getTroopTypes(): Promise<any> {
+      return this.request('/api/v1/army/troop-types');
+  }
+
+  async trainTroops(troopTypeId: string, quantity: number): Promise<any> {
       return this.request('/api/v1/army/train', {
           method: 'POST',
-          body: JSON.stringify({ type, amount })
+          body: JSON.stringify({ troopTypeId, quantity })
       });
   }
 
   // Council
   async getCouncilProfile(councilId: string): Promise<any> {
     return this.request(`/api/v1/council/profile/${councilId}`);
+  }
+
+  async getMyCouncil(): Promise<any> {
+    return this.request('/api/v1/council');
+  }
+
+  async createCouncil(name: string, guildCode: string): Promise<any> {
+    return this.request('/api/v1/council/create', {
+      method: 'POST',
+      body: JSON.stringify({ name, guildCode })
+    });
+  }
+
+  async joinCouncil(councilId: string): Promise<any> {
+    return this.request('/api/v1/council/join', {
+      method: 'POST',
+      body: JSON.stringify({ councilId })
+    });
   }
 
   async getCouncilTechTree(): Promise<{ tech_tree: TechNode[] }> {
@@ -176,6 +224,27 @@ class ApiClient {
     });
   }
 
+  async kickCouncilMember(userId: string): Promise<any> {
+    return this.request('/api/v1/council/kick', {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    });
+  }
+
+  async promoteCouncilMember(userId: string): Promise<any> {
+    return this.request('/api/v1/council/promote', {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    });
+  }
+
+  async setCouncilTaxRate(rate: number): Promise<any> {
+    return this.request('/api/v1/council/tax', {
+      method: 'POST',
+      body: JSON.stringify({ rate }),
+    });
+  }
+
   async createPublicWork(work: { projectCode: string, name: string, requiredResources: Record<string, number> }): Promise<any> {
     return this.request('/api/v1/council/public-works/create', {
       method: 'POST',
@@ -183,9 +252,23 @@ class ApiClient {
     });
   }
 
+  async contributeToPublicWork(publicWorkId: string, contributions: Record<string, number>): Promise<any> {
+    return this.request('/api/v1/council/public-works/contribute', {
+      method: 'POST',
+      body: JSON.stringify({ publicWorkId, contributions }),
+    });
+  }
+
   // Combat
   async getCombatMap(regionId: string = 'region-1'): Promise<{ targets: CombatEntity[] }> {
     return this.request(`/api/v1/combat/map?region=${regionId}`);
+  }
+
+  async relocateCity(regionId: string): Promise<any> {
+    return this.request('/api/v1/city/move', {
+      method: 'POST',
+      body: JSON.stringify({ regionId }),
+    });
   }
 
   async attackEntity(entityId: string): Promise<any> {
@@ -197,6 +280,13 @@ class ApiClient {
 
   async getCombatLogs(): Promise<{ logs: BattleLog[] }> {
     return this.request('/api/v1/combat/logs');
+  }
+
+  async healWoundedTroops(troops: Record<string, number>): Promise<any> {
+    return this.request('/api/v1/combat/heal', {
+      method: 'POST',
+      body: JSON.stringify({ troops })
+    });
   }
 
   // World

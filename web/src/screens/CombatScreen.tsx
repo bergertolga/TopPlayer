@@ -1,13 +1,17 @@
-
 import { useState, useEffect } from 'react';
 import { api } from '../services/ApiClient';
 import type { BattleLog, ClientOverview } from '../services/types';
+import { useToast } from '../components/Toast';
 
 export function CombatScreen() {
   const [overview, setOverview] = useState<ClientOverview | null>(null);
   const [logs, setLogs] = useState<BattleLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLog, setSelectedLog] = useState<any>(null);
+  const { showToast } = useToast();
+  
+  // Hospital State: map typeId -> amount
+  const [healAmounts, setHealAmounts] = useState<Record<string, number>>({});
 
   const fetchData = async () => {
     try {
@@ -17,6 +21,15 @@ export function CombatScreen() {
       ]);
       setOverview(ov);
       setLogs(lg.logs);
+      
+      // Reset heal amounts
+      const initialHeal: Record<string, number> = {};
+      ov.city.hospital.woundedByType.forEach((w: any) => {
+        if (w.typeId) {
+          initialHeal[w.typeId] = 0;
+        }
+      });
+      setHealAmounts(initialHeal);
     } catch (e) {
       console.error(e);
     } finally {
@@ -33,8 +46,37 @@ export function CombatScreen() {
       const details = JSON.parse(log.details_json);
       setSelectedLog({ ...log, details });
     } catch (e) {
-      alert('Failed to parse log details');
+      showToast('Failed to parse log details', 'error');
     }
+  };
+
+  const handleHeal = async () => {
+    const toHeal: Record<string, number> = {};
+    let total = 0;
+    
+    Object.entries(healAmounts).forEach(([typeId, amount]) => {
+      if (amount > 0) {
+        toHeal[typeId] = amount;
+        total += amount;
+      }
+    });
+
+    if (total === 0) {
+      showToast('Select troops to heal', 'info');
+      return;
+    }
+
+    try {
+      await api.healWoundedTroops(toHeal);
+      showToast('Healing started!', 'success');
+      fetchData();
+    } catch (e: any) {
+      showToast(e.message || 'Healing failed', 'error');
+    }
+  };
+
+  const updateHealAmount = (typeId: string, val: number) => {
+    setHealAmounts(prev => ({ ...prev, [typeId]: val }));
   };
 
   if (loading) return <div>Loading Combat Data...</div>;
@@ -60,15 +102,29 @@ export function CombatScreen() {
 
         <div>
           <h2>Hospital ({overview.city.hospital.occupied}/{overview.city.hospital.capacity})</h2>
-          <div style={{ display: 'grid', gap: '0.5rem' }}>
-            {overview.city.hospital.woundedByType.map((w, i) => (
-              <div key={i} style={{ border: '1px solid #ffcdd2', padding: '0.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>{w.count} x {w.type} (Wounded)</span>
-                <button onClick={() => alert('Healing logic here')} style={{ background: '#4CAF50', color: 'white', border: 'none', padding: '0.25rem' }}>Heal</button>
-              </div>
-            ))}
-            {overview.city.hospital.occupied === 0 && <p style={{ color: 'green' }}>Hospital empty.</p>}
-          </div>
+          {overview.city.hospital.woundedByType.length > 0 ? (
+             <div style={{ display: 'grid', gap: '1rem', border: '1px solid #ffcdd2', padding: '1rem', background: '#ffebee' }}>
+                {overview.city.hospital.woundedByType.map((w: any, i) => {
+                  const typeId = w.typeId || `unknown-${i}`;
+                  return (
+                    <div key={typeId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>{w.count} x {w.type}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <input 
+                          type="range" 
+                          min="0" 
+                          max={w.count} 
+                          value={healAmounts[typeId] || 0} 
+                          onChange={(e) => updateHealAmount(typeId, parseInt(e.target.value))} 
+                        />
+                        <span>{healAmounts[typeId] || 0}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+                <button onClick={handleHeal} style={{ background: '#4CAF50', color: 'white', padding: '0.5rem' }}>Heal Selected (1 Coin/Unit)</button>
+             </div>
+          ) : <p style={{ color: 'green' }}>Hospital empty.</p>}
         </div>
       </div>
 

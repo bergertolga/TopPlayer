@@ -12,6 +12,8 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { MarketScreen } from './screens/MarketScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { api } from './services/ApiClient';
+import { ToastProvider } from './components/Toast';
+import { GameModalProvider } from './components/GameModal';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (!api.getUserId()) {
@@ -22,20 +24,23 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<LoginScreen />} />
-        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route index element={<CityScreen />} />
-          <Route path="capital" element={<CapitalScreen />} />
-          <Route path="map" element={<MapScreen />} />
-          <Route path="council" element={<CouncilScreen />} />
-          <Route path="events" element={<EventsScreen />} />
-          <Route path="combat" element={<CombatScreen />} />
-          <Route path="market" element={<MarketScreen />} />
-          <Route path="profile" element={<ProfileScreen />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <GameModalProvider />
+        <Routes>
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<CityScreen />} />
+            <Route path="capital" element={<CapitalScreen />} />
+            <Route path="map" element={<MapScreen />} />
+            <Route path="council" element={<CouncilScreen />} />
+            <Route path="events" element={<EventsScreen />} />
+            <Route path="combat" element={<CombatScreen />} />
+            <Route path="market" element={<MarketScreen />} />
+            <Route path="profile" element={<ProfileScreen />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }

@@ -174,6 +174,37 @@ export async function handleMarket(
     }, 200, corsHeaders);
   }
 
+  if (request.method === 'GET' && url.pathname === '/api/v1/market/my-orders') {
+    let userId: string;
+    try {
+      userId = validateUserId(url.searchParams.get('userId') || request.headers.get('X-User-ID'));
+    } catch (error: any) {
+      return jsonResponse({ error: error.message }, 400, corsHeaders);
+    }
+
+    const city = await env.DB.prepare(
+      'SELECT id FROM cities WHERE user_id = ?'
+    )
+      .bind(userId)
+      .first<{ id: string }>();
+
+    if (!city) {
+      return jsonResponse({ orders: [] }, 200, corsHeaders);
+    }
+
+    const orders = await env.DB.prepare(
+      `SELECT mo.*, r.code as resource_code 
+       FROM market_orders mo
+       JOIN resources r ON mo.resource_id = r.id
+       WHERE mo.city_id = ? AND mo.status = 'open'
+       ORDER BY mo.created_at DESC`
+    )
+      .bind(city.id)
+      .all();
+
+    return jsonResponse({ orders: orders.results }, 200, corsHeaders);
+  }
+
   if (request.method === 'POST' && url.pathname === '/api/v1/market/order') {
     let userId: string;
     try {

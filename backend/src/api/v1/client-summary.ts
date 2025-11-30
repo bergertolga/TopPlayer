@@ -30,9 +30,9 @@ export async function handleClientSummary(request: Request, env: Env): Promise<R
     wallet
   ] = await Promise.all([
     env.DB.prepare('SELECT r.code, cr.amount FROM city_resources cr JOIN resources r ON cr.resource_id = r.id WHERE cr.city_id = ?').bind(city.id).all(),
-    env.DB.prepare('SELECT cb.level, b.code FROM city_buildings cb JOIN buildings b ON cb.building_id = b.id WHERE cb.city_id = ?').bind(city.id).all(),
+    env.DB.prepare('SELECT cb.level, b.code, b.upkeep_coins, b.max_level FROM city_buildings cb JOIN buildings b ON cb.building_id = b.id WHERE cb.city_id = ?').bind(city.id).all(),
     env.DB.prepare('SELECT tt.code, ct.quantity FROM city_troops ct JOIN troop_types tt ON ct.troop_type_id = tt.id WHERE ct.city_id = ?').bind(city.id).all(),
-    env.DB.prepare('SELECT tt.code, cw.quantity FROM city_wounded cw JOIN troop_types tt ON cw.troop_type_id = tt.id WHERE cw.city_id = ?').bind(city.id).all(),
+    env.DB.prepare('SELECT cw.troop_type_id, tt.code, cw.quantity FROM city_wounded cw JOIN troop_types tt ON cw.troop_type_id = tt.id WHERE cw.city_id = ?').bind(city.id).all(),
     env.DB.prepare('SELECT * FROM council_members WHERE user_id = ?').bind(userId).first<any>(),
     env.DB.prepare('SELECT * FROM premium_currencies WHERE user_id = ?').bind(userId).first<any>()
   ]);
@@ -42,13 +42,22 @@ export async function handleClientSummary(request: Request, env: Env): Promise<R
   (resources.results || []).forEach((r: any) => resourceMap[r.code] = r.amount);
 
   // Format Buildings
-  const buildingsList = (buildings.results || []).map((b: any) => ({ type: b.code, level: b.level }));
+  const buildingsList = (buildings.results || []).map((b: any) => {
+    const costMultiplier = Math.pow(1.5, (b.level || 1) - 1);
+    const upgradeCost = Math.floor((b.upkeep_coins || 10) * 10 * costMultiplier);
+    return { 
+      type: b.code, 
+      level: b.level,
+      upgradeCost,
+      canUpgrade: b.level < (b.max_level || 10)
+    };
+  });
 
   // Format Troops
   const troopsList = (troops.results || []).map((t: any) => ({ type: t.code, count: t.quantity }));
   
   // Format Wounded
-  const woundedList = (wounded.results || []).map((w: any) => ({ type: w.code, count: w.quantity }));
+  const woundedList = (wounded.results || []).map((w: any) => ({ typeId: w.troop_type_id, type: w.code, count: w.quantity }));
   const totalWounded = woundedList.reduce((sum, w) => sum + w.count, 0);
   const hospitalCap = 500 + (city.level * 200); // Sync logic with battle.ts
 
@@ -95,6 +104,7 @@ export async function handleClientSummary(request: Request, env: Env): Promise<R
       id: city.id,
       name: city.name,
       level: city.level,
+      region_id: city.region_id,
       resources: resourceMap,
       buildings: buildingsList,
       troops: troopsList,
