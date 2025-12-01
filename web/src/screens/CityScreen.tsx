@@ -8,7 +8,6 @@ import { GameButton } from '../components/ui/GameButton';
 import { GameCard } from '../components/ui/GameCard';
 import { ResourceDisplay } from '../components/ui/ResourceDisplay';
 import { LoadingScreen } from '../components/ui/LoadingScreen';
-import { Icon } from '../components/ui/Icon';
 import { Sprite } from '../components/ui/Sprite';
 import { GameInput, GameSelect } from '../components/ui/GameInput';
 import { gameModal } from '../components/GameModal';
@@ -151,7 +150,8 @@ export function CityScreen() {
         <GameCard title="Buildings" className="flex-col gap-md">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '1rem' }}>
             {city.buildings.map((b, i) => {
-              const content = GAME_CONTENT.buildings[b.type] || { name: b.type, desc: 'Unknown building' };
+              const buildingsData = GAME_CONTENT.buildings as unknown as Record<string, { name: string, description: string }>;
+              const content = buildingsData[b.type] || { name: b.type, description: 'Unknown building' };
               return (
                 <div key={i} style={{ 
                   display: 'flex', 
@@ -162,7 +162,7 @@ export function CityScreen() {
                   background: 'rgba(255,255,255,0.05)',
                   borderRadius: '8px'
                 }}>
-                  <Tooltip text={content.desc}>
+                  <Tooltip text={content.description}>
                     <div style={{ 
                       width: '64px', 
                       height: '64px', 
@@ -187,15 +187,30 @@ export function CityScreen() {
                     Lvl {b.level}
                   </span>
                   
-                  <GameButton 
-                    size="sm" 
-                    variant={b.canUpgrade ? 'green' : 'gray'}
-                    disabled={!b.canUpgrade}
-                    onClick={() => handleUpgrade(b)}
-                    style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
-                  >
-                    {b.canUpgrade ? `Up (${b.upgradeCost})` : 'Max'}
-                  </GameButton>
+                  <div className="flex-col gap-sm" style={{ width: '100%' }}>
+                    {['FARM', 'LUMBER_MILL', 'QUARRY', 'MINE'].includes(b.type) && (
+                      <GameButton 
+                        size="sm" 
+                        variant="blue" 
+                        onClick={() => {
+                          floatingText.show('+ Resources', window.innerWidth / 2, window.innerHeight / 2, '#4caf50');
+                          fetchOverview();
+                        }}
+                        style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
+                      >
+                        Collect
+                      </GameButton>
+                    )}
+                    <GameButton 
+                      size="sm" 
+                      variant={b.canUpgrade ? 'green' : 'gray'}
+                      disabled={!b.canUpgrade}
+                      onClick={() => handleUpgrade(b)}
+                      style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
+                    >
+                      {b.canUpgrade ? `Up (${b.upgradeCost})` : 'Max'}
+                    </GameButton>
+                  </div>
                 </div>
               );
             })}
