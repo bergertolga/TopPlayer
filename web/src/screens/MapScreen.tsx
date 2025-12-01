@@ -5,6 +5,7 @@ import { GameButton } from '../components/ui/GameButton';
 import { Icon } from '../components/ui/Icon';
 import { gameModal } from '../components/GameModal';
 import { battleModal } from '../components/BattleResultModal';
+import { WorldMapRenderer } from '../components/map/WorldMapRenderer'; // Import WorldMapRenderer
 
 const REGIONS = [
   { id: 'region-1', name: 'Heartlands', description: 'Safe, fertile lands. Balanced resources.', color: '#4caf50', icon: '/assets/layerlab/ui/icons/Icon_Flag/icon_guild_flag_1.png' },
@@ -43,6 +44,14 @@ export function MapScreen() {
     }
   }, [view, selectedRegion]);
 
+  const handleRegionSelect = (regionId: string) => {
+    const region = REGIONS.find(r => r.id === regionId);
+    if (region) {
+      setSelectedRegion(region);
+      setView('region');
+    }
+  };
+
   const handleRelocate = async () => {
     if (!await gameModal.confirm(`Relocate to ${selectedRegion.name}? This costs 500 Coins.`)) return;
     try {
@@ -76,71 +85,28 @@ export function MapScreen() {
 
   if (view === 'world') {
     return (
-      <div style={{ textAlign: 'center', padding: '1rem' }}>
-        <h1 style={{ color: 'var(--color-gold)', textShadow: '0 2px 4px black', fontSize: '2.5rem' }}>World Map</h1>
-        <p style={{ color: '#ccc', fontSize: '1.2rem' }}>Select a region to explore</p>
+      <div style={{ textAlign: 'center', padding: '1rem', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <h1 style={{ color: 'var(--color-gold)', textShadow: '0 2px 4px black', fontSize: '2.5rem', marginBottom: '0.5rem' }}>World Map</h1>
+        <p style={{ color: '#ccc', fontSize: '1.2rem', marginBottom: '2rem' }}>Select a region to explore</p>
         
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-          gap: '2rem',
-          marginTop: '2rem'
-        }}>
-          {REGIONS.map(r => (
-            <div 
-              key={r.id} 
-              onClick={() => { setSelectedRegion(r); setView('region'); }}
-              style={{ 
-                position: 'relative',
-                cursor: 'pointer',
-                transition: 'transform 0.2s'
-              }}
-              onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
-              onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              <div style={{
-                background: 'url(/assets/layerlab/ui/Frame/CardFrame_02_Bg.png) no-repeat center/100% 100%',
-                padding: '2.5rem 2rem',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1rem',
-                minHeight: '250px',
-                imageRendering: 'pixelated' // Fix blurriness
-              }}>
-                 <div style={{
-                   width: '80px',
-                   height: '80px',
-                   background: 'url(/assets/layerlab/ui/Frame/BasicFrame_Hexagon_64.png) no-repeat center/contain',
-                   display: 'flex',
-                   justifyContent: 'center',
-                   alignItems: 'center'
-                 }}>
-                    <div style={{ width: '50px', height: '50px', background: r.color, borderRadius: '50%', opacity: 0.5 }}></div>
-                 </div>
-                 
-                 <div>
-                   <h2 style={{ margin: '0 0 0.5rem 0', color: 'var(--color-text-highlight)' }}>{r.name}</h2>
-                   <p style={{ fontSize: '0.9rem', color: '#aaa', margin: 0 }}>{r.description}</p>
-                 </div>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <WorldMapRenderer 
+            onRegionSelect={handleRegionSelect} 
+            currentRegionId={myRegionId || undefined} 
+          />
+        </div>
 
-                 {myRegionId === r.id && (
-                   <div style={{ 
-                     marginTop: 'auto', 
-                     background: 'var(--color-gold-dim)', 
-                     padding: '4px 12px', 
-                     borderRadius: '4px', 
-                     fontSize: '0.8rem', 
-                     fontWeight: 'bold', 
-                     color: 'white'
-                   }}>
-                     Your Territory
-                   </div>
-                 )}
-              </div>
-            </div>
-          ))}
+        <div style={{ marginTop: '2rem', display: 'flex', gap: '2rem', justifyContent: 'center' }}>
+           {/* Legend or Stats could go here */}
+           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+             <div style={{ width: '16px', height: '16px', background: '#4caf50' }}></div> Heartlands
+           </div>
+           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+             <div style={{ width: '16px', height: '16px', background: '#d32f2f' }}></div> Borderlands
+           </div>
+           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+             <div style={{ width: '16px', height: '16px', background: '#2196f3' }}></div> Coast
+           </div>
         </div>
       </div>
     );
