@@ -1,4 +1,4 @@
-import { Env } from '../../types';
+import { Env } from '../types';
 
 export class BuildingProductionManager {
   static calculateBuildingStorageCapacity(level: number): number {
