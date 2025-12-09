@@ -1,80 +1,80 @@
 {
   "meta": {
-    "generatedAt": "2025-11-28T20:40:17.318Z",
+    "generatedAt": "2025-12-09T00:21:36.176Z",
     "players": 50,
-    "ticks": 3000,
+    "ticks": 2000,
     "sampleEvery": 50,
     "policy": "diversified",
-    "seasons": 2,
+    "seasons": 1,
     "cli": "tools/simulate.ts",
-    "runId": "5f05a6b1-5e2c-4fae-947c-7bfe58ae14da",
-    "db": "/Users/tolgaberger/Desktop/BergerAndBerger/TopPlayer/backend/.wrangler/state/v3/d1/miniflare-D1DatabaseObject/d598ef165adce403a9c35fa9c9a7763af7f608dda4db618d4718317edbc7ec1d.sqlite"
+    "runId": "ac200e21-3eac-4ae4-835b-7ee66dabd07c",
+    "db": "/Users/tolgaberger/Desktop/BergerAndBerger/TopPlayer/backend/.wrangler/state/v3/d1/miniflare-dev.sqlite"
   },
   "metrics": {
     "medianTicks": {
-      "Hamlet": 204.5,
-      "Town": 1001,
+      "Hamlet": 55,
+      "Town": 1872,
       "City": null
     },
     "netResourceDrift": {
-      "coins": -19614,
-      "grain": -10845,
-      "timber": 378617,
-      "stone": 376681,
-      "rations": 13526
+      "coins": -50000,
+      "grain": -12439,
+      "timber": 195626,
+      "stone": 149303,
+      "rations": 24881
     },
-    "militarizationRate": 0,
-    "happinessStdDev": 0.166,
+    "militarizationRate": 0.34,
+    "happinessStdDev": 0.201,
     "stagnationTicksMedian": 0,
     "purchasePressure": {
-      "slowProgressPercent": 36,
+      "slowProgressPercent": 32,
       "thresholds": {
         "town": 1200,
         "city": 1800
       }
     },
     "combat": {
-      "totalDead": 1037,
-      "totalWounded": 10,
-      "participationRate": 0.34
+      "totalDead": 0,
+      "totalWounded": 0,
+      "participationRate": 0
     }
   },
   "adjustments": {
     "pacing": {
       "Hamlet": {
-        "median": 204.5,
+        "median": 55,
         "target": 85,
-        "delta": 119.5,
-        "recommended": 70
+        "delta": -30,
+        "recommended": 167
       },
       "Town": {
-        "median": 1001,
+        "median": 1872,
         "target": 650,
-        "delta": 351,
-        "recommended": 652
+        "delta": 1222,
+        "recommended": -66
       },
       "City": {
         "median": null,
         "target": 1700,
         "delta": null,
-        "recommended": 1950
+        "recommended": 0
       }
     },
     "economy": {
-      "avgCoinDrift": -392.3,
-      "recommendedEconBaselineShift": 0.78,
+      "avgCoinDrift": -1000,
+      "recommendedEconBaselineShift": 2,
       "lateGameCoinTarget": 120000
     },
     "militarization": {
-      "current": 0,
+      "current": 0.34,
       "target": 0.35,
-      "focusAdjustment": 0.35
+      "focusAdjustment": 0.01
     },
     "purchasePressure": {
-      "current": 0.36,
+      "current": 0.32,
       "target": 0.3,
-      "pressureAdjustment": -0.06
+      "pressureAdjustment": -0.02
     }
   },
-  "generatedAt": "2025-11-28T20:41:24.141Z"
+  "generatedAt": "2025-12-09T00:21:39.450Z"
 }

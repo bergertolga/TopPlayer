@@ -1,4 +1,5 @@
 import { Env } from '../types';
+import type { D1Database } from '@cloudflare/workers-types';
 import { validateUserId } from '../utils/validation';
 
 interface Conversation {
@@ -33,6 +34,13 @@ async function ensureConversation(db: D1Database, userA: string, userB: string):
     .bind(newId, low, high, Date.now())
     .run();
   return { id: newId, participant_a: low, participant_b: high };
+}
+
+async function logAnalytics(db: D1Database, userId: string, eventType: string, eventData?: any) {
+  await db
+    .prepare('INSERT INTO analytics_events (id, user_id, event_type, event_data, created_at) VALUES (?, ?, ?, ?, ?)')
+    .bind(crypto.randomUUID(), userId, eventType, eventData ? JSON.stringify(eventData) : null, Date.now())
+    .run();
 }
 
 export async function handleChat(request: Request, env: Env): Promise<Response> {
@@ -74,6 +82,7 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
       .prepare('INSERT INTO world_messages (id, user_id, message, created_at) VALUES (?, ?, ?, ?)')
       .bind(crypto.randomUUID(), userId, body.message.trim().slice(0, 500), Date.now())
       .run();
+    await logAnalytics(env.DB, userId, 'world_chat_post', { length: body.message.length });
     return jsonResponse({ success: true });
   }
 

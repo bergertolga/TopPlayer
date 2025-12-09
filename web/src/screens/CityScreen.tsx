@@ -19,6 +19,7 @@ export function CityScreen() {
   const [overview, setOverview] = useState<ClientOverview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { showToast } = useToast();
+  const [collecting, setCollecting] = useState(false);
   
   // Training State
   const [showTrainModal, setShowTrainModal] = useState(false);
@@ -41,6 +42,21 @@ export function CityScreen() {
   }, []);
 
   usePolling(fetchOverview, 15000);
+
+  const handleCollect = async () => {
+    if (collecting) return;
+    setCollecting(true);
+    try {
+      await api.collectResources();
+      showToast('Collected all building output', 'success');
+      floatingText.show('+ Resources', window.innerWidth / 2, window.innerHeight / 2, '#4caf50');
+      fetchOverview();
+    } catch (e: any) {
+      showToast(e.message || 'Collect failed', 'error');
+    } finally {
+      setCollecting(false);
+    }
+  };
 
   const handleUpgrade = async (b: Building) => {
     if (!b.canUpgrade) {
@@ -142,6 +158,14 @@ export function CityScreen() {
             />
           ))}
         </div>
+
+        <GameButton 
+          variant="green" 
+          onClick={handleCollect} 
+          disabled={collecting}
+        >
+          {collecting ? 'Collecting…' : 'Collect All'}
+        </GameButton>
       </section>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
@@ -188,19 +212,6 @@ export function CityScreen() {
                   </span>
                   
                   <div className="flex-col gap-sm" style={{ width: '100%' }}>
-                    {['FARM', 'LUMBER_MILL', 'QUARRY', 'MINE'].includes(b.type) && (
-                      <GameButton 
-                        size="sm" 
-                        variant="blue" 
-                        onClick={() => {
-                          floatingText.show('+ Resources', window.innerWidth / 2, window.innerHeight / 2, '#4caf50');
-                          fetchOverview();
-                        }}
-                        style={{ width: '100%', padding: '4px 8px', fontSize: '0.75rem' }}
-                      >
-                        Collect
-                      </GameButton>
-                    )}
                     <GameButton 
                       size="sm" 
                       variant={b.canUpgrade ? 'green' : 'gray'}

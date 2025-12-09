@@ -1,4 +1,5 @@
 import { Env } from '../../types';
+import type { D1Database } from '@cloudflare/workers-types';
 import { validateUserId, validateTransactionId, validateAmount } from '../../utils/validation';
 import { verifyAppleTransaction, verifyAppleReceipt } from '../../utils/apple-receipt';
 import { getPremiumWallet, mutatePremiumWallet, PremiumWallet } from '../../utils/premium';
@@ -103,6 +104,13 @@ async function getActiveBoosts(db: D1Database, userId: string) {
   return rows?.results || [];
 }
 
+async function logAnalytics(db: D1Database, userId: string, eventType: string, eventData?: any) {
+  await db
+    .prepare('INSERT INTO analytics_events (id, user_id, event_type, event_data, created_at) VALUES (?, ?, ?, ?, ?)')
+    .bind(crypto.randomUUID(), userId, eventType, eventData ? JSON.stringify(eventData) : null, Date.now())
+    .run();
+}
+
 export async function handleShop(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -137,6 +145,7 @@ export async function handleShop(request: Request, env: Env): Promise<Response> 
       { crowns: CROWNS_STIPEND_AMOUNT },
       { reason: 'daily_stipend', metadata: { source: 'stipend' }, updateStipendAt: now }
     );
+    await logAnalytics(env.DB, userId, 'premium_stipend_claim', { crowns: CROWNS_STIPEND_AMOUNT });
     return jsonResponse({ crowns: updated.crowns, lastStipendAt: updated.last_stipend_claim });
   }
 
@@ -189,6 +198,7 @@ export async function handleShop(request: Request, env: Env): Promise<Response> 
         { reason: 'bundle_purchase', metadata: { bundleCode: bundle.code } }
       );
       await applyBundleContents(env, userId, bundle.code, contents);
+      await logAnalytics(env.DB, userId, 'bundle_purchase_crowns', { bundleCode: bundle.code, price: bundle.price_crowns });
       return jsonResponse({
         success: true,
         bundleId: bundle.id,

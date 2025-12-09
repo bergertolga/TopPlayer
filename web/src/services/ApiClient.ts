@@ -36,7 +36,14 @@ class ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`API Error: ${response.statusText}`);
+      let message = response.statusText;
+      try {
+        const body = await response.json();
+        message = body?.error || body?.message || message;
+      } catch (_) {
+        // ignore parse errors
+      }
+      throw new Error(`API Error: ${message}`);
     }
 
     return response.json();
@@ -155,6 +162,13 @@ class ApiClient {
       return this.request('/api/v1/city/construct', {
           method: 'POST',
           body: JSON.stringify({ buildingType: type })
+      });
+  }
+
+  async collectResources(buildingId?: string): Promise<any> {
+      return this.request('/api/v1/city/collect', {
+          method: 'POST',
+          body: JSON.stringify(buildingId ? { buildingId } : {}),
       });
   }
 
@@ -306,6 +320,36 @@ class ApiClient {
   async getPremiumItems(): Promise<any> {
       // GET /api/v1/shop/items
       return this.request('/api/v1/shop/items');
+  }
+
+  async getPremiumBalance(): Promise<{ crowns: number; lastStipendAt?: number; boosts?: any[] }> {
+      return this.request('/api/v1/premium/balance');
+  }
+
+  async claimStipend(): Promise<{ crowns: number; lastStipendAt?: number }> {
+      return this.request('/api/v1/premium/stipend', { method: 'POST' });
+  }
+
+  async getBundles(): Promise<{ bundles: Array<{ code: string; name: string; description: string; price: number; contents: any }> }> {
+      return this.request('/api/v1/shop/bundles');
+  }
+
+  async purchaseBundle(bundleCode: string, paymentMethod: 'crowns' | 'cash' = 'crowns'): Promise<any> {
+      return this.request('/api/v1/shop/purchase', {
+          method: 'POST',
+          body: JSON.stringify({ bundleCode, paymentMethod })
+      });
+  }
+
+  async getWorldChat(limit: number = 50): Promise<{ messages: Array<{ id: string; user_id: string; username?: string; message: string; created_at: number }> }> {
+      return this.request(`/api/v1/chat/world?limit=${limit}`);
+  }
+
+  async postWorldMessage(message: string): Promise<any> {
+      return this.request('/api/v1/chat/world', {
+          method: 'POST',
+          body: JSON.stringify({ message })
+      });
   }
 }
 

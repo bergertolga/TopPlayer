@@ -16,6 +16,15 @@ export { RealmDO } from './durable-objects/realm-do';
 export { KingdomDO } from './durable-objects/kingdom-do';
 export { CityDO } from './durable-objects/city-do';
 
+const DISABLED_LEGACY_PREFIXES = [
+  '/api/purchase',
+  '/api/leaderboard',
+  '/api/social',
+  '/api/analytics',
+  '/api/heroes',
+  '/api/adventure',
+];
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
@@ -34,6 +43,10 @@ export default {
     }
 
     try {
+      if (DISABLED_LEGACY_PREFIXES.some((prefix) => path.startsWith(prefix))) {
+        return jsonResponse({ error: 'Legacy endpoint disabled' }, 410, corsHeaders);
+      }
+
       // Kingdoms Persist API (new architecture)
       if (path.startsWith('/realm/') || path.startsWith('/kingdom/') || path.startsWith('/city/') || path === '/ws') {
         const { handleKingdomsPersistAPI } = await import('./api/kingdoms-persist/routes');

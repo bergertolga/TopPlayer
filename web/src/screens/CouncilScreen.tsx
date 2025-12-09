@@ -7,6 +7,7 @@ import { GameCard } from '../components/ui/GameCard';
 import { GameInput, GameSelect } from '../components/ui/GameInput';
 import { LoadingScreen } from '../components/ui/LoadingScreen';
 import { gameModal } from '../components/GameModal';
+import { usePolling } from '../hooks/usePolling';
 
 export function CouncilScreen() {
   const [data, setData] = useState<any>(null);
@@ -51,6 +52,18 @@ export function CouncilScreen() {
     fetchCouncil();
   }, []);
 
+  const fetchCouncilChat = async () => {
+    if (!data?.council?.id) return;
+    try {
+      const chatData = await api.getCouncilChat(data.council.id);
+      setChat(chatData.messages || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  usePolling(fetchCouncilChat, 15000);
+
   const handleCreate = async () => {
     if (!createName) return;
     try {
@@ -78,8 +91,7 @@ export function CouncilScreen() {
     try {
       await api.sendCouncilMessage(msg);
       setMsg('');
-      const chatData = await api.getCouncilChat(data.council.id);
-      setChat(chatData.messages || []);
+      fetchCouncilChat();
     } catch (e) {
       showToast('Failed to send message', 'error');
     }

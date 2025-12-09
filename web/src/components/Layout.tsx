@@ -14,32 +14,32 @@ export function Layout() {
   };
 
   const navItems = [
-    { path: '/', label: 'City', icon: '🏰' },
-    { path: '/capital', label: 'Capital', icon: '🏛️' },
-    { path: '/market', label: 'Market', icon: '💰' },
-    { path: '/map', label: 'Map', icon: '🗺️' },
-    { path: '/council', label: 'Council', icon: '📜' },
-    { path: '/events', label: 'Events', icon: '🎉' },
-    { path: '/combat', label: 'Combat', icon: '⚔️' },
-    { path: '/profile', label: 'Profile', icon: '👤' },
+    { path: '/', label: 'City' },
+    { path: '/capital', label: 'Capital' },
+    { path: '/market', label: 'Market' },
+    { path: '/map', label: 'Map' },
+    { path: '/council', label: 'Council' },
+    { path: '/events', label: 'Events' },
+    { path: '/combat', label: 'Combat' },
+    { path: '/profile', label: 'Profile' },
   ];
 
   return (
     <div style={{ 
       display: 'flex', 
       height: '100vh', 
-      backgroundImage: 'url(/assets/layerlab/backgrounds/Background_01.png)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
+      background: 'linear-gradient(135deg, #0b1020, #0a0d14 45%, #0d111d)', 
+      position: 'relative'
     }}>
       {/* Sidebar */}
       <aside style={{ 
         width: 'var(--sidebar-width)', 
-        background: 'rgba(0, 0, 0, 0.85)', 
-        borderRight: '2px solid var(--color-gold-dim)',
+        background: 'rgba(7, 10, 18, 0.95)', 
+        borderRight: '1px solid var(--color-border)',
         display: 'flex',
         flexDirection: 'column',
-        zIndex: 10
+        zIndex: 10,
+        position: 'relative'
       }}>
         <div style={{ 
           padding: '1.5rem', 
@@ -71,12 +71,12 @@ export function Layout() {
                     borderRadius: '8px',
                     textDecoration: 'none',
                     color: isActive ? 'var(--color-gold)' : 'var(--color-text)',
-                    background: isActive ? 'rgba(255, 215, 0, 0.15)' : 'transparent',
-                    border: isActive ? '1px solid var(--color-gold-dim)' : '1px solid transparent',
+            background: isActive ? 'linear-gradient(90deg, rgba(243,199,124,0.16), rgba(243,199,124,0.05))' : 'transparent',
+            border: isActive ? '1px solid var(--color-border)' : '1px solid transparent',
                     transition: 'all 0.2s'
                   }}
                 >
-                  <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
+                  <span style={{ width: 8, height: 8, borderRadius: 999, background: isActive ? 'var(--color-gold)' : '#6b7383', display: 'inline-block' }} />
                   <span style={{ fontWeight: isActive ? 'bold' : 'normal' }}>{item.label}</span>
                 </Link>
               );
@@ -103,7 +103,7 @@ export function Layout() {
       </aside>
 
       {/* Main Content Area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'relative', zIndex: 1, padding: '1.5rem' }}>
         {/* Topbar */}
         <header style={{ 
           padding: '1rem 2rem',
@@ -134,14 +134,17 @@ export function Layout() {
         </header>
 
         {/* Page Content */}
-        <main style={{ 
-          flex: 1, 
-          overflowY: 'auto', 
-          padding: '2rem',
-          position: 'relative'
-        }}>
-          <Outlet />
-        </main>
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', justifyContent: 'center' }}>
+          <main style={{ 
+            flex: 1,
+            maxWidth: 'var(--panel-max-width)',
+            width: '100%',
+            position: 'relative',
+            padding: '1.5rem 0 2rem 0',
+          }}>
+            <Outlet />
+          </main>
+        </div>
       </div>
 
       {showQuests && <QuestLog onClose={() => setShowQuests(false)} />}

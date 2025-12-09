@@ -85,28 +85,14 @@ export function MapScreen() {
 
   if (view === 'world') {
     return (
-      <div style={{ textAlign: 'center', padding: '1rem', height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <h1 style={{ color: 'var(--color-gold)', textShadow: '0 2px 4px black', fontSize: '2.5rem', marginBottom: '0.5rem' }}>World Map</h1>
-        <p style={{ color: '#ccc', fontSize: '1.2rem', marginBottom: '2rem' }}>Select a region to explore</p>
-        
+      <div style={{ textAlign: 'center', padding: '1rem', height: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <h1 style={{ color: 'var(--color-gold)', textShadow: '0 2px 4px black', fontSize: '2.4rem', margin: 0 }}>World Map</h1>
+        <p style={{ color: '#d7e2ff', fontSize: '1.05rem', margin: 0 }}>Select a region to explore</p>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <WorldMapRenderer 
             onRegionSelect={handleRegionSelect} 
             currentRegionId={myRegionId || undefined} 
           />
-        </div>
-
-        <div style={{ marginTop: '2rem', display: 'flex', gap: '2rem', justifyContent: 'center' }}>
-           {/* Legend or Stats could go here */}
-           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-             <div style={{ width: '16px', height: '16px', background: '#4caf50' }}></div> Heartlands
-           </div>
-           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-             <div style={{ width: '16px', height: '16px', background: '#d32f2f' }}></div> Borderlands
-           </div>
-           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-             <div style={{ width: '16px', height: '16px', background: '#2196f3' }}></div> Coast
-           </div>
         </div>
       </div>
     );

@@ -24,3 +24,4 @@ CREATE INDEX IF NOT EXISTS idx_recurring_quests_cycle ON recurring_quest_assignm
 
 
 
+

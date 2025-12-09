@@ -14,10 +14,10 @@ export function GameCard({ children, title, className, style }: GameCardProps) {
       style={{
         position: 'relative',
         padding: '20px',
-        background: 'var(--color-bg-panel)', // Uses the new darker panel variable
-        border: '1px solid var(--color-gold-dim)',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.5)',
+        background: 'var(--color-panel)',
+        border: '1px solid var(--color-border)',
+        borderRadius: '12px',
+        boxShadow: '0 24px 42px rgba(0,0,0,0.5)',
         ...style
       }}
     >
@@ -26,15 +26,15 @@ export function GameCard({ children, title, className, style }: GameCardProps) {
       {title && (
         <div style={{
           marginBottom: '1rem',
-          borderBottom: '2px solid var(--color-gold-dim)',
-          paddingBottom: '0.5rem',
-          textAlign: 'center',
+          borderBottom: '1px solid var(--color-gold-dim)',
+          paddingBottom: '0.35rem',
+          textAlign: 'left',
         }}>
           <h3 style={{ 
             margin: 0, 
             color: 'var(--color-gold)', 
             textShadow: '0 2px 2px black',
-            fontSize: '1.3rem', // Slight bump
+            fontSize: '1.2rem',
           }}>
             {title}
           </h3>
