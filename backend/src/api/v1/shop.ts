@@ -14,7 +14,7 @@ function jsonResponse(data: any, status: number = 200, headers: Record<string, s
       'Content-Type': 'application/json',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Key',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Admin-Key, X-User-ID',
       ...headers,
     },
   });

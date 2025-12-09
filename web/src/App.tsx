@@ -11,6 +11,9 @@ import { CombatScreen } from './screens/CombatScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
 import { MarketScreen } from './screens/MarketScreen';
 import { LoginScreen } from './screens/LoginScreen';
+import { ShopScreen } from './screens/ShopScreen';
+import { SocialScreen } from './screens/SocialScreen';
+import { AccountScreen } from './screens/AccountScreen';
 import { api } from './services/ApiClient';
 import { ToastProvider } from './components/Toast';
 import { GameModalProvider } from './components/GameModal';
@@ -38,6 +41,9 @@ export default function App() {
             <Route path="combat" element={<CombatScreen />} />
             <Route path="market" element={<MarketScreen />} />
             <Route path="profile" element={<ProfileScreen />} />
+            <Route path="shop" element={<ShopScreen />} />
+            <Route path="social" element={<SocialScreen />} />
+            <Route path="account" element={<AccountScreen />} />
           </Route>
         </Routes>
       </BrowserRouter>

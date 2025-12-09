@@ -4,3 +4,4 @@ ALTER TABLE city_buildings ADD COLUMN last_collected_at INTEGER DEFAULT 0;
 ALTER TABLE city_buildings ADD COLUMN unclaimed_amount REAL DEFAULT 0;
 
 
+
